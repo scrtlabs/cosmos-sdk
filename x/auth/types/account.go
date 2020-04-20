@@ -150,16 +150,17 @@ func (acc BaseAccount) MarshalYAML() (interface{}, error) {
 		Coins:         acc.Coins,
 		AccountNumber: acc.AccountNumber,
 		Sequence:      acc.Sequence,
+		PubKey:        "",
 	}
-
-	if acc.PubKey != nil {
-		pks, err := sdk.Bech32ifyPubKey(sdk.Bech32PubKeyTypeAccPub, acc.PubKey)
-		if err != nil {
-			return nil, err
-		}
-
-		alias.PubKey = pks
-	}
+	//
+	//if acc.PubKey != nil {
+	//	pks, err := sdk.Bech32ifyPubKey(sdk.Bech32PubKeyTypeAccPub, acc.PubKey)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//
+	//	alias.PubKey = pks
+	//}
 
 	bz, err := yaml.Marshal(alias)
 	if err != nil {
@@ -176,16 +177,17 @@ func (acc BaseAccount) MarshalJSON() ([]byte, error) {
 		Coins:         acc.Coins,
 		AccountNumber: acc.AccountNumber,
 		Sequence:      acc.Sequence,
+		PubKey:        "",
 	}
 
-	if acc.PubKey != nil {
-		pks, err := sdk.Bech32ifyPubKey(sdk.Bech32PubKeyTypeAccPub, acc.PubKey)
-		if err != nil {
-			return nil, err
-		}
-
-		alias.PubKey = pks
-	}
+	//if acc.PubKey != nil {
+	//	pks, err := sdk.Bech32ifyPubKey(sdk.Bech32PubKeyTypeAccPub, acc.PubKey)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//
+	//	alias.PubKey = pks
+	//}
 
 	return json.Marshal(alias)
 }
@@ -197,14 +199,14 @@ func (acc *BaseAccount) UnmarshalJSON(bz []byte) error {
 		return err
 	}
 
-	if alias.PubKey != "" {
-		pk, err := sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeAccPub, alias.PubKey)
-		if err != nil {
-			return err
-		}
-
-		acc.PubKey = pk
-	}
+	//if alias.PubKey != "" {
+	//	pk, err := sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeAccPub, alias.PubKey)
+	//	if err != nil {
+	//		return err
+	//	}
+	//
+	//	acc.PubKey = pk
+	//}
 
 	acc.Address = alias.Address
 	acc.Coins = alias.Coins

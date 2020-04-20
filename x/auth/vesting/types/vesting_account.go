@@ -247,16 +247,17 @@ func (bva BaseVestingAccount) MarshalJSON() ([]byte, error) {
 		DelegatedFree:    bva.DelegatedFree,
 		DelegatedVesting: bva.DelegatedVesting,
 		EndTime:          bva.EndTime,
+		PubKey:           "",
 	}
 
-	if bva.PubKey != nil {
-		pks, err := sdk.Bech32ifyPubKey(sdk.Bech32PubKeyTypeAccPub, bva.PubKey)
-		if err != nil {
-			return nil, err
-		}
-
-		alias.PubKey = pks
-	}
+	//if bva.PubKey != nil {
+	//	pks, err := sdk.Bech32ifyPubKey(sdk.Bech32PubKeyTypeAccPub, bva.PubKey)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//
+	//	alias.PubKey = pks
+	//}
 
 	return json.Marshal(alias)
 }
@@ -269,16 +270,16 @@ func (bva *BaseVestingAccount) UnmarshalJSON(bz []byte) error {
 	}
 
 	var (
-		pk  crypto.PubKey
-		err error
+		pk crypto.PubKey
+		// err error
 	)
 
-	if alias.PubKey != "" {
-		pk, err = sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeAccPub, alias.PubKey)
-		if err != nil {
-			return err
-		}
-	}
+	//if alias.PubKey != "" {
+	//	pk, err = sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeAccPub, alias.PubKey)
+	//	if err != nil {
+	//		return err
+	//	}
+	//}
 
 	bva.BaseAccount = authtypes.NewBaseAccount(alias.Address, alias.Coins, pk, alias.AccountNumber, alias.Sequence)
 	bva.OriginalVesting = alias.OriginalVesting
@@ -434,16 +435,17 @@ func (cva ContinuousVestingAccount) MarshalJSON() ([]byte, error) {
 		DelegatedVesting: cva.DelegatedVesting,
 		EndTime:          cva.EndTime,
 		StartTime:        cva.StartTime,
+		PubKey:           "",
 	}
 
-	if cva.PubKey != nil {
-		pks, err := sdk.Bech32ifyPubKey(sdk.Bech32PubKeyTypeAccPub, cva.PubKey)
-		if err != nil {
-			return nil, err
-		}
-
-		alias.PubKey = pks
-	}
+	//if cva.PubKey != nil {
+	//	pks, err := sdk.Bech32ifyPubKey(sdk.Bech32PubKeyTypeAccPub, cva.PubKey)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//
+	//	alias.PubKey = pks
+	//}
 
 	return json.Marshal(alias)
 }
@@ -456,16 +458,16 @@ func (cva *ContinuousVestingAccount) UnmarshalJSON(bz []byte) error {
 	}
 
 	var (
-		pk  crypto.PubKey
-		err error
+		pk crypto.PubKey
+		// err error
 	)
 
-	if alias.PubKey != "" {
-		pk, err = sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeAccPub, alias.PubKey)
-		if err != nil {
-			return err
-		}
-	}
+	//if alias.PubKey != "" {
+	//	pk, err = sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeAccPub, alias.PubKey)
+	//	if err != nil {
+	//		return err
+	//	}
+	//}
 
 	cva.BaseVestingAccount = &BaseVestingAccount{
 		BaseAccount:      authtypes.NewBaseAccount(alias.Address, alias.Coins, pk, alias.AccountNumber, alias.Sequence),
@@ -619,16 +621,17 @@ func (pva PeriodicVestingAccount) MarshalYAML() (interface{}, error) {
 		EndTime:          pva.EndTime,
 		StartTime:        pva.StartTime,
 		VestingPeriods:   pva.VestingPeriods,
+		PubKey:           "",
 	}
 
-	if pva.PubKey != nil {
-		pks, err := sdk.Bech32ifyPubKey(sdk.Bech32PubKeyTypeAccPub, pva.PubKey)
-		if err != nil {
-			return nil, err
-		}
-
-		alias.PubKey = pks
-	}
+	//if pva.PubKey != nil {
+	//	pks, err := sdk.Bech32ifyPubKey(sdk.Bech32PubKeyTypeAccPub, pva.PubKey)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//
+	//	alias.PubKey = pks
+	//}
 
 	bz, err := yaml.Marshal(alias)
 	if err != nil {
@@ -651,16 +654,17 @@ func (pva PeriodicVestingAccount) MarshalJSON() ([]byte, error) {
 		EndTime:          pva.EndTime,
 		StartTime:        pva.StartTime,
 		VestingPeriods:   pva.VestingPeriods,
+		PubKey:           "",
 	}
 
-	if pva.PubKey != nil {
-		pks, err := sdk.Bech32ifyPubKey(sdk.Bech32PubKeyTypeAccPub, pva.PubKey)
-		if err != nil {
-			return nil, err
-		}
-
-		alias.PubKey = pks
-	}
+	//if pva.PubKey != nil {
+	//	pks, err := sdk.Bech32ifyPubKey(sdk.Bech32PubKeyTypeAccPub, pva.PubKey)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//
+	//	alias.PubKey = pks
+	//}
 
 	return json.Marshal(alias)
 }
@@ -673,16 +677,16 @@ func (pva *PeriodicVestingAccount) UnmarshalJSON(bz []byte) error {
 	}
 
 	var (
-		pk  crypto.PubKey
-		err error
+		pk crypto.PubKey
+		//err error
 	)
 
-	if alias.PubKey != "" {
-		pk, err = sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeAccPub, alias.PubKey)
-		if err != nil {
-			return err
-		}
-	}
+	//if alias.PubKey != "" {
+	//	pk, err = sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeAccPub, alias.PubKey)
+	//	if err != nil {
+	//		return err
+	//	}
+	//}
 
 	pva.BaseVestingAccount = &BaseVestingAccount{
 		BaseAccount:      authtypes.NewBaseAccount(alias.Address, alias.Coins, pk, alias.AccountNumber, alias.Sequence),
@@ -778,16 +782,17 @@ func (dva DelayedVestingAccount) MarshalJSON() ([]byte, error) {
 		DelegatedFree:    dva.DelegatedFree,
 		DelegatedVesting: dva.DelegatedVesting,
 		EndTime:          dva.EndTime,
+		PubKey:           "",
 	}
 
-	if dva.PubKey != nil {
-		pks, err := sdk.Bech32ifyPubKey(sdk.Bech32PubKeyTypeAccPub, dva.PubKey)
-		if err != nil {
-			return nil, err
-		}
-
-		alias.PubKey = pks
-	}
+	//if dva.PubKey != nil {
+	//	pks, err := sdk.Bech32ifyPubKey(sdk.Bech32PubKeyTypeAccPub, dva.PubKey)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//
+	//	alias.PubKey = pks
+	//}
 
 	return json.Marshal(alias)
 }
@@ -800,16 +805,16 @@ func (dva *DelayedVestingAccount) UnmarshalJSON(bz []byte) error {
 	}
 
 	var (
-		pk  crypto.PubKey
-		err error
+		pk crypto.PubKey
+		//err error
 	)
 
-	if alias.PubKey != "" {
-		pk, err = sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeAccPub, alias.PubKey)
-		if err != nil {
-			return err
-		}
-	}
+	//if alias.PubKey != "" {
+	//	pk, err = sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeAccPub, alias.PubKey)
+	//	if err != nil {
+	//		return err
+	//	}
+	//}
 
 	dva.BaseVestingAccount = &BaseVestingAccount{
 		BaseAccount:      authtypes.NewBaseAccount(alias.Address, alias.Coins, pk, alias.AccountNumber, alias.Sequence),

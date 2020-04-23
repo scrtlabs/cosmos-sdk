@@ -12,10 +12,10 @@ import (
 	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/crypto/ed25519"
 
-	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/version"
+	"github.com/Cashmaney/cosmos-sdk/client"
+	"github.com/Cashmaney/cosmos-sdk/codec"
+	sdk "github.com/Cashmaney/cosmos-sdk/types"
+	"github.com/Cashmaney/cosmos-sdk/version"
 )
 
 func Cmd(cdc *codec.Codec) *cobra.Command {

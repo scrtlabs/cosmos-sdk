@@ -2,8 +2,8 @@
 
 The Cosmos SDK offers a full fledged simulation framework to fuzz test every message defined by a module.
 
-This functionality is provided by the[`SimApp`](https://github.com/cosmos/cosmos-sdk/blob/master/simapp/app.go),
-which is a dummy application that is used for running the [`simulation`](https://github.com/cosmos/cosmos-sdk/tree/master/x/simulation) module.
+This functionality is provided by the[`SimApp`](https://github.com/Cashmaney/cosmos-sdk/blob/master/simapp/app.go),
+which is a dummy application that is used for running the [`simulation`](https://github.com/Cashmaney/cosmos-sdk/tree/master/x/simulation) module.
 This module defines all the simulation logic as well as the operations for randomized parameters like accounts, balances etc.
 
 ## Goals
@@ -25,7 +25,7 @@ The simulation app has different commands, each of which tests a different failu
 - `FullAppSimulation`: General simulation mode. Runs the chain and the specified operations for a given number of blocks. Tests that there're no `panics` on the simulation. It does also run invariant checks on every `Period` but they are not benchmarked.
 
 Each simulation must receive a set of inputs (_i.e_ flags) such as the number of blocks that the simulation is run, seed, block size, etc.
-Check the full list of flags [here](https://github.com/cosmos/cosmos-sdk/blob/adf6ddd4a807c8363e33083a3281f6a5e112ab89/simapp/sim_test.go#L34-L50).
+Check the full list of flags [here](https://github.com/Cashmaney/cosmos-sdk/blob/adf6ddd4a807c8363e33083a3281f6a5e112ab89/simapp/sim_test.go#L34-L50).
 
 ## Simulator Modes
 
@@ -35,7 +35,7 @@ In addition to the various inputs and commands, the simulator runs in three mode
 2. From a `genesis.json` file where the initial state and the module parameters are defined.
 This mode is helpful for running simulations on a known state such as a live network export where a new (mostly likely breaking) version of the application needs to be tested.
 3. From a `params.json` file where the initial state is pseudo-randomly generated but the module and simulation parameters can be provided manually.
-This allows for a more controlled and deterministic simulation setup while allowing the state space to still be pseudo-randomly simulated. The list of available parameters is listed [here](https://github.com/cosmos/cosmos-sdk/blob/adf6ddd4a807c8363e33083a3281f6a5e112ab89/x/simulation/params.go#L170-L178).
+This allows for a more controlled and deterministic simulation setup while allowing the state space to still be pseudo-randomly simulated. The list of available parameters is listed [here](https://github.com/Cashmaney/cosmos-sdk/blob/adf6ddd4a807c8363e33083a3281f6a5e112ab89/x/simulation/params.go#L170-L178).
 
 ::: tip
 These modes are not mutually exclusive. So you can for example run a randomly generated genesis state (`1`) with manually generated simulation params (`3`).
@@ -43,10 +43,10 @@ These modes are not mutually exclusive. So you can for example run a randomly ge
 
 ## Usage
 
-This is a general example of how simulations are run. For more specific examples check the SDK [Makefile](https://github.com/cosmos/cosmos-sdk/blob/adf6ddd4a807c8363e33083a3281f6a5e112ab89/Makefile#L88-L123).
+This is a general example of how simulations are run. For more specific examples check the SDK [Makefile](https://github.com/Cashmaney/cosmos-sdk/blob/adf6ddd4a807c8363e33083a3281f6a5e112ab89/Makefile#L88-L123).
 
 ```bash
- $ go test -mod=readonly github.com/cosmos/cosmos-sdk/simapp \
+ $ go test -mod=readonly github.com/Cashmaney/cosmos-sdk/simapp \
   -run=TestApp<simulation_command> \
   ...<flags>
   -v -timeout 24h
@@ -64,7 +64,7 @@ Here are some suggestions when encountering a simulation failure:
 - Try using another `-Seed`. If it can reproduce the same error and if it fails sooner you will spend less time running the simulations.
 - Reduce the `-NumBlocks` . How's the app state at the height previous to the failure?
 - Run invariants on every operation with `-SimulateEveryOperation`. _Note_: this will slow down your simulation **a lot**.
-- Try adding logs to operations that are not logged. You will have to define a [Logger](https://github.com/cosmos/cosmos-sdk/blob/adf6ddd4a807c8363e33083a3281f6a5e112ab89/x/staking/keeper/keeper.go#L65:17) on your `Keeper`.
+- Try adding logs to operations that are not logged. You will have to define a [Logger](https://github.com/Cashmaney/cosmos-sdk/blob/adf6ddd4a807c8363e33083a3281f6a5e112ab89/x/staking/keeper/keeper.go#L65:17) on your `Keeper`.
 
 <!-- ## Use simulation in your SDK-based application -->
 <!-- TODO: link to the simulation section on the tutorial for how to add your own simulation messages -->

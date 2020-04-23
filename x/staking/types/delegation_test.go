@@ -7,8 +7,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/Cashmaney/cosmos-sdk/codec"
+	sdk "github.com/Cashmaney/cosmos-sdk/types"
 )
 
 func TestDelegationEqual(t *testing.T) {

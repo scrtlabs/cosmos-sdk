@@ -10,13 +10,13 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	dbm "github.com/tendermint/tm-db"
 
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/simapp"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/cosmos/cosmos-sdk/x/gov"
-	"github.com/cosmos/cosmos-sdk/x/upgrade"
+	"github.com/Cashmaney/cosmos-sdk/codec"
+	"github.com/Cashmaney/cosmos-sdk/simapp"
+	sdk "github.com/Cashmaney/cosmos-sdk/types"
+	sdkerrors "github.com/Cashmaney/cosmos-sdk/types/errors"
+	"github.com/Cashmaney/cosmos-sdk/types/module"
+	"github.com/Cashmaney/cosmos-sdk/x/gov"
+	"github.com/Cashmaney/cosmos-sdk/x/upgrade"
 )
 
 type TestSuite struct {

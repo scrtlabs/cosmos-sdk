@@ -3,11 +3,11 @@ package keeper
 import (
 	"fmt"
 
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/cosmos/cosmos-sdk/x/distribution/types"
-	"github.com/cosmos/cosmos-sdk/x/params"
+	"github.com/Cashmaney/cosmos-sdk/codec"
+	sdk "github.com/Cashmaney/cosmos-sdk/types"
+	sdkerrors "github.com/Cashmaney/cosmos-sdk/types/errors"
+	"github.com/Cashmaney/cosmos-sdk/x/distribution/types"
+	"github.com/Cashmaney/cosmos-sdk/x/params"
 
 	"github.com/tendermint/tendermint/libs/log"
 )

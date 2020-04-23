@@ -8,9 +8,9 @@ import (
 
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	slashingkeeper "github.com/cosmos/cosmos-sdk/x/slashing/internal/keeper"
-	"github.com/cosmos/cosmos-sdk/x/staking"
+	sdk "github.com/Cashmaney/cosmos-sdk/types"
+	slashingkeeper "github.com/Cashmaney/cosmos-sdk/x/slashing/internal/keeper"
+	"github.com/Cashmaney/cosmos-sdk/x/staking"
 )
 
 func TestBeginBlocker(t *testing.T) {

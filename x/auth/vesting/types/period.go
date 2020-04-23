@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdk "github.com/Cashmaney/cosmos-sdk/types"
 )
 
 // Period defines a length of time and amount of coins that will vest

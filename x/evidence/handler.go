@@ -1,8 +1,8 @@
 package evidence
 
 import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	sdk "github.com/Cashmaney/cosmos-sdk/types"
+	sdkerrors "github.com/Cashmaney/cosmos-sdk/types/errors"
 )
 
 func NewHandler(k Keeper) sdk.Handler {

@@ -92,5 +92,5 @@ Contact us for information about funding an implementation in another language.
 
 ## Contribute
 
-See [this file](https://github.com/cosmos/cosmos-sdk/blob/master/docs/DOCS_README.md) for details of the build process and
+See [this file](https://github.com/Cashmaney/cosmos-sdk/blob/master/docs/DOCS_README.md) for details of the build process and
 considerations when making changes.

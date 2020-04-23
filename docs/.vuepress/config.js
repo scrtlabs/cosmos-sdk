@@ -165,11 +165,11 @@ module.exports = {
             {
               title: "Contributing to the docs",
               url:
-                "https://github.com/cosmos/cosmos-sdk/blob/master/docs/DOCS_README.md"
+                "https://github.com/Cashmaney/cosmos-sdk/blob/master/docs/DOCS_README.md"
             },
             {
               title: "Source code on GitHub",
-              url: "https://github.com/cosmos/cosmos-sdk/"
+              url: "https://github.com/Cashmaney/cosmos-sdk/"
             }
           ]
         }

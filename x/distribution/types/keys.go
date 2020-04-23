@@ -3,7 +3,7 @@ package types
 import (
 	"encoding/binary"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdk "github.com/Cashmaney/cosmos-sdk/types"
 )
 
 const (

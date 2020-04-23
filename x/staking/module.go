@@ -13,16 +13,16 @@ import (
 	cfg "github.com/tendermint/tendermint/config"
 	"github.com/tendermint/tendermint/crypto"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/module"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	sim "github.com/cosmos/cosmos-sdk/x/simulation"
-	"github.com/cosmos/cosmos-sdk/x/staking/client/cli"
-	"github.com/cosmos/cosmos-sdk/x/staking/client/rest"
-	"github.com/cosmos/cosmos-sdk/x/staking/simulation"
-	"github.com/cosmos/cosmos-sdk/x/staking/types"
+	"github.com/Cashmaney/cosmos-sdk/client/context"
+	"github.com/Cashmaney/cosmos-sdk/codec"
+	sdk "github.com/Cashmaney/cosmos-sdk/types"
+	"github.com/Cashmaney/cosmos-sdk/types/module"
+	authtypes "github.com/Cashmaney/cosmos-sdk/x/auth/types"
+	sim "github.com/Cashmaney/cosmos-sdk/x/simulation"
+	"github.com/Cashmaney/cosmos-sdk/x/staking/client/cli"
+	"github.com/Cashmaney/cosmos-sdk/x/staking/client/rest"
+	"github.com/Cashmaney/cosmos-sdk/x/staking/simulation"
+	"github.com/Cashmaney/cosmos-sdk/x/staking/types"
 )
 
 var (

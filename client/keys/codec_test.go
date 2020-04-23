@@ -7,7 +7,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/cosmos/cosmos-sdk/crypto/keys"
+	"github.com/Cashmaney/cosmos-sdk/crypto/keys"
 )
 
 type testCases struct {

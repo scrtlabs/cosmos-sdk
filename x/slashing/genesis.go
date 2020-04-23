@@ -1,9 +1,9 @@
 package slashing
 
 import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/slashing/internal/types"
-	"github.com/cosmos/cosmos-sdk/x/staking/exported"
+	sdk "github.com/Cashmaney/cosmos-sdk/types"
+	"github.com/Cashmaney/cosmos-sdk/x/slashing/internal/types"
+	"github.com/Cashmaney/cosmos-sdk/x/staking/exported"
 )
 
 // InitGenesis initialize default parameters

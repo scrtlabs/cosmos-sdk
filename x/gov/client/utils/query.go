@@ -3,11 +3,11 @@ package utils
 import (
 	"fmt"
 
-	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/context"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
-	"github.com/cosmos/cosmos-sdk/x/gov/types"
+	"github.com/Cashmaney/cosmos-sdk/client"
+	"github.com/Cashmaney/cosmos-sdk/client/context"
+	sdk "github.com/Cashmaney/cosmos-sdk/types"
+	"github.com/Cashmaney/cosmos-sdk/x/auth/client/utils"
+	"github.com/Cashmaney/cosmos-sdk/x/gov/types"
 )
 
 const (

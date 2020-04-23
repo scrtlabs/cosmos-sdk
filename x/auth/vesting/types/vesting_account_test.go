@@ -10,9 +10,9 @@ import (
 	"github.com/tendermint/tendermint/crypto/secp256k1"
 	tmtime "github.com/tendermint/tendermint/types/time"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	authexported "github.com/cosmos/cosmos-sdk/x/auth/exported"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	sdk "github.com/Cashmaney/cosmos-sdk/types"
+	authexported "github.com/Cashmaney/cosmos-sdk/x/auth/exported"
+	authtypes "github.com/Cashmaney/cosmos-sdk/x/auth/types"
 )
 
 var (

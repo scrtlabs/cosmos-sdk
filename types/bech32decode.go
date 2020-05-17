@@ -80,7 +80,7 @@ func DecodeBech32(bech string) (string, []byte, error) {
 	}
 
 	// We exclude the last 6 bytes, which is the checksum.
-	return hrp, decoded[:len(decoded)-6], nil
+	return hrp, decoded, nil
 }
 
 // toBytes converts each character in the string 'chars' to the value of the

@@ -4,14 +4,13 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"github.com/tendermint/tendermint/libs/bech32"
 	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	yaml "gopkg.in/yaml.v2"
 
-	// "github.com/tendermint/tendermint/libs/bech32"
+	"github.com/tendermint/tendermint/libs/bech32"
 	"github.com/tendermint/tendermint/libs/cli"
 
 	"github.com/Cashmaney/cosmos-sdk/client/flags"
@@ -48,7 +47,7 @@ type bech32Output struct {
 func newBech32Output(bs []byte) bech32Output {
 	out := bech32Output{Formats: make([]string, len(bech32Prefixes))}
 	for i, prefix := range bech32Prefixes {
-		bech32Addr, err := sdk.bech32.ConvertAndEncode(prefix, bs)
+		bech32Addr, err := bech32.ConvertAndEncode(prefix, bs)
 		if err != nil {
 			panic(err)
 		}

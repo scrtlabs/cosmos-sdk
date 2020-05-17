@@ -660,7 +660,7 @@ func GetFromBech32(bech32str, prefix string) ([]byte, error) {
 		return nil, errors.New("decoding Bech32 address failed: must provide an address")
 	}
 
-	hrp, bz, err := bech32.DecodeAndConvert(bech32str)
+	hrp, bz, err := DecodeBech32(bech32str)
 	if err != nil {
 		return nil, err
 	}

@@ -203,7 +203,7 @@ func (acc *BaseAccount) UnmarshalJSON(bz []byte) error {
 			return err
 		}
 
-		acc.PubKey = pk.Bytes()
+		acc.PubKey = pk
 	}
 
 	acc.Address = alias.Address

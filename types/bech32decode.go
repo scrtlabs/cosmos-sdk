@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"github.com/btcsuite/btcutil/bech32"
 	"strings"
 )
 
@@ -11,13 +12,23 @@ var gen = []int{0x3b6a57b2, 0x26508e6d, 0x1ea119fa, 0x3d4233dd, 0x2a1462b3}
 
 // NOTE: This method it a slight modification of the method bech32.Decode found
 // btcutil, allowing strings to be more than 90 characters.
-
+func DecodeAndConvert(bech string) (string, []byte, error) {
+	hrp, data, err := decodeBech32(bech)
+	if err != nil {
+		return "", nil, fmt.Errorf("decoding bech32 failed")
+	}
+	converted, err := bech32.ConvertBits(data, 5, 8, false)
+	if err != nil {
+		return "", nil, fmt.Errorf("decoding bech32 failed")
+	}
+	return hrp, converted, nil
+}
 // decodeBech32 decodes a bech32 encoded string, returning the human-readable
 // part and the data part excluding the checksum.
 // Note: the data will be base32 encoded, that is each element of the returned
 // byte array will encode 5 bits of data. Use the ConvertBits method to convert
 // this to 8-bit representation.
-func DecodeBech32(bech string) (string, []byte, error) {
+func decodeBech32(bech string) (string, []byte, error) {
 	// The maximum allowed length for a bech32 string is 90. It must also
 	// be at least 8 characters, since it needs a non-empty HRP, a
 	// separator, and a 6 character checksum.
@@ -80,7 +91,7 @@ func DecodeBech32(bech string) (string, []byte, error) {
 	}
 
 	// We exclude the last 6 bytes, which is the checksum.
-	return hrp, decoded, nil
+	return hrp, decoded[:len(decoded)-6], nil
 }
 
 // toBytes converts each character in the string 'chars' to the value of the

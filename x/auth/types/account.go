@@ -175,6 +175,7 @@ func (acc BaseAccount) MarshalJSON() ([]byte, error) {
 		Address:       acc.Address,
 		AccountNumber: acc.AccountNumber,
 		Sequence:      acc.Sequence,
+		Coins:         acc.Coins,
 	}
 
 	if acc.PubKey != nil {
@@ -209,6 +210,6 @@ func (acc *BaseAccount) UnmarshalJSON(bz []byte) error {
 	acc.Address = alias.Address
 	acc.AccountNumber = alias.AccountNumber
 	acc.Sequence = alias.Sequence
-
+	acc.Coins = alias.Coins
 	return nil
 }

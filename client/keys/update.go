@@ -6,8 +6,8 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/Cashmaney/cosmos-sdk/client/flags"
-	"github.com/Cashmaney/cosmos-sdk/client/input"
+	"github.com/enigmampc/cosmos-sdk/client/flags"
+	"github.com/enigmampc/cosmos-sdk/client/input"
 )
 
 // UpdateKeyCommand changes the password of a key in the keybase.

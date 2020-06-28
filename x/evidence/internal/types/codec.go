@@ -1,8 +1,8 @@
 package types
 
 import (
-	"github.com/Cashmaney/cosmos-sdk/codec"
-	"github.com/Cashmaney/cosmos-sdk/x/evidence/exported"
+	"github.com/enigmampc/cosmos-sdk/codec"
+	"github.com/enigmampc/cosmos-sdk/x/evidence/exported"
 )
 
 // ModuleCdc defines the evidence module's codec. The codec is not sealed as to

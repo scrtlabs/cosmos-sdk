@@ -1,10 +1,10 @@
 package cli
 
 import (
-	"github.com/Cashmaney/cosmos-sdk/client"
-	"github.com/Cashmaney/cosmos-sdk/client/flags"
-	"github.com/Cashmaney/cosmos-sdk/codec"
-	"github.com/Cashmaney/cosmos-sdk/x/evidence/internal/types"
+	"github.com/enigmampc/cosmos-sdk/client"
+	"github.com/enigmampc/cosmos-sdk/client/flags"
+	"github.com/enigmampc/cosmos-sdk/codec"
+	"github.com/enigmampc/cosmos-sdk/x/evidence/internal/types"
 
 	"github.com/spf13/cobra"
 )

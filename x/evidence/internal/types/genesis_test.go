@@ -6,8 +6,8 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/crypto/ed25519"
 
-	"github.com/Cashmaney/cosmos-sdk/x/evidence/exported"
-	"github.com/Cashmaney/cosmos-sdk/x/evidence/internal/types"
+	"github.com/enigmampc/cosmos-sdk/x/evidence/exported"
+	"github.com/enigmampc/cosmos-sdk/x/evidence/internal/types"
 )
 
 func TestDefaultGenesisState(t *testing.T) {

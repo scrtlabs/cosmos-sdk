@@ -3,9 +3,9 @@ package keeper_test
 import (
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/Cashmaney/cosmos-sdk/simapp"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/x/mint/internal/types"
+	"github.com/enigmampc/cosmos-sdk/simapp"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/x/mint/internal/types"
 )
 
 // returns context and an app with updated mint keeper

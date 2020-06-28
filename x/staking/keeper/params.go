@@ -3,9 +3,9 @@ package keeper
 import (
 	"time"
 
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/x/params"
-	"github.com/Cashmaney/cosmos-sdk/x/staking/types"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/x/params"
+	"github.com/enigmampc/cosmos-sdk/x/staking/types"
 )
 
 // Default parameter namespace

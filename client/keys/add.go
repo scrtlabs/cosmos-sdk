@@ -10,10 +10,10 @@ import (
 
 	bip39 "github.com/bartekn/go-bip39"
 
-	"github.com/Cashmaney/cosmos-sdk/client/flags"
-	"github.com/Cashmaney/cosmos-sdk/client/input"
-	"github.com/Cashmaney/cosmos-sdk/crypto/keys"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/client/flags"
+	"github.com/enigmampc/cosmos-sdk/client/input"
+	"github.com/enigmampc/cosmos-sdk/crypto/keys"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"

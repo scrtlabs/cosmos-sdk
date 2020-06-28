@@ -5,7 +5,7 @@ import (
 
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
 )
 
 var isAlphaNumeric = regexp.MustCompile(`^[a-zA-Z0-9]+$`).MatchString

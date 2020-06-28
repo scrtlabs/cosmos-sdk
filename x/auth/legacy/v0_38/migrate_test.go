@@ -4,10 +4,10 @@ import (
 	"testing"
 	"time"
 
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	v034auth "github.com/Cashmaney/cosmos-sdk/x/auth/legacy/v0_34"
-	v036auth "github.com/Cashmaney/cosmos-sdk/x/auth/legacy/v0_36"
-	v036genaccounts "github.com/Cashmaney/cosmos-sdk/x/genaccounts/legacy/v0_36"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	v034auth "github.com/enigmampc/cosmos-sdk/x/auth/legacy/v0_34"
+	v036auth "github.com/enigmampc/cosmos-sdk/x/auth/legacy/v0_36"
+	v036genaccounts "github.com/enigmampc/cosmos-sdk/x/genaccounts/legacy/v0_36"
 
 	"github.com/stretchr/testify/require"
 )

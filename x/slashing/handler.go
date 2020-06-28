@@ -1,9 +1,9 @@
 package slashing
 
 import (
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	sdkerrors "github.com/Cashmaney/cosmos-sdk/types/errors"
-	"github.com/Cashmaney/cosmos-sdk/x/slashing/internal/types"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	sdkerrors "github.com/enigmampc/cosmos-sdk/types/errors"
+	"github.com/enigmampc/cosmos-sdk/x/slashing/internal/types"
 )
 
 // NewHandler creates an sdk.Handler for all the slashing type messages

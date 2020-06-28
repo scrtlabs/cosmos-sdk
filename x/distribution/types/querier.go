@@ -1,6 +1,6 @@
 package types
 
-import sdk "github.com/Cashmaney/cosmos-sdk/types"
+import sdk "github.com/enigmampc/cosmos-sdk/types"
 
 // querier keys
 const (

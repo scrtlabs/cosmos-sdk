@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
 )
 
 const (

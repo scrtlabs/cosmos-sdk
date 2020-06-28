@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/Cashmaney/cosmos-sdk/store/cache"
-	iavlstore "github.com/Cashmaney/cosmos-sdk/store/iavl"
-	"github.com/Cashmaney/cosmos-sdk/store/types"
+	"github.com/enigmampc/cosmos-sdk/store/cache"
+	iavlstore "github.com/enigmampc/cosmos-sdk/store/iavl"
+	"github.com/enigmampc/cosmos-sdk/store/types"
 
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/iavl"

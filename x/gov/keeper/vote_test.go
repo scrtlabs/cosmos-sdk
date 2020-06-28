@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/Cashmaney/cosmos-sdk/x/gov/types"
+	"github.com/enigmampc/cosmos-sdk/x/gov/types"
 )
 
 func TestVotes(t *testing.T) {

@@ -1,7 +1,7 @@
 package types
 
 import (
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
 )
 
 // UpgradeHandler specifies the type of function that is called when an upgrade is applied

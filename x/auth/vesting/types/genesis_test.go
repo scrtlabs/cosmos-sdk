@@ -6,9 +6,9 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/crypto/ed25519"
 
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/x/auth/exported"
-	authtypes "github.com/Cashmaney/cosmos-sdk/x/auth/types"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/x/auth/exported"
+	authtypes "github.com/enigmampc/cosmos-sdk/x/auth/types"
 )
 
 var (

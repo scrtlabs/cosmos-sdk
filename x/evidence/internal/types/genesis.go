@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/Cashmaney/cosmos-sdk/x/evidence/exported"
+	"github.com/enigmampc/cosmos-sdk/x/evidence/exported"
 )
 
 // DONTCOVER

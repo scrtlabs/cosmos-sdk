@@ -4,11 +4,11 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Cashmaney/cosmos-sdk/client/context"
-	"github.com/Cashmaney/cosmos-sdk/client/flags"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/types/rest"
-	"github.com/Cashmaney/cosmos-sdk/x/auth/types"
+	"github.com/enigmampc/cosmos-sdk/client/context"
+	"github.com/enigmampc/cosmos-sdk/client/flags"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/types/rest"
+	"github.com/enigmampc/cosmos-sdk/x/auth/types"
 )
 
 // WriteGenerateStdTxResponse writes response for the generate only mode.

@@ -1,7 +1,7 @@
 package mint
 
 import (
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
 )
 
 // InitGenesis new mint genesis

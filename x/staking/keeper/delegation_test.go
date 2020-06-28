@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/x/staking/types"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/x/staking/types"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

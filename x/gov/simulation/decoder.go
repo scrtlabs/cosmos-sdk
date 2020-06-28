@@ -7,8 +7,8 @@ import (
 
 	tmkv "github.com/tendermint/tendermint/libs/kv"
 
-	"github.com/Cashmaney/cosmos-sdk/codec"
-	"github.com/Cashmaney/cosmos-sdk/x/gov/types"
+	"github.com/enigmampc/cosmos-sdk/codec"
+	"github.com/enigmampc/cosmos-sdk/x/gov/types"
 )
 
 // DecodeStore unmarshals the KVPair's Value to the corresponding gov type

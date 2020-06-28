@@ -10,9 +10,9 @@ import (
 	"github.com/tendermint/tendermint/crypto/multisig"
 	"github.com/tendermint/tendermint/crypto/secp256k1"
 
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/x/auth/ante"
-	"github.com/Cashmaney/cosmos-sdk/x/auth/types"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/x/auth/ante"
+	"github.com/enigmampc/cosmos-sdk/x/auth/types"
 )
 
 func TestSetPubKey(t *testing.T) {

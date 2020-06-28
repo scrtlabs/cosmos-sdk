@@ -12,9 +12,9 @@ import (
 	"github.com/tendermint/tendermint/crypto/ed25519"
 	"github.com/tendermint/tendermint/crypto/secp256k1"
 
-	"github.com/Cashmaney/cosmos-sdk/crypto/keys/hd"
-	"github.com/Cashmaney/cosmos-sdk/crypto/keys/mintkey"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/crypto/keys/hd"
+	"github.com/enigmampc/cosmos-sdk/crypto/keys/mintkey"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
 )
 
 func init() {

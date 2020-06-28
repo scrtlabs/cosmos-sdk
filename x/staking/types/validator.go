@@ -12,10 +12,10 @@ import (
 	tmtypes "github.com/tendermint/tendermint/types"
 	yaml "gopkg.in/yaml.v2"
 
-	"github.com/Cashmaney/cosmos-sdk/codec"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	sdkerrors "github.com/Cashmaney/cosmos-sdk/types/errors"
-	"github.com/Cashmaney/cosmos-sdk/x/staking/exported"
+	"github.com/enigmampc/cosmos-sdk/codec"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	sdkerrors "github.com/enigmampc/cosmos-sdk/types/errors"
+	"github.com/enigmampc/cosmos-sdk/x/staking/exported"
 )
 
 // nolint

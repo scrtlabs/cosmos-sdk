@@ -12,14 +12,14 @@ import (
 
 	"github.com/tendermint/tendermint/crypto/multisig"
 
-	"github.com/Cashmaney/cosmos-sdk/client/context"
-	"github.com/Cashmaney/cosmos-sdk/client/flags"
-	"github.com/Cashmaney/cosmos-sdk/codec"
-	"github.com/Cashmaney/cosmos-sdk/crypto/keys"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/version"
-	"github.com/Cashmaney/cosmos-sdk/x/auth/client/utils"
-	"github.com/Cashmaney/cosmos-sdk/x/auth/types"
+	"github.com/enigmampc/cosmos-sdk/client/context"
+	"github.com/enigmampc/cosmos-sdk/client/flags"
+	"github.com/enigmampc/cosmos-sdk/codec"
+	"github.com/enigmampc/cosmos-sdk/crypto/keys"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/version"
+	"github.com/enigmampc/cosmos-sdk/x/auth/client/utils"
+	"github.com/enigmampc/cosmos-sdk/x/auth/types"
 )
 
 // GetSignCommand returns the sign command

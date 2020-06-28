@@ -6,11 +6,11 @@ import (
 	"fmt"
 	"math/rand"
 
-	"github.com/Cashmaney/cosmos-sdk/codec"
+	"github.com/enigmampc/cosmos-sdk/codec"
 
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/types/module"
-	"github.com/Cashmaney/cosmos-sdk/x/distribution/types"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/types/module"
+	"github.com/enigmampc/cosmos-sdk/x/distribution/types"
 )
 
 // Simulation parameter constants

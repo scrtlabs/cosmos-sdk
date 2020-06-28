@@ -65,7 +65,7 @@ distclean:
 ### Documentation
 
 godocs:
-	@echo "--> Wait a few seconds and visit http://localhost:6060/pkg/github.com/Cashmaney/cosmos-sdk/types"
+	@echo "--> Wait a few seconds and visit http://localhost:6060/pkg/github.com/enigmampc/cosmos-sdk/types"
 	godoc -http=:6060
 
 build-docs:
@@ -92,10 +92,10 @@ test: test-unit
 test-all: test-unit test-ledger-mock test-race test-cover
 
 test-ledger-mock:
-	@go test -mod=readonly `go list github.com/Cashmaney/cosmos-sdk/crypto` -tags='cgo ledger test_ledger_mock'
+	@go test -mod=readonly `go list github.com/enigmampc/cosmos-sdk/crypto` -tags='cgo ledger test_ledger_mock'
 
 test-ledger: test-ledger-mock
-	@go test -mod=readonly -v `go list github.com/Cashmaney/cosmos-sdk/crypto` -tags='cgo ledger'
+	@go test -mod=readonly -v `go list github.com/enigmampc/cosmos-sdk/crypto` -tags='cgo ledger'
 
 test-unit:
 	@VERSION=$(VERSION) go test -mod=readonly $(PACKAGES_NOSIMULATION) -tags='ledger test_ledger_mock'

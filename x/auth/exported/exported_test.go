@@ -6,9 +6,9 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/crypto/secp256k1"
 
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/x/auth/exported"
-	authtypes "github.com/Cashmaney/cosmos-sdk/x/auth/types"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/x/auth/exported"
+	authtypes "github.com/enigmampc/cosmos-sdk/x/auth/types"
 )
 
 func TestGenesisAccountsContains(t *testing.T) {

@@ -3,9 +3,9 @@ package types_test
 import (
 	"testing"
 
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/x/evidence/exported"
-	"github.com/Cashmaney/cosmos-sdk/x/evidence/internal/types"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/x/evidence/exported"
+	"github.com/enigmampc/cosmos-sdk/x/evidence/internal/types"
 
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/crypto/ed25519"

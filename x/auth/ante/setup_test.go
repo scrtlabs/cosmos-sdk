@@ -6,10 +6,10 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/crypto"
 
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	sdkerrors "github.com/Cashmaney/cosmos-sdk/types/errors"
-	"github.com/Cashmaney/cosmos-sdk/x/auth/ante"
-	"github.com/Cashmaney/cosmos-sdk/x/auth/types"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	sdkerrors "github.com/enigmampc/cosmos-sdk/types/errors"
+	"github.com/enigmampc/cosmos-sdk/x/auth/ante"
+	"github.com/enigmampc/cosmos-sdk/x/auth/types"
 )
 
 func TestSetup(t *testing.T) {

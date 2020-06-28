@@ -6,9 +6,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/x/slashing/internal/types"
-	"github.com/Cashmaney/cosmos-sdk/x/staking"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/x/slashing/internal/types"
+	"github.com/enigmampc/cosmos-sdk/x/staking"
 )
 
 // Test a new validator entering the validator set

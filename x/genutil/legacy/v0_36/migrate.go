@@ -1,19 +1,19 @@
 package v036
 
 import (
-	"github.com/Cashmaney/cosmos-sdk/codec"
-	v034auth "github.com/Cashmaney/cosmos-sdk/x/auth/legacy/v0_34"
-	v036auth "github.com/Cashmaney/cosmos-sdk/x/auth/legacy/v0_36"
-	v034distr "github.com/Cashmaney/cosmos-sdk/x/distribution/legacy/v0_34"
-	v036distr "github.com/Cashmaney/cosmos-sdk/x/distribution/legacy/v0_36"
-	v034genAccounts "github.com/Cashmaney/cosmos-sdk/x/genaccounts/legacy/v0_34"
-	v036genAccounts "github.com/Cashmaney/cosmos-sdk/x/genaccounts/legacy/v0_36"
-	"github.com/Cashmaney/cosmos-sdk/x/genutil"
-	v034gov "github.com/Cashmaney/cosmos-sdk/x/gov/legacy/v0_34"
-	v036gov "github.com/Cashmaney/cosmos-sdk/x/gov/legacy/v0_36"
-	v034staking "github.com/Cashmaney/cosmos-sdk/x/staking/legacy/v0_34"
-	v036staking "github.com/Cashmaney/cosmos-sdk/x/staking/legacy/v0_36"
-	v036supply "github.com/Cashmaney/cosmos-sdk/x/supply/legacy/v0_36"
+	"github.com/enigmampc/cosmos-sdk/codec"
+	v034auth "github.com/enigmampc/cosmos-sdk/x/auth/legacy/v0_34"
+	v036auth "github.com/enigmampc/cosmos-sdk/x/auth/legacy/v0_36"
+	v034distr "github.com/enigmampc/cosmos-sdk/x/distribution/legacy/v0_34"
+	v036distr "github.com/enigmampc/cosmos-sdk/x/distribution/legacy/v0_36"
+	v034genAccounts "github.com/enigmampc/cosmos-sdk/x/genaccounts/legacy/v0_34"
+	v036genAccounts "github.com/enigmampc/cosmos-sdk/x/genaccounts/legacy/v0_36"
+	"github.com/enigmampc/cosmos-sdk/x/genutil"
+	v034gov "github.com/enigmampc/cosmos-sdk/x/gov/legacy/v0_34"
+	v036gov "github.com/enigmampc/cosmos-sdk/x/gov/legacy/v0_36"
+	v034staking "github.com/enigmampc/cosmos-sdk/x/staking/legacy/v0_34"
+	v036staking "github.com/enigmampc/cosmos-sdk/x/staking/legacy/v0_36"
+	v036supply "github.com/enigmampc/cosmos-sdk/x/supply/legacy/v0_36"
 )
 
 // Migrate migrates exported state from v0.34 to a v0.36 genesis state.

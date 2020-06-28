@@ -7,8 +7,8 @@ import (
 	"github.com/tendermint/tendermint/crypto"
 	yaml "gopkg.in/yaml.v2"
 
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	sdkerrors "github.com/Cashmaney/cosmos-sdk/types/errors"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	sdkerrors "github.com/enigmampc/cosmos-sdk/types/errors"
 )
 
 // ensure Msg interface compliance at compile time

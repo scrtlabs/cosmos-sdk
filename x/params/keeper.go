@@ -3,10 +3,10 @@ package params
 import (
 	"fmt"
 
-	"github.com/Cashmaney/cosmos-sdk/codec"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/x/params/subspace"
-	"github.com/Cashmaney/cosmos-sdk/x/params/types"
+	"github.com/enigmampc/cosmos-sdk/codec"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/x/params/subspace"
+	"github.com/enigmampc/cosmos-sdk/x/params/types"
 
 	"github.com/tendermint/tendermint/libs/log"
 )

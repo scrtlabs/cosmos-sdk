@@ -8,9 +8,9 @@ import (
 
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/Cashmaney/cosmos-sdk/x/auth/exported"
-	keep "github.com/Cashmaney/cosmos-sdk/x/auth/keeper"
-	"github.com/Cashmaney/cosmos-sdk/x/auth/types"
+	"github.com/enigmampc/cosmos-sdk/x/auth/exported"
+	keep "github.com/enigmampc/cosmos-sdk/x/auth/keeper"
+	"github.com/enigmampc/cosmos-sdk/x/auth/types"
 )
 
 func TestQueryAccount(t *testing.T) {

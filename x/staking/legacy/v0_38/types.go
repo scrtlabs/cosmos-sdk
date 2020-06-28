@@ -7,10 +7,10 @@ import (
 
 	"github.com/tendermint/tendermint/crypto"
 
-	"github.com/Cashmaney/cosmos-sdk/codec"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	v034staking "github.com/Cashmaney/cosmos-sdk/x/staking/legacy/v0_34"
-	v036staking "github.com/Cashmaney/cosmos-sdk/x/staking/legacy/v0_36"
+	"github.com/enigmampc/cosmos-sdk/codec"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	v034staking "github.com/enigmampc/cosmos-sdk/x/staking/legacy/v0_34"
+	v036staking "github.com/enigmampc/cosmos-sdk/x/staking/legacy/v0_36"
 )
 
 const (

@@ -6,13 +6,13 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/Cashmaney/cosmos-sdk/client"
-	"github.com/Cashmaney/cosmos-sdk/client/context"
-	"github.com/Cashmaney/cosmos-sdk/client/flags"
-	"github.com/Cashmaney/cosmos-sdk/codec"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/version"
-	"github.com/Cashmaney/cosmos-sdk/x/supply/internal/types"
+	"github.com/enigmampc/cosmos-sdk/client"
+	"github.com/enigmampc/cosmos-sdk/client/context"
+	"github.com/enigmampc/cosmos-sdk/client/flags"
+	"github.com/enigmampc/cosmos-sdk/codec"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/version"
+	"github.com/enigmampc/cosmos-sdk/x/supply/internal/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module

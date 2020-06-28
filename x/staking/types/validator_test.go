@@ -13,8 +13,8 @@ import (
 	tmtypes "github.com/tendermint/tendermint/types"
 	yaml "gopkg.in/yaml.v2"
 
-	"github.com/Cashmaney/cosmos-sdk/codec"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/codec"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
 )
 
 func TestValidatorTestEquivalent(t *testing.T) {

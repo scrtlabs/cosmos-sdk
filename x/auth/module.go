@@ -9,15 +9,15 @@ import (
 	"github.com/spf13/cobra"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/Cashmaney/cosmos-sdk/client/context"
-	"github.com/Cashmaney/cosmos-sdk/codec"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/types/module"
-	"github.com/Cashmaney/cosmos-sdk/x/auth/client/cli"
-	"github.com/Cashmaney/cosmos-sdk/x/auth/client/rest"
-	"github.com/Cashmaney/cosmos-sdk/x/auth/simulation"
-	"github.com/Cashmaney/cosmos-sdk/x/auth/types"
-	sim "github.com/Cashmaney/cosmos-sdk/x/simulation"
+	"github.com/enigmampc/cosmos-sdk/client/context"
+	"github.com/enigmampc/cosmos-sdk/codec"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/types/module"
+	"github.com/enigmampc/cosmos-sdk/x/auth/client/cli"
+	"github.com/enigmampc/cosmos-sdk/x/auth/client/rest"
+	"github.com/enigmampc/cosmos-sdk/x/auth/simulation"
+	"github.com/enigmampc/cosmos-sdk/x/auth/types"
+	sim "github.com/enigmampc/cosmos-sdk/x/simulation"
 )
 
 var (

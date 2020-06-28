@@ -1,15 +1,15 @@
 package ante
 
 import (
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	err "github.com/Cashmaney/cosmos-sdk/types/errors"
-	sdkerrors "github.com/Cashmaney/cosmos-sdk/types/errors"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	err "github.com/enigmampc/cosmos-sdk/types/errors"
+	sdkerrors "github.com/enigmampc/cosmos-sdk/types/errors"
 
 	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/crypto/multisig"
 
-	"github.com/Cashmaney/cosmos-sdk/x/auth/keeper"
-	"github.com/Cashmaney/cosmos-sdk/x/auth/types"
+	"github.com/enigmampc/cosmos-sdk/x/auth/keeper"
+	"github.com/enigmampc/cosmos-sdk/x/auth/types"
 )
 
 var (

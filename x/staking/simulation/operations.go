@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"math/rand"
 
-	"github.com/Cashmaney/cosmos-sdk/baseapp"
-	"github.com/Cashmaney/cosmos-sdk/codec"
-	"github.com/Cashmaney/cosmos-sdk/simapp/helpers"
-	simappparams "github.com/Cashmaney/cosmos-sdk/simapp/params"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/x/simulation"
-	"github.com/Cashmaney/cosmos-sdk/x/staking/keeper"
-	"github.com/Cashmaney/cosmos-sdk/x/staking/types"
+	"github.com/enigmampc/cosmos-sdk/baseapp"
+	"github.com/enigmampc/cosmos-sdk/codec"
+	"github.com/enigmampc/cosmos-sdk/simapp/helpers"
+	simappparams "github.com/enigmampc/cosmos-sdk/simapp/params"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/x/simulation"
+	"github.com/enigmampc/cosmos-sdk/x/staking/keeper"
+	"github.com/enigmampc/cosmos-sdk/x/staking/types"
 )
 
 // Simulation operation weights constants

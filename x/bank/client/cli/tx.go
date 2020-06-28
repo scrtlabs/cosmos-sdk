@@ -5,14 +5,14 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/Cashmaney/cosmos-sdk/client"
-	"github.com/Cashmaney/cosmos-sdk/client/context"
-	"github.com/Cashmaney/cosmos-sdk/client/flags"
-	"github.com/Cashmaney/cosmos-sdk/codec"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/x/auth"
-	"github.com/Cashmaney/cosmos-sdk/x/auth/client/utils"
-	"github.com/Cashmaney/cosmos-sdk/x/bank/internal/types"
+	"github.com/enigmampc/cosmos-sdk/client"
+	"github.com/enigmampc/cosmos-sdk/client/context"
+	"github.com/enigmampc/cosmos-sdk/client/flags"
+	"github.com/enigmampc/cosmos-sdk/codec"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/x/auth"
+	"github.com/enigmampc/cosmos-sdk/x/auth/client/utils"
+	"github.com/enigmampc/cosmos-sdk/x/bank/internal/types"
 )
 
 // GetTxCmd returns the transaction commands for this module

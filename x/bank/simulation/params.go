@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"math/rand"
 
-	"github.com/Cashmaney/cosmos-sdk/x/bank/internal/types"
-	"github.com/Cashmaney/cosmos-sdk/x/simulation"
+	"github.com/enigmampc/cosmos-sdk/x/bank/internal/types"
+	"github.com/enigmampc/cosmos-sdk/x/simulation"
 )
 
 const keySendEnabled = "sendenabled"

@@ -7,9 +7,9 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/Cashmaney/cosmos-sdk/client/context"
-	"github.com/Cashmaney/cosmos-sdk/types/rest"
-	upgrade "github.com/Cashmaney/cosmos-sdk/x/upgrade/internal/types"
+	"github.com/enigmampc/cosmos-sdk/client/context"
+	"github.com/enigmampc/cosmos-sdk/types/rest"
+	upgrade "github.com/enigmampc/cosmos-sdk/x/upgrade/internal/types"
 )
 
 // RegisterRoutes registers REST routes for the upgrade module under the path specified by routeName.

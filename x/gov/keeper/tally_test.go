@@ -5,9 +5,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/x/gov/types"
-	"github.com/Cashmaney/cosmos-sdk/x/staking"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/x/gov/types"
+	"github.com/enigmampc/cosmos-sdk/x/staking"
 )
 
 func TestTallyNoOneVotes(t *testing.T) {

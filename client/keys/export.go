@@ -6,10 +6,10 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/Cashmaney/cosmos-sdk/client/flags"
-	"github.com/Cashmaney/cosmos-sdk/client/input"
-	"github.com/Cashmaney/cosmos-sdk/crypto/keys"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/client/flags"
+	"github.com/enigmampc/cosmos-sdk/client/input"
+	"github.com/enigmampc/cosmos-sdk/crypto/keys"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
 )
 
 // ExportKeyCommand exports private keys from the key store.

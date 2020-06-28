@@ -6,14 +6,14 @@ import (
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/x/auth"
-	authexported "github.com/Cashmaney/cosmos-sdk/x/auth/exported"
-	"github.com/Cashmaney/cosmos-sdk/x/bank"
-	"github.com/Cashmaney/cosmos-sdk/x/mock"
-	"github.com/Cashmaney/cosmos-sdk/x/staking/types"
-	"github.com/Cashmaney/cosmos-sdk/x/supply"
-	supplyexported "github.com/Cashmaney/cosmos-sdk/x/supply/exported"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/x/auth"
+	authexported "github.com/enigmampc/cosmos-sdk/x/auth/exported"
+	"github.com/enigmampc/cosmos-sdk/x/bank"
+	"github.com/enigmampc/cosmos-sdk/x/mock"
+	"github.com/enigmampc/cosmos-sdk/x/staking/types"
+	"github.com/enigmampc/cosmos-sdk/x/supply"
+	supplyexported "github.com/enigmampc/cosmos-sdk/x/supply/exported"
 )
 
 // getMockApp returns an initialized mock application for this module.

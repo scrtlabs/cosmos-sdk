@@ -1,7 +1,7 @@
 package types
 
 import (
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
 )
 
 // QueryBalanceParams defines the params for querying an account balance.

@@ -16,10 +16,10 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	dbm "github.com/tendermint/tm-db"
 
-	"github.com/Cashmaney/cosmos-sdk/store"
-	storetypes "github.com/Cashmaney/cosmos-sdk/store/types"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	sdkerrors "github.com/Cashmaney/cosmos-sdk/types/errors"
+	"github.com/enigmampc/cosmos-sdk/store"
+	storetypes "github.com/enigmampc/cosmos-sdk/store/types"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	sdkerrors "github.com/enigmampc/cosmos-sdk/types/errors"
 )
 
 const (
@@ -493,7 +493,7 @@ func (app *BaseApp) getContextForTx(mode runTxMode, txBytes []byte) sdk.Context 
 // a cache wrapped multi-store.
 func (app *BaseApp) cacheTxContext(ctx sdk.Context, txBytes []byte) (sdk.Context, sdk.CacheMultiStore) {
 	ms := ctx.MultiStore()
-	// TODO: https://github.com/Cashmaney/cosmos-sdk/issues/2824
+	// TODO: https://github.com/enigmampc/cosmos-sdk/issues/2824
 	msCache := ms.CacheMultiStore()
 	if msCache.TracingEnabled() {
 		msCache = msCache.SetTracingContext(
@@ -590,7 +590,7 @@ func (app *BaseApp) runTx(mode runTxMode, txBytes []byte, tx sdk.Tx) (gInfo sdk.
 
 		// Cache wrap context before AnteHandler call in case it aborts.
 		// This is required for both CheckTx and DeliverTx.
-		// Ref: https://github.com/Cashmaney/cosmos-sdk/issues/2772
+		// Ref: https://github.com/enigmampc/cosmos-sdk/issues/2772
 		//
 		// NOTE: Alternatively, we could require that AnteHandler ensures that
 		// writes do not happen if aborted/failed.  This may have some

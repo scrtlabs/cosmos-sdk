@@ -10,9 +10,9 @@ import (
 	"github.com/tendermint/tendermint/crypto/ed25519"
 	tmkv "github.com/tendermint/tendermint/libs/kv"
 
-	"github.com/Cashmaney/cosmos-sdk/codec"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/x/staking/types"
+	"github.com/enigmampc/cosmos-sdk/codec"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/x/staking/types"
 )
 
 var (

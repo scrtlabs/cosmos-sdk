@@ -13,16 +13,16 @@ import (
 	cfg "github.com/tendermint/tendermint/config"
 	"github.com/tendermint/tendermint/crypto"
 
-	"github.com/Cashmaney/cosmos-sdk/client/context"
-	"github.com/Cashmaney/cosmos-sdk/codec"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/types/module"
-	authtypes "github.com/Cashmaney/cosmos-sdk/x/auth/types"
-	sim "github.com/Cashmaney/cosmos-sdk/x/simulation"
-	"github.com/Cashmaney/cosmos-sdk/x/staking/client/cli"
-	"github.com/Cashmaney/cosmos-sdk/x/staking/client/rest"
-	"github.com/Cashmaney/cosmos-sdk/x/staking/simulation"
-	"github.com/Cashmaney/cosmos-sdk/x/staking/types"
+	"github.com/enigmampc/cosmos-sdk/client/context"
+	"github.com/enigmampc/cosmos-sdk/codec"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/types/module"
+	authtypes "github.com/enigmampc/cosmos-sdk/x/auth/types"
+	sim "github.com/enigmampc/cosmos-sdk/x/simulation"
+	"github.com/enigmampc/cosmos-sdk/x/staking/client/cli"
+	"github.com/enigmampc/cosmos-sdk/x/staking/client/rest"
+	"github.com/enigmampc/cosmos-sdk/x/staking/simulation"
+	"github.com/enigmampc/cosmos-sdk/x/staking/types"
 )
 
 var (

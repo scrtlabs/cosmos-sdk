@@ -5,9 +5,9 @@ import (
 
 	dbm "github.com/tendermint/tm-db"
 
-	"github.com/Cashmaney/cosmos-sdk/store/cachekv"
-	"github.com/Cashmaney/cosmos-sdk/store/tracekv"
-	"github.com/Cashmaney/cosmos-sdk/store/types"
+	"github.com/enigmampc/cosmos-sdk/store/cachekv"
+	"github.com/enigmampc/cosmos-sdk/store/tracekv"
+	"github.com/enigmampc/cosmos-sdk/store/types"
 )
 
 // Wrapper type for dbm.Db with implementation of KVStore

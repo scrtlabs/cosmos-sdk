@@ -7,12 +7,12 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/Cashmaney/cosmos-sdk/codec"
+	"github.com/enigmampc/cosmos-sdk/codec"
 
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/types/module"
-	"github.com/Cashmaney/cosmos-sdk/x/simulation"
-	"github.com/Cashmaney/cosmos-sdk/x/slashing/internal/types"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/types/module"
+	"github.com/enigmampc/cosmos-sdk/x/simulation"
+	"github.com/enigmampc/cosmos-sdk/x/slashing/internal/types"
 )
 
 // Simulation parameter constants

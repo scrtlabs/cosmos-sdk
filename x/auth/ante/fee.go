@@ -3,12 +3,12 @@ package ante
 import (
 	"fmt"
 
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/x/auth/exported"
-	"github.com/Cashmaney/cosmos-sdk/x/auth/keeper"
-	"github.com/Cashmaney/cosmos-sdk/x/auth/types"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/x/auth/exported"
+	"github.com/enigmampc/cosmos-sdk/x/auth/keeper"
+	"github.com/enigmampc/cosmos-sdk/x/auth/types"
 
-	sdkerrors "github.com/Cashmaney/cosmos-sdk/types/errors"
+	sdkerrors "github.com/enigmampc/cosmos-sdk/types/errors"
 )
 
 var (

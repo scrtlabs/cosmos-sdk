@@ -5,11 +5,11 @@ package simulation
 import (
 	"fmt"
 
-	"github.com/Cashmaney/cosmos-sdk/codec"
+	"github.com/enigmampc/cosmos-sdk/codec"
 
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/types/module"
-	"github.com/Cashmaney/cosmos-sdk/x/supply/internal/types"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/types/module"
+	"github.com/enigmampc/cosmos-sdk/x/supply/internal/types"
 )
 
 // RandomizedGenState generates a random GenesisState for supply

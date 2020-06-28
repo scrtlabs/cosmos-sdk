@@ -5,9 +5,9 @@ import (
 
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/Cashmaney/cosmos-sdk/codec"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	authexported "github.com/Cashmaney/cosmos-sdk/x/auth/exported"
+	"github.com/enigmampc/cosmos-sdk/codec"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	authexported "github.com/enigmampc/cosmos-sdk/x/auth/exported"
 )
 
 // StakingKeeper defines the expected staking keeper (noalias)

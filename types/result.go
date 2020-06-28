@@ -7,7 +7,7 @@ import (
 	"math"
 	"strings"
 
-	"github.com/Cashmaney/cosmos-sdk/codec"
+	"github.com/enigmampc/cosmos-sdk/codec"
 
 	ctypes "github.com/tendermint/tendermint/rpc/core/types"
 )

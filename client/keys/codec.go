@@ -1,7 +1,7 @@
 package keys
 
 import (
-	"github.com/Cashmaney/cosmos-sdk/codec"
+	"github.com/enigmampc/cosmos-sdk/codec"
 )
 
 // KeysCdc defines codec to be used with key operations

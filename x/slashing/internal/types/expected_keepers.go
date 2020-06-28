@@ -3,10 +3,10 @@
 package types
 
 import (
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	authexported "github.com/Cashmaney/cosmos-sdk/x/auth/exported"
-	"github.com/Cashmaney/cosmos-sdk/x/params"
-	stakingexported "github.com/Cashmaney/cosmos-sdk/x/staking/exported"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	authexported "github.com/enigmampc/cosmos-sdk/x/auth/exported"
+	"github.com/enigmampc/cosmos-sdk/x/params"
+	stakingexported "github.com/enigmampc/cosmos-sdk/x/staking/exported"
 )
 
 // AccountKeeper expected account keeper

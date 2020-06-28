@@ -3,8 +3,8 @@
 package v0_36
 
 import (
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	v034distr "github.com/Cashmaney/cosmos-sdk/x/distribution/legacy/v0_34"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	v034distr "github.com/enigmampc/cosmos-sdk/x/distribution/legacy/v0_34"
 )
 
 // ----------------------------------------------------------------------------

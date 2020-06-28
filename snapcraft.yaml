@@ -28,7 +28,7 @@ parts:
         cd ${rootdir}
         tar xf gaia-git.tar.gz ; rm -f gaia-git.tar.gz
         mkdir -p go/src/github.com/cosmos bin
-        mv gaia-git/ go/src/github.com/Cashmaney/cosmos-sdk/
+        mv gaia-git/ go/src/github.com/enigmampc/cosmos-sdk/
 
     build-snaps: [go]
     override-build: |

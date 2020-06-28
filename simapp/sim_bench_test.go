@@ -7,11 +7,11 @@ import (
 
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/Cashmaney/cosmos-sdk/x/simulation"
+	"github.com/enigmampc/cosmos-sdk/x/simulation"
 )
 
 // Profile with:
-// /usr/local/go/bin/go test -benchmem -run=^$ github.com/Cashmaney/cosmos-sdk/simapp -bench ^BenchmarkFullAppSimulation$ -Commit=true -cpuprofile cpu.out
+// /usr/local/go/bin/go test -benchmem -run=^$ github.com/enigmampc/cosmos-sdk/simapp -bench ^BenchmarkFullAppSimulation$ -Commit=true -cpuprofile cpu.out
 func BenchmarkFullAppSimulation(b *testing.B) {
 	config, db, dir, logger, _, err := SetupSimulation("goleveldb-app-sim", "Simulation")
 	if err != nil {

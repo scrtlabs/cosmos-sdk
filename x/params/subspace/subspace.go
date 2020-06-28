@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/Cashmaney/cosmos-sdk/codec"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/codec"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
 
-	"github.com/Cashmaney/cosmos-sdk/store/prefix"
+	"github.com/enigmampc/cosmos-sdk/store/prefix"
 )
 
 const (

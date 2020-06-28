@@ -1,7 +1,7 @@
 package types
 
 import (
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
 )
 
 // combine multiple staking hooks, all hook functions are run in array sequence

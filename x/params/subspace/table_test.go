@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/Cashmaney/cosmos-sdk/x/params/subspace"
+	"github.com/enigmampc/cosmos-sdk/x/params/subspace"
 )
 
 func TestKeyTable(t *testing.T) {

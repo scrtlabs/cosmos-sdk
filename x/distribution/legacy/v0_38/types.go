@@ -1,9 +1,9 @@
 package v0_38
 
 import (
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	v034distr "github.com/Cashmaney/cosmos-sdk/x/distribution/legacy/v0_34"
-	v036distr "github.com/Cashmaney/cosmos-sdk/x/distribution/legacy/v0_36"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	v034distr "github.com/enigmampc/cosmos-sdk/x/distribution/legacy/v0_34"
+	v036distr "github.com/enigmampc/cosmos-sdk/x/distribution/legacy/v0_36"
 )
 
 // DONTCOVER

@@ -6,9 +6,9 @@ import (
 
 	"github.com/tendermint/tendermint/crypto"
 
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/x/auth"
-	"github.com/Cashmaney/cosmos-sdk/x/simulation"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/x/auth"
+	"github.com/enigmampc/cosmos-sdk/x/simulation"
 )
 
 // SimAppChainID hardcoded chainID for simulation

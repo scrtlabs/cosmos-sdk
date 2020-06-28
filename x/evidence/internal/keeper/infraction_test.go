@@ -3,9 +3,9 @@ package keeper_test
 import (
 	"time"
 
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/x/evidence/internal/types"
-	"github.com/Cashmaney/cosmos-sdk/x/staking"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/x/evidence/internal/types"
+	"github.com/enigmampc/cosmos-sdk/x/staking"
 
 	"github.com/tendermint/tendermint/crypto"
 )

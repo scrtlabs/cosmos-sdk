@@ -5,8 +5,8 @@ import (
 
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/Cashmaney/cosmos-sdk/codec"
-	sdkerrors "github.com/Cashmaney/cosmos-sdk/types/errors"
+	"github.com/enigmampc/cosmos-sdk/codec"
+	sdkerrors "github.com/enigmampc/cosmos-sdk/types/errors"
 )
 
 // HistoricalInfo contains the historical information that gets stored at each height

@@ -10,7 +10,7 @@ import (
 
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 
-	"github.com/Cashmaney/cosmos-sdk/crypto/keys"
+	"github.com/enigmampc/cosmos-sdk/crypto/keys"
 )
 
 // nolint

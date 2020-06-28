@@ -1,11 +1,11 @@
 package distribution
 
 import (
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	sdkerrors "github.com/Cashmaney/cosmos-sdk/types/errors"
-	"github.com/Cashmaney/cosmos-sdk/x/distribution/keeper"
-	"github.com/Cashmaney/cosmos-sdk/x/distribution/types"
-	govtypes "github.com/Cashmaney/cosmos-sdk/x/gov/types"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	sdkerrors "github.com/enigmampc/cosmos-sdk/types/errors"
+	"github.com/enigmampc/cosmos-sdk/x/distribution/keeper"
+	"github.com/enigmampc/cosmos-sdk/x/distribution/types"
+	govtypes "github.com/enigmampc/cosmos-sdk/x/gov/types"
 )
 
 func NewHandler(k keeper.Keeper) sdk.Handler {

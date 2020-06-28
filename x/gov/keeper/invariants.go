@@ -5,8 +5,8 @@ package keeper
 import (
 	"fmt"
 
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/x/gov/types"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/x/gov/types"
 )
 
 // RegisterInvariants registers all governance invariants

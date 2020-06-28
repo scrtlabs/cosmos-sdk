@@ -3,11 +3,11 @@ package utils
 import (
 	"fmt"
 
-	"github.com/Cashmaney/cosmos-sdk/client"
-	"github.com/Cashmaney/cosmos-sdk/client/context"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/x/auth/client/utils"
-	"github.com/Cashmaney/cosmos-sdk/x/gov/types"
+	"github.com/enigmampc/cosmos-sdk/client"
+	"github.com/enigmampc/cosmos-sdk/client/context"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/x/auth/client/utils"
+	"github.com/enigmampc/cosmos-sdk/x/gov/types"
 )
 
 const (

@@ -1,6 +1,6 @@
 package utils
 
-import "github.com/Cashmaney/cosmos-sdk/x/gov/types"
+import "github.com/enigmampc/cosmos-sdk/x/gov/types"
 
 // NormalizeVoteOption - normalize user specified vote option
 func NormalizeVoteOption(option string) string {

@@ -11,10 +11,10 @@ import (
 	"github.com/tendermint/tendermint/crypto/multisig"
 	"github.com/tendermint/tendermint/libs/cli"
 
-	"github.com/Cashmaney/cosmos-sdk/client/flags"
-	"github.com/Cashmaney/cosmos-sdk/crypto"
-	"github.com/Cashmaney/cosmos-sdk/crypto/keys"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/client/flags"
+	"github.com/enigmampc/cosmos-sdk/crypto"
+	"github.com/enigmampc/cosmos-sdk/crypto/keys"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
 )
 
 const (

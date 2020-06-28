@@ -3,7 +3,7 @@ package types
 import (
 	"sync"
 
-	"github.com/Cashmaney/cosmos-sdk/version"
+	"github.com/enigmampc/cosmos-sdk/version"
 )
 
 // DefaultKeyringServiceName defines a default service name for the keyring.

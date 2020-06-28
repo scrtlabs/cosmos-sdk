@@ -10,16 +10,16 @@ import (
 
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/Cashmaney/cosmos-sdk/client/context"
-	"github.com/Cashmaney/cosmos-sdk/codec"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/types/module"
-	sim "github.com/Cashmaney/cosmos-sdk/x/simulation"
-	"github.com/Cashmaney/cosmos-sdk/x/slashing/client/cli"
-	"github.com/Cashmaney/cosmos-sdk/x/slashing/client/rest"
-	"github.com/Cashmaney/cosmos-sdk/x/slashing/internal/types"
-	"github.com/Cashmaney/cosmos-sdk/x/slashing/simulation"
-	stakingkeeper "github.com/Cashmaney/cosmos-sdk/x/staking/keeper"
+	"github.com/enigmampc/cosmos-sdk/client/context"
+	"github.com/enigmampc/cosmos-sdk/codec"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/types/module"
+	sim "github.com/enigmampc/cosmos-sdk/x/simulation"
+	"github.com/enigmampc/cosmos-sdk/x/slashing/client/cli"
+	"github.com/enigmampc/cosmos-sdk/x/slashing/client/rest"
+	"github.com/enigmampc/cosmos-sdk/x/slashing/internal/types"
+	"github.com/enigmampc/cosmos-sdk/x/slashing/simulation"
+	stakingkeeper "github.com/enigmampc/cosmos-sdk/x/staking/keeper"
 )
 
 var (

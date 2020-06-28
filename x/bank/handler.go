@@ -1,10 +1,10 @@
 package bank
 
 import (
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	sdkerrors "github.com/Cashmaney/cosmos-sdk/types/errors"
-	"github.com/Cashmaney/cosmos-sdk/x/bank/internal/keeper"
-	"github.com/Cashmaney/cosmos-sdk/x/bank/internal/types"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	sdkerrors "github.com/enigmampc/cosmos-sdk/types/errors"
+	"github.com/enigmampc/cosmos-sdk/x/bank/internal/keeper"
+	"github.com/enigmampc/cosmos-sdk/x/bank/internal/types"
 )
 
 // NewHandler returns a handler for "bank" type messages.

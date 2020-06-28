@@ -5,14 +5,14 @@ import (
 	"math/rand"
 	"testing"
 
-	"github.com/Cashmaney/cosmos-sdk/codec"
+	"github.com/enigmampc/cosmos-sdk/codec"
 
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/crypto"
 
-	"github.com/Cashmaney/cosmos-sdk/baseapp"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/baseapp"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
 )
 
 // BigInterval is a representation of the interval [lo, hi), where

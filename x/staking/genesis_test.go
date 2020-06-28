@@ -11,9 +11,9 @@ import (
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	keep "github.com/Cashmaney/cosmos-sdk/x/staking/keeper"
-	"github.com/Cashmaney/cosmos-sdk/x/staking/types"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	keep "github.com/enigmampc/cosmos-sdk/x/staking/keeper"
+	"github.com/enigmampc/cosmos-sdk/x/staking/types"
 )
 
 func TestInitGenesis(t *testing.T) {

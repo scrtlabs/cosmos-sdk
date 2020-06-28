@@ -15,8 +15,8 @@ import (
 	pvm "github.com/tendermint/tendermint/privval"
 	tversion "github.com/tendermint/tendermint/version"
 
-	"github.com/Cashmaney/cosmos-sdk/codec"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/codec"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
 )
 
 // ShowNodeIDCmd - ported from Tendermint, dump node ID to stdout

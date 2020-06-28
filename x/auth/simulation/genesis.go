@@ -6,13 +6,13 @@ import (
 	"fmt"
 	"math/rand"
 
-	"github.com/Cashmaney/cosmos-sdk/codec"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/types/module"
-	"github.com/Cashmaney/cosmos-sdk/x/auth/exported"
-	"github.com/Cashmaney/cosmos-sdk/x/auth/types"
-	vestingtypes "github.com/Cashmaney/cosmos-sdk/x/auth/vesting/types"
-	"github.com/Cashmaney/cosmos-sdk/x/simulation"
+	"github.com/enigmampc/cosmos-sdk/codec"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/types/module"
+	"github.com/enigmampc/cosmos-sdk/x/auth/exported"
+	"github.com/enigmampc/cosmos-sdk/x/auth/types"
+	vestingtypes "github.com/enigmampc/cosmos-sdk/x/auth/vesting/types"
+	"github.com/enigmampc/cosmos-sdk/x/simulation"
 )
 
 // Simulation parameter constants

@@ -1,7 +1,7 @@
 package types
 
 import (
-	sdkerrors "github.com/Cashmaney/cosmos-sdk/types/errors"
+	sdkerrors "github.com/enigmampc/cosmos-sdk/types/errors"
 )
 
 // x/params module sentinel errors

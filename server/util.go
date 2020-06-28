@@ -21,10 +21,10 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	pvm "github.com/tendermint/tendermint/privval"
 
-	"github.com/Cashmaney/cosmos-sdk/client/flags"
-	"github.com/Cashmaney/cosmos-sdk/codec"
-	"github.com/Cashmaney/cosmos-sdk/server/config"
-	"github.com/Cashmaney/cosmos-sdk/version"
+	"github.com/enigmampc/cosmos-sdk/client/flags"
+	"github.com/enigmampc/cosmos-sdk/codec"
+	"github.com/enigmampc/cosmos-sdk/server/config"
+	"github.com/enigmampc/cosmos-sdk/version"
 )
 
 // server context

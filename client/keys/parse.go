@@ -13,8 +13,8 @@ import (
 	"github.com/tendermint/tendermint/libs/bech32"
 	"github.com/tendermint/tendermint/libs/cli"
 
-	"github.com/Cashmaney/cosmos-sdk/client/flags"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/client/flags"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
 )
 
 var config = sdk.GetConfig()

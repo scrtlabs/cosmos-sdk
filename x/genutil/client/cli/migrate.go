@@ -9,13 +9,13 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/tendermint/tendermint/types"
 
-	"github.com/Cashmaney/cosmos-sdk/codec"
-	"github.com/Cashmaney/cosmos-sdk/server"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/version"
-	extypes "github.com/Cashmaney/cosmos-sdk/x/genutil"
-	v036 "github.com/Cashmaney/cosmos-sdk/x/genutil/legacy/v0_36"
-	v038 "github.com/Cashmaney/cosmos-sdk/x/genutil/legacy/v0_38"
+	"github.com/enigmampc/cosmos-sdk/codec"
+	"github.com/enigmampc/cosmos-sdk/server"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/version"
+	extypes "github.com/enigmampc/cosmos-sdk/x/genutil"
+	v036 "github.com/enigmampc/cosmos-sdk/x/genutil/legacy/v0_36"
+	v038 "github.com/enigmampc/cosmos-sdk/x/genutil/legacy/v0_38"
 )
 
 const (
@@ -25,7 +25,7 @@ const (
 
 // Allow applications to extend and modify the migration process.
 //
-// Ref: https://github.com/Cashmaney/cosmos-sdk/issues/5041
+// Ref: https://github.com/enigmampc/cosmos-sdk/issues/5041
 var migrationMap = extypes.MigrationMap{
 	"v0.36": v036.Migrate,
 	"v0.38": v038.Migrate, // NOTE: v0.37 and v0.38 are genesis compatible

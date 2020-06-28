@@ -3,8 +3,8 @@ package keys
 import (
 	"testing"
 
-	"github.com/Cashmaney/cosmos-sdk/client/flags"
-	"github.com/Cashmaney/cosmos-sdk/tests"
+	"github.com/enigmampc/cosmos-sdk/client/flags"
+	"github.com/enigmampc/cosmos-sdk/tests"
 
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"

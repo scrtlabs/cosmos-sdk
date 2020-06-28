@@ -3,10 +3,10 @@ package server
 import (
 	"fmt"
 
-	"github.com/Cashmaney/cosmos-sdk/crypto/keys"
+	"github.com/enigmampc/cosmos-sdk/crypto/keys"
 
-	clkeys "github.com/Cashmaney/cosmos-sdk/client/keys"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
+	clkeys "github.com/enigmampc/cosmos-sdk/client/keys"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
 )
 
 // GenerateCoinKey returns the address of a public key, along with the secret

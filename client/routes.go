@@ -3,8 +3,8 @@ package client
 import (
 	"github.com/gorilla/mux"
 
-	"github.com/Cashmaney/cosmos-sdk/client/context"
-	"github.com/Cashmaney/cosmos-sdk/client/rpc"
+	"github.com/enigmampc/cosmos-sdk/client/context"
+	"github.com/enigmampc/cosmos-sdk/client/rpc"
 )
 
 // Register routes

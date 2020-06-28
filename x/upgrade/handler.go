@@ -1,9 +1,9 @@
 package upgrade
 
 import (
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	sdkerrors "github.com/Cashmaney/cosmos-sdk/types/errors"
-	govtypes "github.com/Cashmaney/cosmos-sdk/x/gov/types"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	sdkerrors "github.com/enigmampc/cosmos-sdk/types/errors"
+	govtypes "github.com/enigmampc/cosmos-sdk/x/gov/types"
 )
 
 // NewSoftwareUpgradeProposalHandler creates a governance handler to manage new proposal types.

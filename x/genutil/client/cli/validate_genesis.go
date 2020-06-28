@@ -8,9 +8,9 @@ import (
 	"github.com/spf13/cobra"
 	tmtypes "github.com/tendermint/tendermint/types"
 
-	"github.com/Cashmaney/cosmos-sdk/codec"
-	"github.com/Cashmaney/cosmos-sdk/server"
-	"github.com/Cashmaney/cosmos-sdk/types/module"
+	"github.com/enigmampc/cosmos-sdk/codec"
+	"github.com/enigmampc/cosmos-sdk/server"
+	"github.com/enigmampc/cosmos-sdk/types/module"
 )
 
 // Validate genesis command takes

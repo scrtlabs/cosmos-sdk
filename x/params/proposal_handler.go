@@ -3,9 +3,9 @@ package params
 import (
 	"fmt"
 
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	sdkerrors "github.com/Cashmaney/cosmos-sdk/types/errors"
-	govtypes "github.com/Cashmaney/cosmos-sdk/x/gov/types"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	sdkerrors "github.com/enigmampc/cosmos-sdk/types/errors"
+	govtypes "github.com/enigmampc/cosmos-sdk/x/gov/types"
 )
 
 // NewParamChangeProposalHandler creates a new governance Handler for a ParamChangeProposal

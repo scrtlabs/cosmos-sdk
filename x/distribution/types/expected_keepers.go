@@ -1,11 +1,11 @@
 package types
 
 import (
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	authexported "github.com/Cashmaney/cosmos-sdk/x/auth/exported"
-	"github.com/Cashmaney/cosmos-sdk/x/staking"
-	stakingexported "github.com/Cashmaney/cosmos-sdk/x/staking/exported"
-	supplyexported "github.com/Cashmaney/cosmos-sdk/x/supply/exported"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	authexported "github.com/enigmampc/cosmos-sdk/x/auth/exported"
+	"github.com/enigmampc/cosmos-sdk/x/staking"
+	stakingexported "github.com/enigmampc/cosmos-sdk/x/staking/exported"
+	supplyexported "github.com/enigmampc/cosmos-sdk/x/supply/exported"
 )
 
 // AccountKeeper defines the expected account keeper used for simulations (noalias)
@@ -67,7 +67,7 @@ type SupplyKeeper interface {
 	GetModuleAddress(name string) sdk.AccAddress
 	GetModuleAccount(ctx sdk.Context, name string) supplyexported.ModuleAccountI
 
-	// TODO remove with genesis 2-phases refactor https://github.com/Cashmaney/cosmos-sdk/issues/2862
+	// TODO remove with genesis 2-phases refactor https://github.com/enigmampc/cosmos-sdk/issues/2862
 	SetModuleAccount(sdk.Context, supplyexported.ModuleAccountI)
 
 	SendCoinsFromModuleToModule(ctx sdk.Context, senderModule string, recipientModule string, amt sdk.Coins) error

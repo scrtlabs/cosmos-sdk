@@ -1,7 +1,7 @@
 package rest
 
 import (
-	"github.com/Cashmaney/cosmos-sdk/client/context"
+	"github.com/enigmampc/cosmos-sdk/client/context"
 
 	"github.com/gorilla/mux"
 )

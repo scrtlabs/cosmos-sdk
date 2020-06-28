@@ -1,8 +1,8 @@
 package keeper
 
 import (
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/x/crisis/internal/types"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/x/crisis/internal/types"
 )
 
 // GetConstantFee get's the constant fee from the paramSpace

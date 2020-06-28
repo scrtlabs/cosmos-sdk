@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	govtypes "github.com/Cashmaney/cosmos-sdk/x/gov/types"
+	govtypes "github.com/enigmampc/cosmos-sdk/x/gov/types"
 )
 
 const (

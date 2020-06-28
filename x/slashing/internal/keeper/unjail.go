@@ -1,8 +1,8 @@
 package keeper
 
 import (
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/x/slashing/internal/types"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/x/slashing/internal/types"
 )
 
 // Unjail calls the staking Unjail function to unjail a validator if the

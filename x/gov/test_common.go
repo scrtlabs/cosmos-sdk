@@ -15,16 +15,16 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/crypto"
 
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	sdkerrors "github.com/Cashmaney/cosmos-sdk/types/errors"
-	authexported "github.com/Cashmaney/cosmos-sdk/x/auth/exported"
-	"github.com/Cashmaney/cosmos-sdk/x/bank"
-	keep "github.com/Cashmaney/cosmos-sdk/x/gov/keeper"
-	"github.com/Cashmaney/cosmos-sdk/x/gov/types"
-	"github.com/Cashmaney/cosmos-sdk/x/mock"
-	"github.com/Cashmaney/cosmos-sdk/x/staking"
-	"github.com/Cashmaney/cosmos-sdk/x/supply"
-	supplyexported "github.com/Cashmaney/cosmos-sdk/x/supply/exported"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	sdkerrors "github.com/enigmampc/cosmos-sdk/types/errors"
+	authexported "github.com/enigmampc/cosmos-sdk/x/auth/exported"
+	"github.com/enigmampc/cosmos-sdk/x/bank"
+	keep "github.com/enigmampc/cosmos-sdk/x/gov/keeper"
+	"github.com/enigmampc/cosmos-sdk/x/gov/types"
+	"github.com/enigmampc/cosmos-sdk/x/mock"
+	"github.com/enigmampc/cosmos-sdk/x/staking"
+	"github.com/enigmampc/cosmos-sdk/x/supply"
+	supplyexported "github.com/enigmampc/cosmos-sdk/x/supply/exported"
 )
 
 var (

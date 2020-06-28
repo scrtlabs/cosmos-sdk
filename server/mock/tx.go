@@ -5,8 +5,8 @@ import (
 	"bytes"
 	"fmt"
 
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	sdkerrors "github.com/Cashmaney/cosmos-sdk/types/errors"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	sdkerrors "github.com/enigmampc/cosmos-sdk/types/errors"
 )
 
 // An sdk.Tx which is its own sdk.Msg.

@@ -14,14 +14,14 @@ import (
 
 	"github.com/tendermint/tendermint/types"
 
-	"github.com/Cashmaney/cosmos-sdk/client/context"
-	"github.com/Cashmaney/cosmos-sdk/codec"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/client/context"
+	"github.com/enigmampc/cosmos-sdk/codec"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
 )
 
 const (
-	DefaultPage  = 1
-	DefaultLimit = 30 // should be consistent with tendermint/tendermint/rpc/core/pipe.go:19
+	DefaultPage    = 1
+	DefaultLimit   = 30             // should be consistent with tendermint/tendermint/rpc/core/pipe.go:19
 	TxMinHeightKey = "tx.minheight" // Inclusive minimum height filter
 	TxMaxHeightKey = "tx.maxheight" // Inclusive maximum height filter
 )

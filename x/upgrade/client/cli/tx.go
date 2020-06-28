@@ -5,17 +5,17 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/Cashmaney/cosmos-sdk/x/gov/client/cli"
+	"github.com/enigmampc/cosmos-sdk/x/gov/client/cli"
 
 	"github.com/spf13/cobra"
 
-	"github.com/Cashmaney/cosmos-sdk/client/context"
-	"github.com/Cashmaney/cosmos-sdk/codec"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/x/auth"
-	"github.com/Cashmaney/cosmos-sdk/x/auth/client/utils"
-	"github.com/Cashmaney/cosmos-sdk/x/gov"
-	upgrade "github.com/Cashmaney/cosmos-sdk/x/upgrade/internal/types"
+	"github.com/enigmampc/cosmos-sdk/client/context"
+	"github.com/enigmampc/cosmos-sdk/codec"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/x/auth"
+	"github.com/enigmampc/cosmos-sdk/x/auth/client/utils"
+	"github.com/enigmampc/cosmos-sdk/x/gov"
+	upgrade "github.com/enigmampc/cosmos-sdk/x/upgrade/internal/types"
 )
 
 const (

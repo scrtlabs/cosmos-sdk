@@ -3,7 +3,7 @@ package rpc
 import (
 	"github.com/gorilla/mux"
 
-	"github.com/Cashmaney/cosmos-sdk/client/context"
+	"github.com/enigmampc/cosmos-sdk/client/context"
 )
 
 // Register REST endpoints

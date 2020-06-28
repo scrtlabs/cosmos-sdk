@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	keep "github.com/Cashmaney/cosmos-sdk/x/gov/keeper"
+	keep "github.com/enigmampc/cosmos-sdk/x/gov/keeper"
 
 	abci "github.com/tendermint/tendermint/abci/types"
 )

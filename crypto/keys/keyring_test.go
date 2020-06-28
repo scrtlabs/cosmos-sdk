@@ -9,9 +9,9 @@ import (
 	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/crypto/ed25519"
 
-	"github.com/Cashmaney/cosmos-sdk/crypto/keys/hd"
-	"github.com/Cashmaney/cosmos-sdk/tests"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/crypto/keys/hd"
+	"github.com/enigmampc/cosmos-sdk/tests"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
 )
 
 func TestLazyKeyManagementKeyRing(t *testing.T) {

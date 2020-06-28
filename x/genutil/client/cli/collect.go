@@ -10,11 +10,11 @@ import (
 	"github.com/tendermint/tendermint/libs/cli"
 	tmtypes "github.com/tendermint/tendermint/types"
 
-	"github.com/Cashmaney/cosmos-sdk/client/flags"
-	"github.com/Cashmaney/cosmos-sdk/codec"
-	"github.com/Cashmaney/cosmos-sdk/server"
-	"github.com/Cashmaney/cosmos-sdk/x/genutil"
-	"github.com/Cashmaney/cosmos-sdk/x/genutil/types"
+	"github.com/enigmampc/cosmos-sdk/client/flags"
+	"github.com/enigmampc/cosmos-sdk/codec"
+	"github.com/enigmampc/cosmos-sdk/server"
+	"github.com/enigmampc/cosmos-sdk/x/genutil"
+	"github.com/enigmampc/cosmos-sdk/x/genutil/types"
 )
 
 const flagGenTxDir = "gentx-dir"

@@ -1,7 +1,7 @@
 package keys
 
 import (
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
 )
 
 // KeyOutput defines a structure wrapping around an Info object used for output

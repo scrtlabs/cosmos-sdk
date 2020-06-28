@@ -6,10 +6,10 @@ import (
 	"github.com/stretchr/testify/require"
 	tmbytes "github.com/tendermint/tendermint/libs/bytes"
 
-	"github.com/Cashmaney/cosmos-sdk/codec"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/x/evidence/exported"
-	"github.com/Cashmaney/cosmos-sdk/x/evidence/internal/types"
+	"github.com/enigmampc/cosmos-sdk/codec"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/x/evidence/exported"
+	"github.com/enigmampc/cosmos-sdk/x/evidence/internal/types"
 )
 
 var _ exported.Evidence = (*testEvidence)(nil)

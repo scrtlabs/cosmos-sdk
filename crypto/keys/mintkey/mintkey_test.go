@@ -11,8 +11,8 @@ import (
 	cryptoAmino "github.com/tendermint/tendermint/crypto/encoding/amino"
 	"github.com/tendermint/tendermint/crypto/secp256k1"
 
-	"github.com/Cashmaney/cosmos-sdk/crypto/keys"
-	"github.com/Cashmaney/cosmos-sdk/crypto/keys/mintkey"
+	"github.com/enigmampc/cosmos-sdk/crypto/keys"
+	"github.com/enigmampc/cosmos-sdk/crypto/keys/mintkey"
 )
 
 func TestArmorUnarmorPrivKey(t *testing.T) {

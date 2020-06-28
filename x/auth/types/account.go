@@ -9,8 +9,8 @@ import (
 	"github.com/tendermint/tendermint/crypto"
 	yaml "gopkg.in/yaml.v2"
 
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/x/auth/exported"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/x/auth/exported"
 )
 
 //-----------------------------------------------------------------------------

@@ -3,8 +3,8 @@ package keeper
 import (
 	"fmt"
 
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	types "github.com/Cashmaney/cosmos-sdk/x/staking/types"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	types "github.com/enigmampc/cosmos-sdk/x/staking/types"
 )
 
 // Slash a validator for an infraction committed at a known height
@@ -33,7 +33,7 @@ func (k Keeper) Slash(ctx sdk.Context, consAddr sdk.ConsAddress, infractionHeigh
 	slashAmountDec := amount.ToDec().Mul(slashFactor)
 	slashAmount := slashAmountDec.TruncateInt()
 
-	// ref https://github.com/Cashmaney/cosmos-sdk/issues/1348
+	// ref https://github.com/enigmampc/cosmos-sdk/issues/1348
 
 	validator, found := k.GetValidatorByConsAddr(ctx, consAddr)
 	if !found {

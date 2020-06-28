@@ -8,12 +8,12 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/Cashmaney/cosmos-sdk/client/context"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/types/rest"
-	"github.com/Cashmaney/cosmos-sdk/x/auth/client/utils"
-	"github.com/Cashmaney/cosmos-sdk/x/auth/types"
-	genutilrest "github.com/Cashmaney/cosmos-sdk/x/genutil/client/rest"
+	"github.com/enigmampc/cosmos-sdk/client/context"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/types/rest"
+	"github.com/enigmampc/cosmos-sdk/x/auth/client/utils"
+	"github.com/enigmampc/cosmos-sdk/x/auth/types"
+	genutilrest "github.com/enigmampc/cosmos-sdk/x/genutil/client/rest"
 )
 
 // query accountREST Handler
@@ -38,7 +38,7 @@ func QueryAccountRequestHandlerFn(storeName string, cliCtx context.CLIContext) h
 		account, height, err := accGetter.GetAccountWithHeight(addr)
 		if err != nil {
 			// TODO: Handle more appropriately based on the error type.
-			// Ref: https://github.com/Cashmaney/cosmos-sdk/issues/4923
+			// Ref: https://github.com/enigmampc/cosmos-sdk/issues/4923
 			if err := accGetter.EnsureExists(addr); err != nil {
 				cliCtx = cliCtx.WithHeight(height)
 				rest.PostProcessResponse(w, cliCtx, types.BaseAccount{})

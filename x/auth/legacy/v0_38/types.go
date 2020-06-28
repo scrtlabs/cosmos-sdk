@@ -13,9 +13,9 @@ import (
 
 	"github.com/tendermint/tendermint/crypto"
 
-	"github.com/Cashmaney/cosmos-sdk/codec"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	v034auth "github.com/Cashmaney/cosmos-sdk/x/auth/legacy/v0_34"
+	"github.com/enigmampc/cosmos-sdk/codec"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	v034auth "github.com/enigmampc/cosmos-sdk/x/auth/legacy/v0_34"
 )
 
 const (

@@ -9,12 +9,12 @@ import (
 
 	dbm "github.com/tendermint/tm-db"
 
-	"github.com/Cashmaney/cosmos-sdk/codec"
-	"github.com/Cashmaney/cosmos-sdk/store"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/x/params"
-	"github.com/Cashmaney/cosmos-sdk/x/params/subspace"
-	"github.com/Cashmaney/cosmos-sdk/x/params/types"
+	"github.com/enigmampc/cosmos-sdk/codec"
+	"github.com/enigmampc/cosmos-sdk/store"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/x/params"
+	"github.com/enigmampc/cosmos-sdk/x/params/subspace"
+	"github.com/enigmampc/cosmos-sdk/x/params/types"
 )
 
 func validateNoOp(_ interface{}) error { return nil }

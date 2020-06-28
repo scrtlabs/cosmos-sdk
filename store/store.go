@@ -3,9 +3,9 @@ package store
 import (
 	dbm "github.com/tendermint/tm-db"
 
-	"github.com/Cashmaney/cosmos-sdk/store/cache"
-	"github.com/Cashmaney/cosmos-sdk/store/rootmulti"
-	"github.com/Cashmaney/cosmos-sdk/store/types"
+	"github.com/enigmampc/cosmos-sdk/store/cache"
+	"github.com/enigmampc/cosmos-sdk/store/rootmulti"
+	"github.com/enigmampc/cosmos-sdk/store/types"
 )
 
 // Pruning strategies that may be provided to a KVStore to enable pruning.

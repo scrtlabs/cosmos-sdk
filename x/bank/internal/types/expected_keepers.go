@@ -1,8 +1,8 @@
 package types
 
 import (
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/x/auth/exported"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/x/auth/exported"
 )
 
 // AccountKeeper defines the account contract that must be fulfilled when

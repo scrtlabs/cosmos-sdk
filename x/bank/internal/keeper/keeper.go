@@ -6,12 +6,12 @@ import (
 
 	"github.com/tendermint/tendermint/libs/log"
 
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	sdkerrors "github.com/Cashmaney/cosmos-sdk/types/errors"
-	authexported "github.com/Cashmaney/cosmos-sdk/x/auth/exported"
-	vestexported "github.com/Cashmaney/cosmos-sdk/x/auth/vesting/exported"
-	"github.com/Cashmaney/cosmos-sdk/x/bank/internal/types"
-	"github.com/Cashmaney/cosmos-sdk/x/params"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	sdkerrors "github.com/enigmampc/cosmos-sdk/types/errors"
+	authexported "github.com/enigmampc/cosmos-sdk/x/auth/exported"
+	vestexported "github.com/enigmampc/cosmos-sdk/x/auth/vesting/exported"
+	"github.com/enigmampc/cosmos-sdk/x/bank/internal/types"
+	"github.com/enigmampc/cosmos-sdk/x/params"
 )
 
 var _ Keeper = (*BaseKeeper)(nil)

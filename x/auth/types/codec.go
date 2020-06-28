@@ -1,8 +1,8 @@
 package types
 
 import (
-	"github.com/Cashmaney/cosmos-sdk/codec"
-	"github.com/Cashmaney/cosmos-sdk/x/auth/exported"
+	"github.com/enigmampc/cosmos-sdk/codec"
+	"github.com/enigmampc/cosmos-sdk/x/auth/exported"
 )
 
 // ModuleCdc auth module wide codec

@@ -1,8 +1,8 @@
 package types
 
 import (
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/x/supply/exported"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/x/supply/exported"
 )
 
 // SupplyKeeper defines the expected supply Keeper (noalias)

@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Cashmaney/cosmos-sdk/tests"
+	"github.com/enigmampc/cosmos-sdk/tests"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

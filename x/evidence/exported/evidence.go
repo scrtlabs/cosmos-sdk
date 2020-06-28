@@ -1,7 +1,7 @@
 package exported
 
 import (
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
 
 	tmbytes "github.com/tendermint/tendermint/libs/bytes"
 )

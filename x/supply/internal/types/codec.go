@@ -1,8 +1,8 @@
 package types
 
 import (
-	"github.com/Cashmaney/cosmos-sdk/codec"
-	"github.com/Cashmaney/cosmos-sdk/x/supply/exported"
+	"github.com/enigmampc/cosmos-sdk/codec"
+	"github.com/enigmampc/cosmos-sdk/x/supply/exported"
 )
 
 // RegisterCodec registers the account types and interface

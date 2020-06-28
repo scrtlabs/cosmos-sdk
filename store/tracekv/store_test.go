@@ -10,10 +10,10 @@ import (
 
 	dbm "github.com/tendermint/tm-db"
 
-	"github.com/Cashmaney/cosmos-sdk/store/dbadapter"
-	"github.com/Cashmaney/cosmos-sdk/store/prefix"
-	"github.com/Cashmaney/cosmos-sdk/store/tracekv"
-	"github.com/Cashmaney/cosmos-sdk/store/types"
+	"github.com/enigmampc/cosmos-sdk/store/dbadapter"
+	"github.com/enigmampc/cosmos-sdk/store/prefix"
+	"github.com/enigmampc/cosmos-sdk/store/tracekv"
+	"github.com/enigmampc/cosmos-sdk/store/types"
 )
 
 func bz(s string) []byte { return []byte(s) }

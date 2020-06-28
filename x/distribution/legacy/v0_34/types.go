@@ -3,7 +3,7 @@
 package v0_34
 
 import (
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
 )
 
 // ----------------------------------------------------------------------------

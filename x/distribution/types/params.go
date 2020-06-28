@@ -5,8 +5,8 @@ import (
 
 	"gopkg.in/yaml.v2"
 
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
-	"github.com/Cashmaney/cosmos-sdk/x/params"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/x/params"
 )
 
 const (

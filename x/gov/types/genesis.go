@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
 )
 
 // GenesisState - all staking state that must be provided at genesis

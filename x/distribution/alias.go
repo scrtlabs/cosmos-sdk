@@ -1,9 +1,9 @@
 package distribution
 
 import (
-	"github.com/Cashmaney/cosmos-sdk/x/distribution/client"
-	"github.com/Cashmaney/cosmos-sdk/x/distribution/keeper"
-	"github.com/Cashmaney/cosmos-sdk/x/distribution/types"
+	"github.com/enigmampc/cosmos-sdk/x/distribution/client"
+	"github.com/enigmampc/cosmos-sdk/x/distribution/keeper"
+	"github.com/enigmampc/cosmos-sdk/x/distribution/types"
 )
 
 // nolint

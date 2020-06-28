@@ -3,8 +3,8 @@ package bank
 // nolint
 
 import (
-	"github.com/Cashmaney/cosmos-sdk/x/bank/internal/keeper"
-	"github.com/Cashmaney/cosmos-sdk/x/bank/internal/types"
+	"github.com/enigmampc/cosmos-sdk/x/bank/internal/keeper"
+	"github.com/enigmampc/cosmos-sdk/x/bank/internal/types"
 )
 
 const (

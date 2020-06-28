@@ -8,10 +8,10 @@ import (
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
 
-	"github.com/Cashmaney/cosmos-sdk/client/flags"
-	"github.com/Cashmaney/cosmos-sdk/crypto/keys"
-	"github.com/Cashmaney/cosmos-sdk/tests"
-	sdk "github.com/Cashmaney/cosmos-sdk/types"
+	"github.com/enigmampc/cosmos-sdk/client/flags"
+	"github.com/enigmampc/cosmos-sdk/crypto/keys"
+	"github.com/enigmampc/cosmos-sdk/tests"
+	sdk "github.com/enigmampc/cosmos-sdk/types"
 )
 
 func Test_runDeleteCmd(t *testing.T) {

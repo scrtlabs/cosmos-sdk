@@ -202,6 +202,10 @@ func RunAddCmd(cmd *cobra.Command, args []string, kb keys.Keybase, inBuf *bufio.
 			return errors.New("cannot set custom bip32 path with ledger")
 		}
 
+		if sdk.GetConfig().GetCoinType() != sdk.CoinType {
+			return errors.New("ledger does not currently support new coin type. Use the legacy hd path flag")
+		}
+
 		if !keys.IsSupportedAlgorithm(kb.SupportedAlgosLedger(), algo) {
 			return keys.ErrUnsupportedSigningAlgo
 		}

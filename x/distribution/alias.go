@@ -12,6 +12,7 @@ const (
 	ModuleName                       = types.ModuleName
 	StoreKey                         = types.StoreKey
 	RouterKey                        = types.RouterKey
+	ProposalRouteSecretFoundationTax = types.ProposalRouteSecretFoundationTax
 	QuerierRoute                     = types.QuerierRoute
 	ProposalTypeCommunityPoolSpend   = types.ProposalTypeCommunityPoolSpend
 	QueryParams                      = types.QueryParams

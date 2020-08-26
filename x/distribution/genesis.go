@@ -13,6 +13,8 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, supplyKeeper types.SupplyKeeper
 
 	keeper.SetFeePool(ctx, data.FeePool)
 	keeper.SetParams(ctx, data.Params)
+	keeper.SetSecretFoundationTax(ctx, data.SecretFoundationTax)
+	keeper.SetSecretFoundationAddr(ctx, data.SecretFoundationAddress)
 
 	for _, dwi := range data.DelegatorWithdrawInfos {
 		keeper.SetDelegatorWithdrawAddr(ctx, dwi.DelegatorAddress, dwi.WithdrawAddress)
@@ -59,6 +61,8 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, supplyKeeper types.SupplyKeeper
 func ExportGenesis(ctx sdk.Context, keeper Keeper) types.GenesisState {
 	feePool := keeper.GetFeePool(ctx)
 	params := keeper.GetParams(ctx)
+	sft := keeper.GetSecretFoundationTax(ctx)
+	sfa := keeper.GetSecretFoundationAddr(ctx)
 
 	dwi := make([]types.DelegatorWithdrawInfo, 0)
 	keeper.IterateDelegatorWithdrawAddrs(ctx, func(del sdk.AccAddress, addr sdk.AccAddress) (stop bool) {
@@ -139,5 +143,5 @@ func ExportGenesis(ctx sdk.Context, keeper Keeper) types.GenesisState {
 		},
 	)
 
-	return types.NewGenesisState(params, feePool, dwi, pp, outstanding, acc, his, cur, dels, slashes)
+	return types.NewGenesisState(params, feePool, sft, sfa, dwi, pp, outstanding, acc, his, cur, dels, slashes)
 }

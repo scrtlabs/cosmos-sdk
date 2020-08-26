@@ -59,6 +59,48 @@ func (k Keeper) SetFeePool(ctx sdk.Context, feePool types.FeePool) {
 	store.Set(types.FeePoolKey, b)
 }
 
+// GetSecretFoundationTax returns the current secret foundation tax.
+func (k Keeper) GetSecretFoundationTax(ctx sdk.Context) sdk.Dec {
+	store := ctx.KVStore(k.storeKey)
+	bz := store.Get(types.SecretFoundationTaxKey)
+	if bz == nil {
+		panic("expected secret foundation tax to be non-nil")
+	}
+
+	var tax sdk.Dec
+	k.cdc.MustUnmarshalBinaryBare(bz, &tax)
+
+	return tax
+}
+
+// SetSecretFoundationTax sets the secret foundation tax.
+func (k Keeper) SetSecretFoundationTax(ctx sdk.Context, tax sdk.Dec) {
+	store := ctx.KVStore(k.storeKey)
+	bz := k.cdc.MustMarshalBinaryBare(tax)
+	store.Set(types.SecretFoundationTaxKey, bz)
+}
+
+// GetSecretFoundationAddr returns the current secret foundation address.
+func (k Keeper) GetSecretFoundationAddr(ctx sdk.Context) sdk.AccAddress {
+	store := ctx.KVStore(k.storeKey)
+	bz := store.Get(types.SecretFoundationAddrKey)
+	if bz == nil {
+		panic("expected secret foundation address to be non-nil")
+	}
+
+	var addr sdk.AccAddress
+	k.cdc.MustUnmarshalBinaryBare(bz, &addr)
+
+	return addr
+}
+
+// SetSecretFoundationAddr sets the secret foundation address.
+func (k Keeper) SetSecretFoundationAddr(ctx sdk.Context, addr sdk.AccAddress) {
+	store := ctx.KVStore(k.storeKey)
+	bz := k.cdc.MustMarshalBinaryBare(addr)
+	store.Set(types.SecretFoundationAddrKey, bz)
+}
+
 // get the proposer public key for this block
 func (k Keeper) GetPreviousProposerConsAddr(ctx sdk.Context) (consAddr sdk.ConsAddress) {
 	store := ctx.KVStore(k.storeKey)

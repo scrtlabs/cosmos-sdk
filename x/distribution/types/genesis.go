@@ -55,6 +55,8 @@ type ValidatorSlashEventRecord struct {
 type GenesisState struct {
 	Params                          Params                                 `json:"params" yaml:"params"`
 	FeePool                         FeePool                                `json:"fee_pool" yaml:"fee_pool"`
+	SecretFoundationTax             sdk.Dec                                `json:"secret_foundation_tax" yaml:"secret_foundation_tax"`
+	SecretFoundationAddress         sdk.AccAddress                         `json:"secret_foundation_address" yaml:"secret_foundation_address"`
 	DelegatorWithdrawInfos          []DelegatorWithdrawInfo                `json:"delegator_withdraw_infos" yaml:"delegator_withdraw_infos"`
 	PreviousProposer                sdk.ConsAddress                        `json:"previous_proposer" yaml:"previous_proposer"`
 	OutstandingRewards              []ValidatorOutstandingRewardsRecord    `json:"outstanding_rewards" yaml:"outstanding_rewards"`
@@ -66,14 +68,25 @@ type GenesisState struct {
 }
 
 func NewGenesisState(
-	params Params, fp FeePool, dwis []DelegatorWithdrawInfo, pp sdk.ConsAddress, r []ValidatorOutstandingRewardsRecord,
-	acc []ValidatorAccumulatedCommissionRecord, historical []ValidatorHistoricalRewardsRecord,
-	cur []ValidatorCurrentRewardsRecord, dels []DelegatorStartingInfoRecord, slashes []ValidatorSlashEventRecord,
+	params Params,
+	fp FeePool,
+	sft sdk.Dec,
+	sfa sdk.AccAddress,
+	dwis []DelegatorWithdrawInfo,
+	pp sdk.ConsAddress,
+	r []ValidatorOutstandingRewardsRecord,
+	acc []ValidatorAccumulatedCommissionRecord,
+	historical []ValidatorHistoricalRewardsRecord,
+	cur []ValidatorCurrentRewardsRecord,
+	dels []DelegatorStartingInfoRecord,
+	slashes []ValidatorSlashEventRecord,
 ) GenesisState {
 
 	return GenesisState{
 		Params:                          params,
 		FeePool:                         fp,
+		SecretFoundationTax:             sft,
+		SecretFoundationAddress:         sfa,
 		DelegatorWithdrawInfos:          dwis,
 		PreviousProposer:                pp,
 		OutstandingRewards:              r,

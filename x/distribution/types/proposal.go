@@ -106,7 +106,9 @@ func (sftp SecretFoundationTaxProposal) ProposalRoute() string {
 }
 
 // ProposalType returns the proposal's type.
-func (sftp SecretFoundationTaxProposal) ProposalType() string { return ProposalTypeSecretFoundationTax }
+func (sftp SecretFoundationTaxProposal) ProposalType() string {
+	return ProposalTypeSecretFoundationTax
+}
 
 // ValidateBasic executes basic stateless validity checks returning an error if
 // any check fails.

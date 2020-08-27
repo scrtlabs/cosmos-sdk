@@ -55,6 +55,7 @@ var (
 	GetValidatorSlashEventKeyPrefix            = types.GetValidatorSlashEventKeyPrefix
 	GetValidatorSlashEventKey                  = types.GetValidatorSlashEventKey
 	HandleCommunityPoolSpendProposal           = keeper.HandleCommunityPoolSpendProposal
+	HandleSecretFoundationTaxProposal          = keeper.HandleSecretFoundationTaxProposal
 	NewQuerier                                 = keeper.NewQuerier
 	MakeTestCodec                              = keeper.MakeTestCodec
 	CreateTestInputDefault                     = keeper.CreateTestInputDefault
@@ -84,6 +85,7 @@ var (
 	NewMsgWithdrawValidatorCommission          = types.NewMsgWithdrawValidatorCommission
 	MsgFundCommunityPool                       = types.NewMsgFundCommunityPool
 	NewCommunityPoolSpendProposal              = types.NewCommunityPoolSpendProposal
+	NewSecretFoundationTaxProposal             = types.NewSecretFoundationTaxProposal
 	NewQueryValidatorOutstandingRewardsParams  = types.NewQueryValidatorOutstandingRewardsParams
 	NewQueryValidatorCommissionParams          = types.NewQueryValidatorCommissionParams
 	NewQueryValidatorSlashesParams             = types.NewQueryValidatorSlashesParams
@@ -142,6 +144,7 @@ type (
 	MsgWithdrawDelegatorReward             = types.MsgWithdrawDelegatorReward
 	MsgWithdrawValidatorCommission         = types.MsgWithdrawValidatorCommission
 	CommunityPoolSpendProposal             = types.CommunityPoolSpendProposal
+	SecretFoundationTaxProposal            = types.SecretFoundationTaxProposal
 	QueryValidatorOutstandingRewardsParams = types.QueryValidatorOutstandingRewardsParams
 	QueryValidatorCommissionParams         = types.QueryValidatorCommissionParams
 	QueryValidatorSlashesParams            = types.QueryValidatorSlashesParams

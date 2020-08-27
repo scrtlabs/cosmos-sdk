@@ -9,7 +9,7 @@ import (
 const (
 	ProposalTypeCommunityPoolSpend   = "CommunityPoolSpend"
 	ProposalTypeSecretFoundationTax  = "SecretFoundationTax"
-	ProposalRouteSecretFoundationTax = "distribution/SecretFoundationTax"
+	ProposalRouteSecretFoundationTax = "SecretFoundationTax"
 )
 
 var (

@@ -79,19 +79,51 @@ func (k Keeper) AllocateTokens(
 
 	// calculate fraction allocated to validators
 	communityTax := k.GetCommunityTax(ctx)
-	voteMultiplier := sdk.OneDec().Sub(proposerMultiplier).Sub(communityTax)
+	foundationTax := k.GetSecretFoundationTax(ctx)
 
-	// allocate tokens proportionally to voting power
-	// TODO consider parallelizing later, ref https://github.com/enigmampc/cosmos-sdk/pull/3099#discussion_r246276376
+	// Define the vote multiplier as (100 - proposerMultiplier - communityTax - foundationTax)%.
+	// The value along with a validator's power fraction, is used to determine the
+	// validator's rewards. Note, foundationTax may be zero.
+	voteMultiplier := sdk.OneDec().Sub(proposerMultiplier).Sub(communityTax).Sub(foundationTax)
+
+	// Define the same vote multiplier without the foundationTax, allowing us to
+	// determine the amount to send to the foundation tax account. This allows us
+	// to avoid multiple multiplication and truncation operations.
+	voteMultiplierWithoutFT := sdk.OneDec().Sub(proposerMultiplier).Sub(communityTax)
+
+	var foundationTaxSum sdk.DecCoins
+
+	// allocate tokens proportionally to voting power minus any taxes
 	for _, vote := range previousVotes {
 		validator := k.stakingKeeper.ValidatorByConsAddr(ctx, vote.Validator.Address)
-
-		// TODO consider microslashing for missing votes.
-		// ref https://github.com/enigmampc/cosmos-sdk/issues/2525#issuecomment-430838701
 		powerFraction := sdk.NewDec(vote.Validator.Power).QuoTruncate(sdk.NewDec(totalPreviousPower))
+
+		// To determine the allocation to the foundation tax, we determine the
+		// validator's reward with and without the foundation tax, and take the
+		// difference. Note, foundationTax may be zero. When non-zero, the invariant
+		// rewardWithoutFT > reward must hold.
 		reward := feesCollected.MulDecTruncate(voteMultiplier).MulDecTruncate(powerFraction)
+		rewardWithoutFT := feesCollected.MulDecTruncate(voteMultiplierWithoutFT).MulDecTruncate(powerFraction)
+
+		// allocate tokens to the validator
 		k.AllocateTokensToValidator(ctx, validator, reward)
-		remaining = remaining.Sub(reward)
+
+		// Determine the foundation tax, update remaining and foundationTaxSum, where
+		// we first deduct the reward from remaining and then further deduct the
+		// rewardWithoutFT from remaining as it will go to the foundation account.
+		valFoundationTax := rewardWithoutFT.Sub(reward)
+		remaining = remaining.Sub(reward).Sub(valFoundationTax)
+		foundationTaxSum = foundationTaxSum.Add(valFoundationTax...)
+	}
+
+	// Send the foundation tax sum to the foundation tax address. Note, the taxes
+	// collected are decimals and when coverted to integer coins, we must truncate.
+	//
+	// TODO: Should we store the remainder and add to the next allocation?
+	foundationTaxAddr := k.GetSecretFoundationAddr(ctx)
+	foundationTaxSumTrunc, _ := foundationTaxSum.TruncateDecimal()
+	if err := k.supplyKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, foundationTaxAddr, foundationTaxSumTrunc); err != nil {
+		panic(err)
 	}
 
 	// allocate community funding

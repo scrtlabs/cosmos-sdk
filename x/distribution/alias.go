@@ -26,6 +26,8 @@ const (
 	QueryCommunityPool               = types.QueryCommunityPool
 	DefaultParamspace                = types.DefaultParamspace
 	TypeMsgFundCommunityPool         = types.TypeMsgFundCommunityPool
+	QuerySecretFoundationTax         = types.QuerySecretFoundationTax
+	QuerySecretFoundationAddr        = types.QuerySecretFoundationAddr
 )
 
 var (

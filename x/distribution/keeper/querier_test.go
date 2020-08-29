@@ -105,6 +105,52 @@ func getQueriedCommunityPool(t *testing.T, ctx sdk.Context, cdc *codec.Codec, qu
 	return
 }
 
+func TestQuerier_QuerySecretFoundationTax(t *testing.T) {
+	cdc := codec.New()
+	types.RegisterCodec(cdc)
+
+	ctx, _, keeper, _, _ := CreateTestInputDefault(t, false, 100)
+	querier := NewQuerier(keeper)
+
+	expected := sdk.MustNewDecFromStr("0.15")
+	keeper.SetSecretFoundationTax(ctx, expected)
+
+	query := abci.RequestQuery{
+		Path: strings.Join([]string{custom, types.QuerierRoute, types.QuerySecretFoundationTax}, ""),
+		Data: []byte{},
+	}
+	res, err := querier(ctx, []string{types.QuerySecretFoundationTax}, query)
+	require.NoError(t, err)
+	require.Equal(t, "\"0.150000000000000000\"", string(res))
+
+	var tax sdk.Dec
+	require.NoError(t, cdc.UnmarshalJSON(res, &tax))
+	require.Equal(t, expected, tax)
+}
+
+func TestQuerier_QuerySecretFoundationAddr(t *testing.T) {
+	cdc := codec.New()
+	types.RegisterCodec(cdc)
+
+	ctx, _, keeper, _, _ := CreateTestInputDefault(t, false, 100)
+	querier := NewQuerier(keeper)
+
+	expected := sdk.AccAddress("addr________________")
+	keeper.SetSecretFoundationAddr(ctx, expected)
+
+	query := abci.RequestQuery{
+		Path: strings.Join([]string{custom, types.QuerierRoute, types.QuerySecretFoundationAddr}, ""),
+		Data: []byte{},
+	}
+	res, err := querier(ctx, []string{types.QuerySecretFoundationAddr}, query)
+	require.NoError(t, err)
+	require.Equal(t, "\"cosmos1v9jxgujlta047h6lta047h6lta047h6lad2uda\"", string(res))
+
+	var addr sdk.AccAddress
+	require.NoError(t, cdc.UnmarshalJSON(res, &addr))
+	require.Equal(t, expected, addr)
+}
+
 func TestQueries(t *testing.T) {
 	cdc := codec.New()
 	types.RegisterCodec(cdc)

@@ -42,6 +42,12 @@ func NewQuerier(k Keeper) sdk.Querier {
 		case types.QueryCommunityPool:
 			return queryCommunityPool(ctx, path[1:], req, k)
 
+		case types.QuerySecretFoundationTax:
+			return querySecretFoundationTax(ctx, k)
+
+		case types.QuerySecretFoundationAddr:
+			return querySecretFoundationAddr(ctx, k)
+
 		default:
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "unknown query path: %s", path[0])
 		}
@@ -52,6 +58,24 @@ func queryParams(ctx sdk.Context, path []string, req abci.RequestQuery, k Keeper
 	params := k.GetParams(ctx)
 
 	res, err := codec.MarshalJSONIndent(k.cdc, params)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+	}
+
+	return res, nil
+}
+
+func querySecretFoundationTax(ctx sdk.Context, k Keeper) ([]byte, error) {
+	res, err := codec.MarshalJSONIndent(k.cdc, k.GetSecretFoundationTax(ctx))
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+	}
+
+	return res, nil
+}
+
+func querySecretFoundationAddr(ctx sdk.Context, k Keeper) ([]byte, error) {
+	res, err := codec.MarshalJSONIndent(k.cdc, k.GetSecretFoundationAddr(ctx))
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}

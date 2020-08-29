@@ -11,6 +11,7 @@ import (
 	sdk "github.com/enigmampc/cosmos-sdk/types"
 	"github.com/enigmampc/cosmos-sdk/types/module"
 	"github.com/enigmampc/cosmos-sdk/x/distribution/types"
+	"github.com/enigmampc/cosmos-sdk/x/simulation"
 )
 
 // Simulation parameter constants
@@ -19,6 +20,7 @@ const (
 	BaseProposerReward  = "base_proposer_reward"
 	BonusProposerReward = "bonus_proposer_reward"
 	WithdrawEnabled     = "withdraw_enabled"
+	FoundationTax       = "foundation_tax"
 )
 
 // GenCommunityTax randomized CommunityTax
@@ -39,6 +41,10 @@ func GenBonusProposerReward(r *rand.Rand) sdk.Dec {
 // GenWithdrawEnabled returns a randomized WithdrawEnabled parameter.
 func GenWithdrawEnabled(r *rand.Rand) bool {
 	return r.Int63n(101) <= 95 // 95% chance of withdraws being enabled
+}
+
+func GenFoundationTax(r *rand.Rand) sdk.Dec {
+	return sdk.NewDecWithPrec(1, 2).Add(sdk.NewDecWithPrec(int64(r.Intn(30)), 2))
 }
 
 // RandomizedGenState generates a random GenesisState for distribution
@@ -67,8 +73,18 @@ func RandomizedGenState(simState *module.SimulationState) {
 		func(r *rand.Rand) { withdrawEnabled = GenWithdrawEnabled(r) },
 	)
 
+	var foundationTax sdk.Dec
+	simState.AppParams.GetOrGenerate(
+		simState.Cdc, FoundationTax, &foundationTax, simState.Rand,
+		func(r *rand.Rand) { foundationTax = GenFoundationTax(r) },
+	)
+
+	foundationTaxAcc, _ := simulation.RandomAcc(simState.Rand, simState.Accounts)
+
 	distrGenesis := types.GenesisState{
-		FeePool: types.InitialFeePool(),
+		FeePool:                 types.InitialFeePool(),
+		SecretFoundationTax:     foundationTax,
+		SecretFoundationAddress: foundationTaxAcc.Address,
 		Params: types.Params{
 			CommunityTax:        communityTax,
 			BaseProposerReward:  baseProposerReward,

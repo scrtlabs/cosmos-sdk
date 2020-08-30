@@ -317,6 +317,8 @@ func GetQuerySecretFoundationTaxCmd(cdc *codec.Codec) *cobra.Command {
 	}
 }
 
+// GetQuerySecretFoundationAddrCmd returns a command handler for querying the
+// secret foundation account address.
 func GetQuerySecretFoundationAddrCmd(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "secret-foundation-address",

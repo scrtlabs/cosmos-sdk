@@ -63,6 +63,15 @@ func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router, queryRoute st
 		communityPoolHandler(cliCtx, queryRoute),
 	).Methods("GET")
 
+	r.HandleFunc(
+		"/distribution/secret_foundation_tax",
+		querySecretFoundationTaxHandler(cliCtx),
+	).Methods("GET")
+
+	r.HandleFunc(
+		"/distribution/secret_foundation_address",
+		querySecretFoundationAddrHandler(cliCtx),
+	).Methods("GET")
 }
 
 // HTTP request handler to query the total rewards balance from all delegations
@@ -278,6 +287,54 @@ func communityPoolHandler(cliCtx context.CLIContext, queryRoute string) http.Han
 
 		cliCtx = cliCtx.WithHeight(height)
 		rest.PostProcessResponse(w, cliCtx, result)
+	}
+}
+
+func querySecretFoundationTaxHandler(cliCtx context.CLIContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		cliCtx, ok := rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
+		if !ok {
+			return
+		}
+
+		res, height, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QuerySecretFoundationTax), nil)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		var tax sdk.Dec
+		if err := cliCtx.Codec.UnmarshalJSON(res, &tax); err != nil {
+			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		cliCtx = cliCtx.WithHeight(height)
+		rest.PostProcessResponse(w, cliCtx, tax)
+	}
+}
+
+func querySecretFoundationAddrHandler(cliCtx context.CLIContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		cliCtx, ok := rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
+		if !ok {
+			return
+		}
+
+		res, height, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QuerySecretFoundationAddr), nil)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		var addr sdk.AccAddress
+		if err := cliCtx.Codec.UnmarshalJSON(res, &addr); err != nil {
+			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		cliCtx = cliCtx.WithHeight(height)
+		rest.PostProcessResponse(w, cliCtx, addr)
 	}
 }
 

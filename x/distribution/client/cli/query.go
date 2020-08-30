@@ -307,7 +307,7 @@ func GetQuerySecretFoundationTaxCmd(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			var tax sdk.DecCoins
+			var tax sdk.Dec
 			if err := cdc.UnmarshalJSON(res, &tax); err != nil {
 				return err
 			}

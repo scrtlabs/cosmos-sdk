@@ -143,9 +143,12 @@ func (app *SimApp) prepForZeroHeightGenesis(ctx sdk.Context, jailWhiteList []str
 		validator.UnbondingHeight = 0
 		if applyWhiteList && !whiteListMap[addr.String()] {
 			validator.Jailed = true
+			app.stakingKeeper.SetValidator(ctx, validator)
+			app.stakingKeeper.DeleteValidatorByPowerIndex(ctx, validator)
+		} else {
+			app.stakingKeeper.SetValidator(ctx, validator)
 		}
 
-		app.StakingKeeper.SetValidator(ctx, validator)
 		counter++
 	}
 

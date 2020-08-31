@@ -23,14 +23,3 @@ func HandleCommunityPoolSpendProposal(ctx sdk.Context, k Keeper, p types.Communi
 	logger.Info(fmt.Sprintf("transferred %s from the community pool to recipient %s", p.Amount, p.Recipient))
 	return nil
 }
-
-// HandleSecretFoundationTaxProposal executes a SecretFoundationTaxProposal
-// handler by settting the tax and address of the secret foundation tax pool.
-func HandleSecretFoundationTaxProposal(ctx sdk.Context, k Keeper, p types.SecretFoundationTaxProposal) error {
-	k.SetSecretFoundationTax(ctx, p.Tax)
-	k.SetSecretFoundationAddr(ctx, p.Address)
-
-	logger := k.Logger(ctx)
-	logger.Info("updated secret foundation tax", "address", p.Address.String(), "tax", p.Tax.String())
-	return nil
-}

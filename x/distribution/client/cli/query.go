@@ -34,8 +34,6 @@ func GetQueryCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		GetCmdQueryValidatorSlashes(queryRoute, cdc),
 		GetCmdQueryDelegatorRewards(queryRoute, cdc),
 		GetCmdQueryCommunityPool(queryRoute, cdc),
-		GetQuerySecretFoundationTaxCmd(cdc),
-		GetQuerySecretFoundationAddrCmd(cdc),
 	)...)
 
 	return distQueryCmd
@@ -288,56 +286,6 @@ $ %s query distribution community-pool
 			var result sdk.DecCoins
 			cdc.MustUnmarshalJSON(res, &result)
 			return cliCtx.PrintOutput(result)
-		},
-	}
-}
-
-// GetQuerySecretFoundationTaxCmd returns a command handler for querying the
-// secret foundation tax.
-func GetQuerySecretFoundationTaxCmd(cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
-		Use:   "secret-foundation-tax",
-		Args:  cobra.NoArgs,
-		Short: "Query the secret foundation tax",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-
-			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QuerySecretFoundationTax), nil)
-			if err != nil {
-				return err
-			}
-
-			var tax sdk.Dec
-			if err := cdc.UnmarshalJSON(res, &tax); err != nil {
-				return err
-			}
-
-			return cliCtx.PrintOutput(tax)
-		},
-	}
-}
-
-// GetQuerySecretFoundationAddrCmd returns a command handler for querying the
-// secret foundation account address.
-func GetQuerySecretFoundationAddrCmd(cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
-		Use:   "secret-foundation-address",
-		Args:  cobra.NoArgs,
-		Short: "Query the secret foundation account address",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-
-			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QuerySecretFoundationAddr), nil)
-			if err != nil {
-				return err
-			}
-
-			var addr sdk.AccAddress
-			if err := cdc.UnmarshalJSON(res, &addr); err != nil {
-				return err
-			}
-
-			return cliCtx.PrintOutput(addr)
 		},
 	}
 }

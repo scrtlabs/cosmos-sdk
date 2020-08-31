@@ -20,8 +20,8 @@ var (
 	ParamStoreKeyBaseProposerReward  = []byte("baseproposerreward")
 	ParamStoreKeyBonusProposerReward = []byte("bonusproposerreward")
 	ParamStoreKeyWithdrawAddrEnabled = []byte("withdrawaddrenabled")
-	ParamSecretFoundationTax         = []byte("secret_foundation_tax")
-	ParamSecretFoundationAddress     = []byte("secret_foundation_address")
+	ParamSecretFoundationTax         = []byte("secretfoundationtax")
+	ParamSecretFoundationAddress     = []byte("secretfoundationaddress")
 )
 
 // Params defines the set of distribution parameters.

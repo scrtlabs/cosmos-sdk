@@ -14,7 +14,7 @@ const (
 	keyCommunityTax        = "communitytax"
 	keyBaseProposerReward  = "baseproposerreward"
 	keyBonusProposerReward = "bonusproposerreward"
-	keySecretFoundationTax = "secret_foundation_tax"
+	keySecretFoundationTax = "secretfoundationtax"
 )
 
 // ParamChanges defines the parameters that can be modified by param change

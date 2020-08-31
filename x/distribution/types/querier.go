@@ -13,8 +13,6 @@ const (
 	QueryDelegatorValidators         = "delegator_validators"
 	QueryWithdrawAddr                = "withdraw_addr"
 	QueryCommunityPool               = "community_pool"
-	QuerySecretFoundationTax         = "secret_foundation_tax"
-	QuerySecretFoundationAddr        = "secret_foundation_addr"
 )
 
 // params for query 'custom/distr/validator_outstanding_rewards'

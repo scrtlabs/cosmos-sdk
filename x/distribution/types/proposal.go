@@ -1,27 +1,24 @@
 package types
 
 import (
+	"fmt"
+	"strings"
+
 	sdk "github.com/enigmampc/cosmos-sdk/types"
 	govtypes "github.com/enigmampc/cosmos-sdk/x/gov/types"
-	"gopkg.in/yaml.v2"
 )
 
 const (
-	ProposalTypeCommunityPoolSpend   = "CommunityPoolSpend"
-	ProposalTypeSecretFoundationTax  = "SecretFoundationTax"
-	ProposalRouteSecretFoundationTax = "SecretFoundationTax"
+	// ProposalTypeCommunityPoolSpend defines the type for a CommunityPoolSpendProposal
+	ProposalTypeCommunityPoolSpend = "CommunityPoolSpend"
 )
 
-var (
-	_ govtypes.Content = CommunityPoolSpendProposal{}
-	_ govtypes.Content = SecretFoundationTaxProposal{}
-)
+// Assert CommunityPoolSpendProposal implements govtypes.Content at compile-time
+var _ govtypes.Content = CommunityPoolSpendProposal{}
 
 func init() {
 	govtypes.RegisterProposalType(ProposalTypeCommunityPoolSpend)
 	govtypes.RegisterProposalTypeCodec(CommunityPoolSpendProposal{}, "cosmos-sdk/CommunityPoolSpendProposal")
-	govtypes.RegisterProposalType(ProposalTypeSecretFoundationTax)
-	govtypes.RegisterProposalTypeCodec(SecretFoundationTaxProposal{}, "cosmos-sdk/SecretFoundationTaxProposal")
 }
 
 // CommunityPoolSpendProposal spends from the community pool
@@ -67,66 +64,12 @@ func (csp CommunityPoolSpendProposal) ValidateBasic() error {
 
 // String implements the Stringer interface.
 func (csp CommunityPoolSpendProposal) String() string {
-	out, _ := yaml.Marshal(csp)
-	return string(out)
-}
-
-// SecretFoundationTaxProposal defines a governance proposal type that allows
-// for the modification of the secret foundation tax and/or address.
-type SecretFoundationTaxProposal struct {
-	Title       string         `json:"title" yaml:"title"`
-	Description string         `json:"description" yaml:"description"`
-	Tax         sdk.Dec        `json:"tax" yaml:"tax"`
-	Address     sdk.AccAddress `json:"address" yaml:"address"`
-}
-
-func NewSecretFoundationTaxProposal(title, descr string, tax sdk.Dec, addr sdk.AccAddress) SecretFoundationTaxProposal {
-	return SecretFoundationTaxProposal{
-		Title:       title,
-		Description: descr,
-		Tax:         tax,
-		Address:     addr,
-	}
-}
-
-// GetTitle returns the proposal's title.
-func (sftp SecretFoundationTaxProposal) GetTitle() string {
-	return sftp.Title
-}
-
-// GetDescription returns the proposal's description.
-func (sftp SecretFoundationTaxProposal) GetDescription() string {
-	return sftp.Description
-}
-
-// GetDescription returns the proposal's route which is used to match against
-// a proposal handler.
-func (sftp SecretFoundationTaxProposal) ProposalRoute() string {
-	return ProposalRouteSecretFoundationTax
-}
-
-// ProposalType returns the proposal's type.
-func (sftp SecretFoundationTaxProposal) ProposalType() string {
-	return ProposalTypeSecretFoundationTax
-}
-
-// ValidateBasic executes basic stateless validity checks returning an error if
-// any check fails.
-func (sftp SecretFoundationTaxProposal) ValidateBasic() error {
-	if err := govtypes.ValidateAbstract(sftp); err != nil {
-		return err
-	}
-	if sftp.Tax.IsNil() || sftp.Tax.IsNegative() {
-		return ErrInvalidSecretFoundationTax
-	}
-	if sftp.Address.Empty() {
-		return ErrInvalidSecretFoundationAddress
-	}
-
-	return nil
-}
-
-func (sftp SecretFoundationTaxProposal) String() string {
-	out, _ := yaml.Marshal(sftp)
-	return string(out)
+	var b strings.Builder
+	b.WriteString(fmt.Sprintf(`Community Pool Spend Proposal:
+  Title:       %s
+  Description: %s
+  Recipient:   %s
+  Amount:      %s
+`, csp.Title, csp.Description, csp.Recipient, csp.Amount))
+	return b.String()
 }

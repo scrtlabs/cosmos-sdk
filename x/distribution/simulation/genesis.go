@@ -82,14 +82,14 @@ func RandomizedGenState(simState *module.SimulationState) {
 	foundationTaxAcc, _ := simulation.RandomAcc(simState.Rand, simState.Accounts)
 
 	distrGenesis := types.GenesisState{
-		FeePool:                 types.InitialFeePool(),
-		SecretFoundationTax:     foundationTax,
-		SecretFoundationAddress: foundationTaxAcc.Address,
+		FeePool: types.InitialFeePool(),
 		Params: types.Params{
-			CommunityTax:        communityTax,
-			BaseProposerReward:  baseProposerReward,
-			BonusProposerReward: bonusProposerReward,
-			WithdrawAddrEnabled: withdrawEnabled,
+			CommunityTax:            communityTax,
+			SecretFoundationTax:     foundationTax,
+			SecretFoundationAddress: foundationTaxAcc.Address,
+			BaseProposerReward:      baseProposerReward,
+			BonusProposerReward:     bonusProposerReward,
+			WithdrawAddrEnabled:     withdrawEnabled,
 		},
 	}
 

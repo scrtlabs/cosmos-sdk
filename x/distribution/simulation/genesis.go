@@ -43,7 +43,8 @@ func GenWithdrawEnabled(r *rand.Rand) bool {
 	return r.Int63n(101) <= 95 // 95% chance of withdraws being enabled
 }
 
-func GenFoundationTax(r *rand.Rand) sdk.Dec {
+// GenSecretFoundationTax returns a randomized secret foundation tax parameter.
+func GenSecretFoundationTax(r *rand.Rand) sdk.Dec {
 	return sdk.NewDecWithPrec(1, 2).Add(sdk.NewDecWithPrec(int64(r.Intn(30)), 2))
 }
 
@@ -76,7 +77,7 @@ func RandomizedGenState(simState *module.SimulationState) {
 	var foundationTax sdk.Dec
 	simState.AppParams.GetOrGenerate(
 		simState.Cdc, FoundationTax, &foundationTax, simState.Rand,
-		func(r *rand.Rand) { foundationTax = GenFoundationTax(r) },
+		func(r *rand.Rand) { foundationTax = GenSecretFoundationTax(r) },
 	)
 
 	foundationTaxAcc, _ := simulation.RandomAcc(simState.Rand, simState.Accounts)

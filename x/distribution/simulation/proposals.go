@@ -11,11 +11,8 @@ import (
 	"github.com/enigmampc/cosmos-sdk/x/simulation"
 )
 
-// Proposal operation weights
-const (
-	OpWeightSubmitCommunitySpendProposal      = "op_weight_submit_community_spend_proposal"
-	OpWeightSubmitSecretFoundationTaxProposal = "op_weight_submit_secret_foundation_tax_proposal"
-)
+// OpWeightSubmitCommunitySpendProposal app params key for community spend proposal
+const OpWeightSubmitCommunitySpendProposal = "op_weight_submit_community_spend_proposal"
 
 // ProposalContents defines the module weighted proposals' contents
 func ProposalContents(k keeper.Keeper) []simulation.WeightedProposalContent {
@@ -24,11 +21,6 @@ func ProposalContents(k keeper.Keeper) []simulation.WeightedProposalContent {
 			AppParamsKey:       OpWeightSubmitCommunitySpendProposal,
 			DefaultWeight:      simappparams.DefaultWeightCommunitySpendProposal,
 			ContentSimulatorFn: SimulateCommunityPoolSpendProposalContent(k),
-		},
-		{
-			AppParamsKey:       OpWeightSubmitSecretFoundationTaxProposal,
-			DefaultWeight:      simappparams.DefaultWeightSecretFoundationTaxProposal,
-			ContentSimulatorFn: SimulateSecretFoundationTaxProposalContent(),
 		},
 	}
 }
@@ -55,20 +47,6 @@ func SimulateCommunityPoolSpendProposalContent(k keeper.Keeper) simulation.Conte
 			simulation.RandStringOfLength(r, 100),
 			simAccount.Address,
 			sdk.NewCoins(sdk.NewCoin(balance[denomIndex].Denom, amount)),
-		)
-	}
-}
-
-// SimulateSecretFoundationTaxProposalContent generates a random SecretFoundationTaxProposal.
-func SimulateSecretFoundationTaxProposalContent() simulation.ContentSimulatorFn {
-	return func(r *rand.Rand, ctx sdk.Context, accs []simulation.Account) govtypes.Content {
-		simAccount, _ := simulation.RandomAcc(r, accs)
-
-		return types.NewSecretFoundationTaxProposal(
-			simulation.RandStringOfLength(r, 10),
-			simulation.RandStringOfLength(r, 100),
-			simulation.RandomDecAmount(r, sdk.MustNewDecFromStr("0.20")),
-			simAccount.Address,
 		)
 	}
 }

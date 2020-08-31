@@ -111,15 +111,3 @@ func NewCommunityPoolSpendProposalHandler(k Keeper) govtypes.Handler {
 		}
 	}
 }
-
-func NewSecretFoundationTaxProposalHandler(k Keeper) govtypes.Handler {
-	return func(ctx sdk.Context, content govtypes.Content) error {
-		switch c := content.(type) {
-		case types.SecretFoundationTaxProposal:
-			return keeper.HandleSecretFoundationTaxProposal(ctx, k, c)
-
-		default:
-			return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "unrecognized distribution proposal content type: %T", c)
-		}
-	}
-}

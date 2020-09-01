@@ -11,7 +11,6 @@ import (
 	sdk "github.com/enigmampc/cosmos-sdk/types"
 	"github.com/enigmampc/cosmos-sdk/types/module"
 	"github.com/enigmampc/cosmos-sdk/x/distribution/types"
-	"github.com/enigmampc/cosmos-sdk/x/simulation"
 )
 
 // Simulation parameter constants
@@ -80,17 +79,17 @@ func RandomizedGenState(simState *module.SimulationState) {
 		func(r *rand.Rand) { foundationTax = GenSecretFoundationTax(r) },
 	)
 
-	foundationTaxAcc, _ := simulation.RandomAcc(simState.Rand, simState.Accounts)
+	// foundationTaxAcc, _ := simulation.RandomAcc(simState.Rand, simState.Accounts)
 
 	distrGenesis := types.GenesisState{
 		FeePool: types.InitialFeePool(),
 		Params: types.Params{
-			CommunityTax:            communityTax,
-			SecretFoundationTax:     foundationTax,
-			SecretFoundationAddress: foundationTaxAcc.Address,
-			BaseProposerReward:      baseProposerReward,
-			BonusProposerReward:     bonusProposerReward,
-			WithdrawAddrEnabled:     withdrawEnabled,
+			CommunityTax:        communityTax,
+			SecretFoundationTax: foundationTax,
+			// SecretFoundationAddress: foundationTaxAcc.Address,
+			BaseProposerReward:  baseProposerReward,
+			BonusProposerReward: bonusProposerReward,
+			WithdrawAddrEnabled: withdrawEnabled,
 		},
 	}
 

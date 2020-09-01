@@ -106,15 +106,21 @@ func (k Keeper) AllocateTokens(
 		remaining = remaining.Sub(reward)
 	}
 
-	// Send the foundation tax sum to the foundation tax address. Note, the taxes
-	// collected are decimals and when coverted to integer coins, we must truncate.
-	// The remainder is given back to the community pool.
+	// Send the foundation tax sum to the foundation tax address (if defined).
+	// Note, the taxes collected are decimals and when coverted to integer coins,
+	// we must truncate. The remainder is given back to the community pool.
 	foundationTaxAddr := k.GetSecretFoundationAddr(ctx)
-	foundationTaxSumTrunc, rem := foundationTaxSum.TruncateDecimal()
-	remaining = remaining.Add(rem...)
+	if !foundationTaxAddr.Empty() {
+		foundationTaxSumTrunc, rem := foundationTaxSum.TruncateDecimal()
+		remaining = remaining.Add(rem...)
 
-	if err := k.supplyKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, foundationTaxAddr, foundationTaxSumTrunc); err != nil {
-		panic(err)
+		if err := k.supplyKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, foundationTaxAddr, foundationTaxSumTrunc); err != nil {
+			panic(err)
+		}
+	} else {
+		// Add the foundation tax to the remaining sum to be allocated to the
+		// community pool since the secret foundation address is not defined.
+		remaining = remaining.Add(foundationTaxSum...)
 	}
 
 	// allocate community funding minus the foundation tax

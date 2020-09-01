@@ -75,6 +75,11 @@ func (p Params) ValidateBasic() error {
 			"community tax should non-negative and less than one: %s", p.CommunityTax,
 		)
 	}
+	if p.SecretFoundationTax.IsNegative() || p.SecretFoundationTax.GT(sdk.OneDec()) {
+		return fmt.Errorf(
+			"secret foundation tax should non-negative and less than one: %s", p.SecretFoundationTax,
+		)
+	}
 	if p.BaseProposerReward.IsNegative() {
 		return fmt.Errorf(
 			"base proposer reward should be positive: %s", p.BaseProposerReward,
@@ -89,9 +94,6 @@ func (p Params) ValidateBasic() error {
 		return fmt.Errorf(
 			"sum of base and bonus proposer reward cannot greater than one: %s", v,
 		)
-	}
-	if p.SecretFoundationTax.IsPositive() && p.SecretFoundationAddress.Empty() {
-		return fmt.Errorf("invalid or empty secret foundation address used with positive tax: %s", p.SecretFoundationTax)
 	}
 
 	return nil

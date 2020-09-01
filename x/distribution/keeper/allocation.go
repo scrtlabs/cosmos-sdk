@@ -86,34 +86,24 @@ func (k Keeper) AllocateTokens(
 	// validator's rewards. Note, foundationTax may be zero.
 	voteMultiplier := sdk.OneDec().Sub(proposerMultiplier).Sub(communityTax).Sub(foundationTax)
 
-	// Define the same vote multiplier without the foundationTax, allowing us to
-	// determine the amount to send to the foundation tax account. This allows us
-	// to avoid multiple multiplication and truncation operations.
-	voteMultiplierWithoutFT := sdk.OneDec().Sub(proposerMultiplier).Sub(communityTax)
-
 	var foundationTaxSum sdk.DecCoins
+	if !foundationTax.IsZero() {
+		foundationTaxSum = feesCollected.MulDecTruncate(foundationTax)
+		remaining = remaining.Sub(foundationTaxSum)
+	}
 
 	// allocate tokens proportionally to voting power minus any taxes
 	for _, vote := range previousVotes {
 		validator := k.stakingKeeper.ValidatorByConsAddr(ctx, vote.Validator.Address)
-		powerFraction := sdk.NewDec(vote.Validator.Power).QuoTruncate(sdk.NewDec(totalPreviousPower))
 
-		// To determine the allocation to the foundation tax, we determine the
-		// validator's reward with and without the foundation tax, and take the
-		// difference. Note, foundationTax may be zero. When non-zero, the invariant
-		// rewardWithoutFT > reward must hold.
+		powerFraction := sdk.NewDec(vote.Validator.Power).QuoTruncate(sdk.NewDec(totalPreviousPower))
 		reward := feesCollected.MulDecTruncate(voteMultiplier).MulDecTruncate(powerFraction)
-		rewardWithoutFT := feesCollected.MulDecTruncate(voteMultiplierWithoutFT).MulDecTruncate(powerFraction)
 
 		// allocate tokens to the validator
 		k.AllocateTokensToValidator(ctx, validator, reward)
 
-		// Determine the foundation tax, update remaining and foundationTaxSum, where
-		// we first deduct the reward from remaining and then further deduct the
-		// rewardWithoutFT from remaining as it will go to the foundation account.
-		valFoundationTax := rewardWithoutFT.Sub(reward)
+		// update the remaining allocation for the community pool
 		remaining = remaining.Sub(reward)
-		foundationTaxSum = foundationTaxSum.Add(valFoundationTax...)
 	}
 
 	// Send the foundation tax sum to the foundation tax address. Note, the taxes
@@ -128,7 +118,6 @@ func (k Keeper) AllocateTokens(
 	}
 
 	// allocate community funding minus the foundation tax
-	remaining = remaining.Sub(foundationTaxSum)
 	feePool.CommunityPool = feePool.CommunityPool.Add(remaining...)
 	k.SetFeePool(ctx, feePool)
 }

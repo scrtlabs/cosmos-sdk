@@ -77,17 +77,17 @@ func (k Keeper) AllocateTokens(
 			previousProposer.String()))
 	}
 
-	// calculate fraction allocated to validators
 	communityTax := k.GetCommunityTax(ctx)
+	voteMultiplier := sdk.OneDec().Sub(proposerMultiplier).Sub(communityTax)
+
 	foundationTax := k.GetSecretFoundationTax(ctx)
+	foundationTaxAddr := k.GetSecretFoundationAddr(ctx)
 
-	// Define the vote multiplier as (100 - proposerMultiplier - communityTax - foundationTax)%.
-	// The value along with a validator's power fraction, is used to determine the
-	// validator's rewards. Note, foundationTax may be zero.
-	voteMultiplier := sdk.OneDec().Sub(proposerMultiplier).Sub(communityTax).Sub(foundationTax)
-
+	// only apply the secret foundation tax when the tax and address is non-zero
 	var foundationTaxSum sdk.DecCoins
-	if !foundationTax.IsZero() {
+	if !foundationTax.IsZero() && !foundationTaxAddr.Empty() {
+		voteMultiplier = voteMultiplier.Sub(foundationTax)
+
 		foundationTaxSum = feesCollected.MulDecTruncate(foundationTax)
 		remaining = remaining.Sub(foundationTaxSum)
 	}
@@ -106,21 +106,16 @@ func (k Keeper) AllocateTokens(
 		remaining = remaining.Sub(reward)
 	}
 
-	// Send the foundation tax sum to the foundation tax address (if defined).
-	// Note, the taxes collected are decimals and when coverted to integer coins,
-	// we must truncate. The remainder is given back to the community pool.
-	foundationTaxAddr := k.GetSecretFoundationAddr(ctx)
-	if !foundationTaxAddr.Empty() {
+	// Send the foundation tax sum to the foundation tax address. Note, the taxes
+	// collected are decimals and when coverted to integer coins, we must truncate.
+	// The remainder is given back to the community pool.
+	if !foundationTaxSum.IsZero() {
 		foundationTaxSumTrunc, rem := foundationTaxSum.TruncateDecimal()
 		remaining = remaining.Add(rem...)
 
 		if err := k.supplyKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, foundationTaxAddr, foundationTaxSumTrunc); err != nil {
 			panic(err)
 		}
-	} else {
-		// Add the foundation tax to the remaining sum to be allocated to the
-		// community pool since the secret foundation address is not defined.
-		remaining = remaining.Add(foundationTaxSum...)
 	}
 
 	// allocate community funding minus the foundation tax

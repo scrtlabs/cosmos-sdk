@@ -27,6 +27,9 @@ func newCachedValidator(val types.Validator, marshalled string) cachedValidator 
 
 // get a single validator
 func (k Keeper) GetValidator(ctx sdk.Context, addr sdk.ValAddress) (validator types.Validator, found bool) {
+	k.validatorCacheMutex.Lock()
+	defer k.validatorCacheMutex.Unlock()
+
 	store := ctx.KVStore(k.storeKey)
 	value := store.Get(types.GetValidatorKey(addr))
 	if value == nil {

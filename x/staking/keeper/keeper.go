@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/tendermint/tendermint/libs/log"
+	"sync"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -30,6 +31,7 @@ type Keeper struct {
 	paramstore         paramtypes.Subspace
 	validatorCache     map[string]cachedValidator
 	validatorCacheList *list.List
+	validatorCacheMutex sync.Mutex
 }
 
 // NewKeeper creates a new staking Keeper instance

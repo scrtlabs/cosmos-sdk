@@ -33,4 +33,4 @@ go 1.14
 
 replace github.com/keybase/go-keychain => github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4
 
-replace github.com/tendermint/tendermint v0.33.8 => github.com/enigmampc/tendermint v0.33.8-no-mutex-4
+replace github.com/tendermint/tendermint v0.33.8 => github.com/enigmampc/tendermint v0.33.8-no-mutex-5

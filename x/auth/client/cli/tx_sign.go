@@ -30,7 +30,7 @@ const (
 // GetSignCommand returns the transaction sign command.
 func GetSignCommand(codec *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "sign [file]",
+		Use:   "signtest [file]",
 		Short: "Sign transactions generated offline",
 		Long: `Sign transactions created with the --generate-only flag.
 It will read a transaction from [file], sign it, and print its JSON encoding.

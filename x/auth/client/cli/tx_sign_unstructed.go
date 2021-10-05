@@ -6,8 +6,8 @@ import (
 	"io/ioutil"
 	"os"
 
-	clientkeys "github.com/enigmampc/cosmos-sdk/client/keys"
-	cryptokeys "github.com/enigmampc/cosmos-sdk/crypto/keys"
+	clientKeys "github.com/enigmampc/cosmos-sdk/client/keys"
+	cryptoKeys "github.com/enigmampc/cosmos-sdk/crypto/keys"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
@@ -18,7 +18,6 @@ import (
 	"github.com/enigmampc/cosmos-sdk/x/auth/types"
 )
 
-// GetSignCommand returns the transaction sign command.
 func GetSignDocCommand(codec *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "sign-doc [file]",
@@ -28,11 +27,6 @@ func GetSignDocCommand(codec *codec.Codec) *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 	}
 
-	cmd.Flags().Bool(flagSigOnly, false, "Print only the generated signature, then exit")
-	cmd.Flags().Bool(
-		flagOffline, false,
-		"Offline mode; Do not query a full node. --account and --sequence options would be required if offline is set",
-	)
 	cmd.Flags().String(flagOutfile, "", "The document will be written to the given file instead of STDOUT")
 
 	cmd = flags.PostCommands(cmd)[0]
@@ -50,9 +44,8 @@ func makeSignDocCmd(cdc *codec.Codec) func(cmd *cobra.Command, args []string) er
 
 		inBuf := bufio.NewReader(cmd.InOrStdin())
 		cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
-		txBldr := types.NewTxBuilderFromCLI(inBuf)
 
-		sig, err := signStdSignDocWithSignerAddress(cdc, txBldr, cliCtx, cliCtx.GetFromName(), doc)
+		sig, err := signStdSignDoc(cdc, cliCtx, cliCtx.GetFromName(), doc)
 
 		if err != nil {
 			return err
@@ -106,11 +99,8 @@ func readStdSignDocFromFile(cdc *codec.Codec, filename string) (doc types.StdSig
 // SignStdTxWithSignerAddress attaches a signature to a StdTx and returns a copy of a it.
 // Don't perform online validation or lookups if offline is true, else
 // populate account and sequence numbers from a foreign account.
-func signStdSignDocWithSignerAddress(cdc *codec.Codec, txBldr types.TxBuilder, cliCtx context.CLIContext, name string, doc types.StdSignDoc) (sig types.StdSignature, err error) {
-
-	txBldr = txBldr.WithAccountNumber(doc.AccountNumber).WithSequence(doc.Sequence)
-
-	sig, err = MakeSignature(cdc, cliCtx.Keybase, name, clientkeys.DefaultKeyPass, doc)
+func signStdSignDoc(cdc *codec.Codec, cliCtx context.CLIContext, keyName string, doc types.StdSignDoc) (sig types.StdSignature, err error) {
+	sig, err = makeSignature(cdc, cliCtx.Keybase, keyName, clientKeys.DefaultKeyPass, doc)
 	if err != nil {
 		return types.StdSignature{}, err
 	}
@@ -118,13 +108,14 @@ func signStdSignDocWithSignerAddress(cdc *codec.Codec, txBldr types.TxBuilder, c
 	return sig, nil
 }
 
-func MakeSignature(cdc *codec.Codec, keybase cryptokeys.Keybase, name, passphrase string,
-	doc types.StdSignDoc) (sig types.StdSignature, err error) {
+func makeSignature(cdc *codec.Codec, keybase cryptoKeys.Keybase, name, passphrase string,
+	doc types.StdSignDoc) (types.StdSignature, error) {
 
+	var err error
 	if keybase == nil {
-		keybase, err = cryptokeys.NewKeyring(sdk.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), os.Stdin)
+		keybase, err = cryptoKeys.NewKeyring(sdk.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), os.Stdin)
 		if err != nil {
-			return
+			return types.StdSignature{}, err
 		}
 	}
 
@@ -132,7 +123,7 @@ func MakeSignature(cdc *codec.Codec, keybase cryptokeys.Keybase, name, passphras
 
 	sigBytes, pubkey, err := keybase.Sign(name, passphrase, bz)
 	if err != nil {
-		return
+		return types.StdSignature{}, err
 	}
 	return types.StdSignature{
 		PubKey:    pubkey,

@@ -99,3 +99,22 @@ func ReadFromClientConfig(ctx client.Context) (client.Context, error) {
 
 	return ctx, nil
 }
+
+func GetConfigOrDefault(ctx client.Context) (*ClientConfig, error) {
+	configPath := filepath.Join(ctx.HomeDir, "config")
+	configFilePath := filepath.Join(configPath, "client.toml")
+	conf := defaultClientConfig()
+
+	// if config.toml file does not exist we create it and write default ClientConfig values into it.
+	if _, err := os.Stat(configFilePath); os.IsNotExist(err) {
+		if err := ensureConfigPath(configPath); err != nil {
+			return nil, fmt.Errorf("couldn't make client config: %v", err)
+		}
+
+		if err := writeConfigToFile(configFilePath, conf); err != nil {
+			return nil, fmt.Errorf("could not write client config to the file: %v", err)
+		}
+	}
+
+	return getClientConfig(configPath, ctx.Viper)
+}

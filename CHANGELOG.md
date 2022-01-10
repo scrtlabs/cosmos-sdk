@@ -37,6 +37,29 @@ Ref: https://keepachangelog.com/en/1.0.0/
 
 ## [Unreleased]
 
+## [v0.44.5](https://github.com/cosmos/cosmos-sdk/releases/tag/v0.44.5) - 2021-12-02
+
+### Improvements
+* (baseapp) [\#10631](https://github.com/cosmos/cosmos-sdk/pull/10631)  Emit ante events even for the failed txs. 
+
+### Bug Fixes
+
+* [\#10648](https://github.com/cosmos/cosmos-sdk/pull/10648) Upgrade IAVL to 0.17.3 to solve race condition bug in IAVL.
+
+## [v0.44.4](https://github.com/cosmos/cosmos-sdk/releases/tag/v0.44.4) - 2021-11-25
+
+### Improvements
+
+* (types) [\#10630](https://github.com/cosmos/cosmos-sdk/pull/10630) Add an `Events` field to the `TxResponse` type that captures _all_ events emitted by a transaction, unlike `Logs` which only contains events emitted during message execution.
+* (x/upgrade) [\#10532](https://github.com/cosmos/cosmos-sdk/pull/10532)  Add `keeper.DumpUpgradeInfoWithInfoToDisk` to include `Plan.Info` in the upgrade-info file.
+* (store) [\#10544](https://github.com/cosmos/cosmos-sdk/pull/10544) Use the new IAVL iterator structure which significantly improves iterator performance.
+
+### Bug Fixes
+
+* [\#10414](https://github.com/cosmos/cosmos-sdk/pull/10414) Use `sdk.GetConfig().GetFullBIP44Path()` instead `sdk.FullFundraiserPath` to generate key
+* (bank) [\#10394](https://github.com/cosmos/cosmos-sdk/pull/10394) Fix: query account balance by ibc denom.
+* [\10608](https://github.com/cosmos/cosmos-sdk/pull/10608) Change the order of module migration by pushing x/auth to the end. Auth module depends on other modules and should be run last. We have updated the documentation to provide more details how to change module migration order. This is technically a breaking change, but only impacts updates between the upgrades with version change, hence migrating from the previous patch release doesn't cause new migration and doesn't break the state.
+
 ## [v0.44.3](https://github.com/cosmos/cosmos-sdk/releases/tag/v0.44.3) - 2021-10-21
 
 ### Improvements
@@ -52,6 +75,7 @@ Ref: https://keepachangelog.com/en/1.0.0/
 
 * (client) [#10226](https://github.com/cosmos/cosmos-sdk/pull/10226) Fix --home flag parsing.
 * (rosetta) [\#10340](https://github.com/cosmos/cosmos-sdk/pull/10340) Use `GenesisChunked(ctx)` instead `Genesis(ctx)` to get genesis block height
+* [\#10394](https://github.com/cosmos/cosmos-sdk/issues/10394) Fixes issue related to grpc-gateway of account balance by ibc-denom.
 
 ## [v0.44.2](https://github.com/cosmos/cosmos-sdk/releases/tag/v0.44.2) - 2021-10-12
 

@@ -74,13 +74,7 @@ func snapshotItems(items [][]byte) [][]byte {
 		zWriter, _ := zlib.NewWriterLevel(bufWriter, 7)
 		protoWriter := protoio.NewDelimitedWriter(zWriter)
 		for _, item := range items {
-			protoWriter.WriteMsg(&snapshottypes.SnapshotItem{
-				Item: &snapshottypes.SnapshotItem_ExtensionPayload{
-					ExtensionPayload: &snapshottypes.SnapshotExtensionPayload{
-						Payload: item,
-					},
-				},
-			})
+			types.WriteExtensionItem(protoWriter, item)
 		}
 		protoWriter.Close()
 		zWriter.Close()
@@ -134,14 +128,7 @@ func (m *mockSnapshotter) Restore(
 
 func (m *mockSnapshotter) Snapshot(height uint64, protoWriter protoio.Writer) error {
 	for _, item := range m.items {
-		msg := snapshottypes.SnapshotItem{
-			Item: &snapshottypes.SnapshotItem_ExtensionPayload{
-				ExtensionPayload: &snapshottypes.SnapshotExtensionPayload{
-					Payload: item,
-				},
-			},
-		}
-		if err := protoWriter.WriteMsg(&msg); err != nil {
+		if err := types.WriteExtensionItem(protoWriter, item); err != nil {
 			return err
 		}
 	}

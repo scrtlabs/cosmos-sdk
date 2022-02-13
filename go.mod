@@ -47,9 +47,9 @@ require (
 	github.com/tendermint/crypto v0.0.0-20191022145703-50d29ede1e15
 	github.com/tendermint/go-amino v0.16.0
 	github.com/tendermint/tendermint v0.34.14
-	github.com/tendermint/tm-db v0.6.4
-	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5
-	google.golang.org/genproto v0.0.0-20210828152312-66f60bf46e71
+	github.com/tendermint/tm-db v0.6.6
+	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
+	google.golang.org/genproto v0.0.0-20210917145530-b395a37504d4
 	google.golang.org/grpc v1.42.0
 	google.golang.org/protobuf v1.27.1
 	gopkg.in/yaml.v2 v2.4.0
@@ -62,6 +62,8 @@ replace google.golang.org/grpc => google.golang.org/grpc v1.33.2
 replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 
 replace github.com/99designs/keyring => github.com/cosmos/keyring v1.1.7-0.20210622111912-ef00f8ac3d76
+
+replace github.com/cosmos/iavl => github.com/osmosis-labs/iavl v0.17.3-osmo-v1
 
 // Fix upstream GHSA-h395-qcrw-5vmq vulnerability.
 // TODO Remove it: https://github.com/cosmos/cosmos-sdk/issues/10409

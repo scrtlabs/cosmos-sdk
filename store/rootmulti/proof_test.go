@@ -15,7 +15,7 @@ import (
 func TestVerifyIAVLStoreQueryProof(t *testing.T) {
 	// Create main tree for testing.
 	db := dbm.NewMemDB()
-	iStore, err := iavl.LoadStore(db, nil, types.CommitID{}, false)
+	iStore, err := iavl.LoadStore(db, nil, types.NewKVStoreKey("test"), types.CommitID{}, false)
 	store := iStore.(*iavl.Store)
 	require.Nil(t, err)
 	store.Set([]byte("MYKEY"), []byte("MYVALUE"))

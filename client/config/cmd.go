@@ -24,7 +24,7 @@ func Cmd() *cobra.Command {
 		// It overrides the rootCmd `PersistentPreRunE` to allow to correct a faulty configuration.
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 			// Create context with flags to get the right home dir
-			clientCtx, err := client.ReadPersistentCommandFlags(client.GetClientContextFromCmd(cmd).WithViper(""), cmd.Flags())
+			clientCtx, err := client.ReadPersistentCommandFlags(cmd.Context(), client.GetClientContextFromCmd(cmd).WithViper(""), cmd.Flags())
 			if err != nil {
 				return err
 			}

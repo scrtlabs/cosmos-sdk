@@ -3,6 +3,7 @@ package rootmulti
 import (
 	"encoding/binary"
 	"fmt"
+	"github.com/tendermint/tendermint/libs/log"
 	"io"
 	"math"
 	"sort"
@@ -37,7 +38,9 @@ const (
 // cacheMultiStore which is used for branching other MultiStores. It implements
 // the CommitMultiStore interface.
 type Store struct {
-	db             dbm.DB
+	db     dbm.DB
+	logger log.Logger
+
 	lastCommitInfo *types.CommitInfo
 	pruningOpts    types.PruningOptions
 	storesParams   map[types.StoreKey]storeParams
@@ -46,6 +49,7 @@ type Store struct {
 	lazyLoading    bool
 	pruneHeights   []int64
 	initialVersion int64
+	iavlCacheSize  int
 
 	traceWriter  io.Writer
 	traceContext types.TraceContext
@@ -64,15 +68,17 @@ var (
 // store will be created with a PruneNothing pruning strategy by default. After
 // a store is created, KVStores must be mounted and finally LoadLatestVersion or
 // LoadVersion must be called.
-func NewStore(db dbm.DB) *Store {
+func NewStore(db dbm.DB, logger log.Logger) *Store {
 	return &Store{
-		db:           db,
-		pruningOpts:  types.PruneNothing,
-		storesParams: make(map[types.StoreKey]storeParams),
-		stores:       make(map[types.StoreKey]types.CommitKVStore),
-		keysByName:   make(map[string]types.StoreKey),
-		pruneHeights: make([]int64, 0),
-		listeners:    make(map[types.StoreKey][]types.WriteListener),
+		db:            db,
+		logger:        logger,
+		pruningOpts:   types.PruneNothing,
+		iavlCacheSize: iavl.DefaultIAVLCacheSize,
+		storesParams:  make(map[types.StoreKey]storeParams),
+		stores:        make(map[types.StoreKey]types.CommitKVStore),
+		keysByName:    make(map[string]types.StoreKey),
+		pruneHeights:  make([]int64, 0),
+		listeners:     make(map[types.StoreKey][]types.WriteListener),
 	}
 }
 
@@ -831,9 +837,9 @@ func (rs *Store) loadCommitStoreFromParams(key types.StoreKey, id types.CommitID
 		var err error
 
 		if params.initialVersion == 0 {
-			store, err = iavl.LoadStore(db, id, rs.lazyLoading)
+			store, err = iavl.LoadStore(db, rs.logger, key, id, rs.lazyLoading, rs.iavlCacheSize)
 		} else {
-			store, err = iavl.LoadStoreWithInitialVersion(db, id, rs.lazyLoading, params.initialVersion)
+			store, err = iavl.LoadStoreWithInitialVersion(db, rs.logger, key, id, rs.lazyLoading, params.initialVersion, rs.iavlCacheSize)
 		}
 
 		if err != nil {

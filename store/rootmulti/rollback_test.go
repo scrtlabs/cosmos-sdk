@@ -46,10 +46,22 @@ func SetupWithDB(isCheckTx bool, db dbm.DB) *simapp.SimApp {
 }
 
 func TestRollback(t *testing.T) {
-	t.Skip()
+	encCfg := simapp.MakeTestEncodingConfig()
 	db := dbm.NewMemDB()
-	app := SetupWithDB(false, db)
+	app := simapp.NewSimApp(log.NewNopLogger(), db, nil, true, map[int64]bool{}, simapp.DefaultNodeHome, 0, encCfg, simapp.EmptyAppOptions{})
+	genesisState := simapp.NewDefaultGenesisState(encCfg.Marshaler)
+	stateBytes, err := json.MarshalIndent(genesisState, "", "  ")
+	require.NoError(t, err)
+
+	// Initialize the chain
+	app.InitChain(
+		abci.RequestInitChain{
+			Validators:    []abci.ValidatorUpdate{},
+			AppStateBytes: stateBytes,
+		},
+	)
 	app.Commit()
+
 	ver0 := app.LastBlockHeight()
 	// commit 10 blocks
 	for i := int64(1); i <= 10; i++ {

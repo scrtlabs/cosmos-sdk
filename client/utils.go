@@ -3,6 +3,7 @@ package client
 import (
 	"github.com/spf13/pflag"
 	rpchttp "github.com/tendermint/tendermint/rpc/client/http"
+	"net/url"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -74,5 +75,16 @@ func ReadPageRequest(flagSet *pflag.FlagSet) (*query.PageRequest, error) {
 // NewClientFromNode sets up Client implementation that communicates with a Tendermint node over
 // JSON RPC and WebSockets
 func NewClientFromNode(nodeURI string) (*rpchttp.HTTP, error) {
-	return rpchttp.New(nodeURI, "/websocket")
+
+	defaultPortURI, _ := url.Parse(nodeURI)
+
+	if defaultPortURI.Scheme == "https" && defaultPortURI.Port() == "" {
+		defaultPortURI.Host = defaultPortURI.Host + ":443"
+	}
+
+	if defaultPortURI.Scheme == "http" && defaultPortURI.Port() == "" {
+		defaultPortURI.Host = defaultPortURI.Host + ":80"
+	}
+
+	return rpchttp.New(defaultPortURI.String(), "/websocket")
 }

@@ -74,12 +74,11 @@ func ReadPageRequest(flagSet *pflag.FlagSet) (*query.PageRequest, error) {
 
 // NewClientFromNode sets up Client implementation that communicates with a Tendermint node over
 // JSON RPC and WebSockets
+// TODO: We might not need to manually append `/websocket`:
+// https://github.com/cosmos/cosmos-sdk/issues/8986
 func NewClientFromNode(nodeURI string) (*rpchttp.HTTP, error) {
 
-	defaultPortURI, err := url.Parse(nodeURI)
-	if err != nil {
-		return nil, err
-	}
+	defaultPortURI, _ := url.Parse(nodeURI)
 
 	if defaultPortURI.Scheme == "https" && defaultPortURI.Port() == "" {
 		defaultPortURI.Host = defaultPortURI.Host + ":443"
@@ -90,4 +89,5 @@ func NewClientFromNode(nodeURI string) (*rpchttp.HTTP, error) {
 	}
 
 	return rpchttp.New(defaultPortURI.String(), "/websocket")
+
 }

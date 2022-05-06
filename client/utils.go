@@ -76,7 +76,10 @@ func ReadPageRequest(flagSet *pflag.FlagSet) (*query.PageRequest, error) {
 // JSON RPC and WebSockets
 func NewClientFromNode(nodeURI string) (*rpchttp.HTTP, error) {
 
-	defaultPortURI, _ := url.Parse(nodeURI)
+	defaultPortURI, err := url.Parse(nodeURI)
+	if err != nil {
+		return nil, err
+	}
 
 	if defaultPortURI.Scheme == "https" && defaultPortURI.Port() == "" {
 		defaultPortURI.Host = defaultPortURI.Host + ":443"

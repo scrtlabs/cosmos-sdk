@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/store/rootmulti"
@@ -36,7 +37,7 @@ application.
 				return fmt.Errorf("failed to rollback tendermint state: %w", err)
 			}
 			// rollback the multistore
-			cms := rootmulti.NewStore(db)
+			cms := rootmulti.NewStore(db, log.NewNopLogger())
 			cms.RollbackToVersion(height)
 
 			fmt.Printf("Rolled back state to height %d and hash %X", height, hash)

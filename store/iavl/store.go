@@ -3,10 +3,9 @@ package iavl
 import (
 	"errors"
 	"fmt"
+	"github.com/tendermint/tendermint/libs/log"
 	"io"
 	"time"
-
-	"github.com/tendermint/tendermint/libs/log"
 
 	ics23 "github.com/confio/ics23/go"
 	"github.com/cosmos/iavl"
@@ -14,7 +13,6 @@ import (
 	tmcrypto "github.com/tendermint/tendermint/proto/tendermint/crypto"
 	dbm "github.com/tendermint/tm-db"
 
-	pruningtypes "github.com/cosmos/cosmos-sdk/pruning/types"
 	"github.com/cosmos/cosmos-sdk/store/cachekv"
 	"github.com/cosmos/cosmos-sdk/store/listenkv"
 	"github.com/cosmos/cosmos-sdk/store/tracekv"
@@ -145,13 +143,13 @@ func (st *Store) LastCommitID() types.CommitID {
 
 // SetPruning panics as pruning options should be provided at initialization
 // since IAVl accepts pruning options directly.
-func (st *Store) SetPruning(_ pruningtypes.PruningOptions) {
+func (st *Store) SetPruning(_ types.PruningOptions) {
 	panic("cannot set pruning options on an initialized IAVL store")
 }
 
 // SetPruning panics as pruning options should be provided at initialization
 // since IAVl accepts pruning options directly.
-func (st *Store) GetPruning() pruningtypes.PruningOptions {
+func (st *Store) GetPruning() types.PruningOptions {
 	panic("cannot get pruning options on an initialized IAVL store")
 }
 

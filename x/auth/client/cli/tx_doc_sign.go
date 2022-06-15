@@ -14,7 +14,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec/legacy"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth/legacy/legacytx"
+	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
 )
 
 func GetSignDocCommand() *cobra.Command {
@@ -47,7 +47,6 @@ func makeSignDocCmd() func(cmd *cobra.Command, args []string) error {
 
 		keybase := tx.NewFactoryCLI(ctx, cmd.Flags()).Keybase()
 		sig, err := signStdSignDoc(ctx, keybase, doc)
-
 		if err != nil {
 			return err
 		}
@@ -60,7 +59,7 @@ func makeSignDocCmd() func(cmd *cobra.Command, args []string) error {
 		}
 
 		fp, err := os.OpenFile(
-			viper.GetString(flags.FlagOutputDocument), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644,
+			viper.GetString(flags.FlagOutputDocument), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o644,
 		)
 		if err != nil {
 			return err
@@ -96,7 +95,6 @@ func readStdSignDocFromFile(filename string) (doc legacytx.StdSignDoc, err error
 // Don't perform online validation or lookups if offline is true, else
 // populate account and sequence numbers from a foreign account.
 func signStdSignDoc(ctx client.Context, keybase keyring.Keyring, doc legacytx.StdSignDoc) (sig legacytx.StdSignature, err error) {
-
 	sig, err = makeSignature(keybase, ctx.GetFromName(), doc)
 	if err != nil {
 		return legacytx.StdSignature{}, err

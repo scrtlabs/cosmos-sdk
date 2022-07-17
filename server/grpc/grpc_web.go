@@ -34,7 +34,7 @@ func StartGRPCWeb(grpcSrv *grpc.Server, config config.Config) (*http.Server, err
 
 	errCh := make(chan error)
 	go func() {
-		ln, err := reuseport.Listen("tcp", config.GRPCWeb.Address)
+		ln, err := reuseport.Listen("tcp4", config.GRPCWeb.Address)
 		if err != nil {
 			log.Fatalf("error in reuseport listener: %v", err)
 		}

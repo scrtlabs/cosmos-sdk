@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
@@ -10,6 +11,8 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/server/config"
 	"github.com/cosmos/cosmos-sdk/server/types"
+
+	"github.com/valyala/fasthttp/reuseport"
 )
 
 // StartGRPCWeb starts a gRPC-Web server on the given address.
@@ -31,7 +34,12 @@ func StartGRPCWeb(grpcSrv *grpc.Server, config config.Config) (*http.Server, err
 
 	errCh := make(chan error)
 	go func() {
-		if err := grpcWebSrv.ListenAndServe(); err != nil {
+		ln, err := reuseport.Listen("tcp", config.GRPCWeb.Address)
+		if err != nil {
+			log.Fatalf("error in reuseport listener: %v", err)
+		}
+
+		if err := grpcWebSrv.Serve(ln); err != nil {
 			errCh <- fmt.Errorf("[grpc] failed to serve: %w", err)
 		}
 	}()

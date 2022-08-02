@@ -42,10 +42,10 @@ func migrateParamsStore(ctx sdk.Context, paramstore types.ParamSubspace) {
 	//Set votingParams
 	paramstore.Get(ctx, types.ParamStoreKeyVotingParams, &votingParams)
 	votingParams.ExpeditedVotingPeriod = expeditedVotingPeriod
-	paramstore.Set(ctx, types.ParamStoreKeyDepositParams, votingParams)
+	paramstore.Set(ctx, types.ParamStoreKeyVotingParams, votingParams)
 
 	//Set tallyParams
 	paramstore.Get(ctx, types.ParamStoreKeyTallyParams, &votingParams)
 	tallyParams.ExpeditedThreshold = expeditedThreshold
-	paramstore.Set(ctx, types.ParamStoreKeyDepositParams, votingParams)
+	paramstore.Set(ctx, types.ParamStoreKeyTallyParams, votingParams)
 }

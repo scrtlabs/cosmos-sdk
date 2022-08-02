@@ -36,7 +36,7 @@ const (
 	DefaultKeyPass = "12345678"
 
 	// Default CoinType for Secret Ledger App
-	DefaultLedgerCoinType = 529
+	DefaultLedgerCoinType = 118
 )
 
 // AddKeyCommand defines a keys command to add a generated or recovered private key to keybase.

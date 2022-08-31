@@ -7,6 +7,7 @@ import "google/protobuf/any.proto";
 
 option go_package                       = "github.com/cosmos/cosmos-sdk/types";
 option (gogoproto.goproto_stringer_all) = false;
+option (gogoproto.sizer_all) = true;
 
 // TxResponse defines a structure containing relevant tx data and metadata. The
 // tags are stringified and the log is JSON decoded.

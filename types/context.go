@@ -7,7 +7,6 @@ import (
 	"github.com/gogo/protobuf/proto"
 	abci "github.com/tendermint/tendermint/abci/types"
 	tmbytes "github.com/tendermint/tendermint/libs/bytes"
-	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
 	"github.com/cosmos/cosmos-sdk/store/gaskv"
@@ -23,21 +22,22 @@ but please do not over-use it. We try to keep all data structured
 and standard additions here would be better just to add to the Context struct
 */
 type Context struct {
-	ctx           context.Context
-	ms            MultiStore
-	header        tmproto.Header
-	headerHash    tmbytes.HexBytes
-	chainID       string
-	txBytes       []byte
-	logger        log.Logger
-	voteInfo      []abci.VoteInfo
-	gasMeter      GasMeter
-	blockGasMeter GasMeter
-	checkTx       bool
-	recheckTx     bool // if recheckTx == true, then checkTx must also be true
-	minGasPrice   DecCoins
-	consParams    *abci.ConsensusParams
-	eventManager  *EventManager
+	ctx             context.Context
+	ms              MultiStore
+	header          tmproto.Header
+	headerHash      tmbytes.HexBytes
+	chainID         string
+	txBytes         []byte
+	logger          SdkLogger
+	voteInfo        []abci.VoteInfo
+	gasMeter        GasMeter
+	blockGasMeter   GasMeter
+	checkTx         bool
+	recheckTx       bool // if recheckTx == true, then checkTx must also be true
+	minGasPrice     DecCoins
+	consParams      *abci.ConsensusParams
+	eventManager    *EventManager
+	logLevelManager *LogLevelManager
 }
 
 // Proposed rename, not done to avoid API breakage
@@ -50,7 +50,7 @@ func (c Context) BlockHeight() int64          { return c.header.Height }
 func (c Context) BlockTime() time.Time        { return c.header.Time }
 func (c Context) ChainID() string             { return c.chainID }
 func (c Context) TxBytes() []byte             { return c.txBytes }
-func (c Context) Logger() log.Logger          { return c.logger }
+func (c Context) Logger() SdkLogger           { return c.logger }
 func (c Context) VoteInfos() []abci.VoteInfo  { return c.voteInfo }
 func (c Context) GasMeter() GasMeter          { return c.gasMeter }
 func (c Context) BlockGasMeter() GasMeter     { return c.blockGasMeter }
@@ -77,19 +77,21 @@ func (c Context) ConsensusParams() *abci.ConsensusParams {
 }
 
 // create a new context
-func NewContext(ms MultiStore, header tmproto.Header, isCheckTx bool, logger log.Logger) Context {
+func NewContext(ms MultiStore, header tmproto.Header, isCheckTx bool, logger SdkLogger, manager *LogLevelManager) Context {
 	// https://github.com/gogo/protobuf/issues/519
 	header.Time = header.Time.UTC()
+
 	return Context{
-		ctx:          context.Background(),
-		ms:           ms,
-		header:       header,
-		chainID:      header.ChainID,
-		checkTx:      isCheckTx,
-		logger:       logger,
-		gasMeter:     stypes.NewInfiniteGasMeter(),
-		minGasPrice:  DecCoins{},
-		eventManager: NewEventManager(),
+		ctx:             context.Background(),
+		ms:              ms,
+		header:          header,
+		chainID:         header.ChainID,
+		checkTx:         isCheckTx,
+		logger:          logger,
+		gasMeter:        stypes.NewInfiniteGasMeter(),
+		minGasPrice:     DecCoins{},
+		eventManager:    NewEventManager(),
+		logLevelManager: manager,
 	}
 }
 
@@ -157,7 +159,7 @@ func (c Context) WithTxBytes(txBytes []byte) Context {
 }
 
 // WithLogger returns a Context with an updated logger.
-func (c Context) WithLogger(logger log.Logger) Context {
+func (c Context) WithLogger(logger SdkLogger) Context {
 	c.logger = logger
 	return c
 }
@@ -221,9 +223,12 @@ func (c Context) IsZero() bool {
 
 // WithValue is deprecated, provided for backwards compatibility
 // Please use
-//     ctx = ctx.WithContext(context.WithValue(ctx.Context(), key, false))
+//
+//	ctx = ctx.WithContext(context.WithValue(ctx.Context(), key, false))
+//
 // instead of
-//     ctx = ctx.WithValue(key, false)
+//
+//	ctx = ctx.WithValue(key, false)
 func (c Context) WithValue(key, value interface{}) Context {
 	c.ctx = context.WithValue(c.ctx, key, value)
 	return c
@@ -231,9 +236,12 @@ func (c Context) WithValue(key, value interface{}) Context {
 
 // Value is deprecated, provided for backwards compatibility
 // Please use
-//     ctx.Context().Value(key)
+//
+//	ctx.Context().Value(key)
+//
 // instead of
-//     ctx.Value(key)
+//
+//	ctx.Value(key)
 func (c Context) Value(key interface{}) interface{} {
 	return c.ctx.Value(key)
 }
@@ -280,4 +288,12 @@ func WrapSDKContext(ctx Context) context.Context {
 // attached
 func UnwrapSDKContext(ctx context.Context) Context {
 	return ctx.Value(SdkContextKey).(Context)
+}
+
+// GetLogLevel
+func (c Context) GetLogLevel(key string) Level {
+	if c.logLevelManager == nil {
+		return Level(c.logger.GetLevel())
+	}
+	return c.logLevelManager.GetLogLevel(key)
 }

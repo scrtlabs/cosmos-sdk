@@ -41,7 +41,7 @@ const ServerContextKey = sdk.ContextKey("server.context")
 type Context struct {
 	Viper    *viper.Viper
 	Config   *tmcfg.Config
-	Logger   tmlog.Logger
+	Logger   sdk.SdkLogger
 	TmLogger tmlog.Logger
 }
 
@@ -58,13 +58,13 @@ func NewDefaultContext() *Context {
 	return NewContext(
 		viper.New(),
 		tmcfg.DefaultConfig(),
-		ZeroLogWrapper{log.Logger},
+		sdk.SdkLogger{Logger: log.Logger},
 		ZeroLogWrapper{log.Logger},
 	)
 }
 
-func NewContext(v *viper.Viper, config *tmcfg.Config, logger tmlog.Logger, tmlogger tmlog.Logger) *Context {
-	return &Context{v, config, logger, tmlogger}
+func NewContext(v *viper.Viper, config *tmcfg.Config, appLogger sdk.SdkLogger, tmlogger tmlog.Logger) *Context {
+	return &Context{v, config, appLogger, tmlogger}
 }
 
 func bindFlags(basename string, cmd *cobra.Command, v *viper.Viper) (err error) {
@@ -160,7 +160,7 @@ func InterceptConfigsPreRunHandler(cmd *cobra.Command, customAppConfigTemplate s
 		return fmt.Errorf("failed to parse log level (%s): %w", tmLogLvlStr, err)
 	}
 
-	serverCtx.Logger = ZeroLogWrapper{zerolog.New(logWriter).Level(logLvl).With().Timestamp().Logger()}
+	serverCtx.Logger = sdk.SdkLogger{Logger: zerolog.New(logWriter).Level(logLvl).With().Timestamp().Logger()}
 	serverCtx.TmLogger = ZeroLogWrapper{zerolog.New(logWriter).Level(tmLogLvl).With().Timestamp().Logger()}
 
 	return SetCmdServerContext(cmd, serverCtx)

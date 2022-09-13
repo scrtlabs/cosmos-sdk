@@ -301,7 +301,7 @@ func (k Keeper) ClearUpgradePlan(ctx sdk.Context) {
 
 // Logger returns a module-specific logger.
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
-	return ctx.Logger().With("module", "x/"+types.ModuleName)
+	return ctx.Logger().Level(ctx.GetLogLevel(types.ModuleName)).With("module", "x/"+types.ModuleName)
 }
 
 // GetUpgradePlan returns the currently scheduled Plan if any, setting havePlan to true if there is a scheduled

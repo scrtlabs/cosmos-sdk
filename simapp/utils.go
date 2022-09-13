@@ -3,9 +3,10 @@ package simapp
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/rs/zerolog"
 	"io/ioutil"
+	"os"
 
-	"github.com/tendermint/tendermint/libs/log"
 	dbm "github.com/tendermint/tm-db"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -16,32 +17,35 @@ import (
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 )
 
+func defaultLogger() sdk.SdkLogger {
+	return sdk.SdkLogger{zerolog.New(os.Stdout)}.WithSdkLogger("module", "sdk/app")
+}
+
 // SetupSimulation creates the config, db (levelDB), temporary directory and logger for
 // the simulation tests. If `FlagEnabledValue` is false it skips the current test.
 // Returns error on an invalid db intantiation or temp dir creation.
-func SetupSimulation(dirPrefix, dbName string) (simtypes.Config, dbm.DB, string, log.Logger, bool, error) {
+func SetupSimulation(dirPrefix, dbName string) (simtypes.Config, dbm.DB, string, sdk.SdkLogger, bool, error) {
 	if !FlagEnabledValue {
-		return simtypes.Config{}, nil, "", nil, true, nil
+		return simtypes.Config{}, nil, "", sdk.SdkLogger{}, true, nil
 	}
 
 	config := NewConfigFromFlags()
 	config.ChainID = helpers.SimAppChainID
 
-	var logger log.Logger
+	logger := defaultLogger()
+
 	if FlagVerboseValue {
-		logger = log.TestingLogger()
-	} else {
-		logger = log.NewNopLogger()
+		logger.Level(sdk.Disabled)
 	}
 
 	dir, err := ioutil.TempDir("", dirPrefix)
 	if err != nil {
-		return simtypes.Config{}, nil, "", nil, false, err
+		return simtypes.Config{}, nil, "", sdk.SdkLogger{}, false, err
 	}
 
 	db, err := sdk.NewLevelDB(dbName, dir)
 	if err != nil {
-		return simtypes.Config{}, nil, "", nil, false, err
+		return simtypes.Config{}, nil, "", sdk.SdkLogger{}, false, err
 	}
 
 	return config, db, dir, logger, false, nil

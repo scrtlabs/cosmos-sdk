@@ -47,7 +47,7 @@ func NewKeeper(
 
 // Logger returns a module-specific logger.
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
-	return ctx.Logger().With("module", "x/"+types.ModuleName)
+	return ctx.Logger().Level(ctx.GetLogLevel(types.ModuleName)).With("module", "x/"+types.ModuleName)
 }
 
 // get the minter

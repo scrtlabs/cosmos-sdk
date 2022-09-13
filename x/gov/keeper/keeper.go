@@ -81,7 +81,7 @@ func (keeper *Keeper) SetHooks(gh types.GovHooks) *Keeper {
 
 // Logger returns a module-specific logger.
 func (keeper Keeper) Logger(ctx sdk.Context) log.Logger {
-	return ctx.Logger().With("module", "x/"+types.ModuleName)
+	return ctx.Logger().Level(ctx.GetLogLevel(types.ModuleName)).With("module", "x/"+types.ModuleName)
 }
 
 // Router returns the gov Keeper's Router

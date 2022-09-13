@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
+	"github.com/rs/zerolog"
 	"io/ioutil"
 	"math/rand"
 	"os"
@@ -74,8 +75,8 @@ func (ps *paramStore) Get(_ sdk.Context, key []byte, ptr interface{}) {
 	}
 }
 
-func defaultLogger() log.Logger {
-	return log.NewTMLogger(log.NewSyncWriter(os.Stdout)).With("module", "sdk/app")
+func defaultLogger() sdk.SdkLogger {
+	return sdk.SdkLogger{zerolog.New(os.Stdout)}.WithSdkLogger("module", "sdk/app")
 }
 
 func newBaseApp(name string, options ...func(*BaseApp)) *BaseApp {
@@ -361,7 +362,8 @@ func TestVersionSetterGetter(t *testing.T) {
 }
 
 func TestLoadVersionInvalid(t *testing.T) {
-	logger := log.NewNopLogger()
+	logger := defaultLogger()
+	logger.Level(sdk.Disabled)
 	pruningOpt := SetPruning(store.PruneNothing)
 	db := dbm.NewMemDB()
 	name := t.Name()
@@ -393,7 +395,8 @@ func TestLoadVersionInvalid(t *testing.T) {
 }
 
 func TestLoadVersionPruning(t *testing.T) {
-	logger := log.NewNopLogger()
+	logger := defaultLogger()
+	logger.Level(sdk.Disabled)
 	pruningOptions := store.PruningOptions{
 		KeepRecent: 2,
 		KeepEvery:  3,

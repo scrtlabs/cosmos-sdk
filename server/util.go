@@ -39,9 +39,10 @@ const ServerContextKey = sdk.ContextKey("server.context")
 
 // server context
 type Context struct {
-	Viper  *viper.Viper
-	Config *tmcfg.Config
-	Logger tmlog.Logger
+	Viper    *viper.Viper
+	Config   *tmcfg.Config
+	Logger   tmlog.Logger
+	TmLogger tmlog.Logger
 }
 
 // ErrorCode contains the exit code for server exit.
@@ -58,11 +59,12 @@ func NewDefaultContext() *Context {
 		viper.New(),
 		tmcfg.DefaultConfig(),
 		ZeroLogWrapper{log.Logger},
+		ZeroLogWrapper{log.Logger},
 	)
 }
 
-func NewContext(v *viper.Viper, config *tmcfg.Config, logger tmlog.Logger) *Context {
-	return &Context{v, config, logger}
+func NewContext(v *viper.Viper, config *tmcfg.Config, logger tmlog.Logger, tmlogger tmlog.Logger) *Context {
+	return &Context{v, config, logger, tmlogger}
 }
 
 func bindFlags(basename string, cmd *cobra.Command, v *viper.Viper) (err error) {
@@ -128,6 +130,7 @@ func InterceptConfigsPreRunHandler(cmd *cobra.Command, customAppConfigTemplate s
 
 	// intercept configuration files, using both Viper instances separately
 	config, err := interceptConfigs(serverCtx.Viper, customAppConfigTemplate, customAppConfig)
+
 	if err != nil {
 		return err
 	}
@@ -145,13 +148,20 @@ func InterceptConfigsPreRunHandler(cmd *cobra.Command, customAppConfigTemplate s
 		logWriter = os.Stderr
 	}
 
-	logLvlStr := serverCtx.Viper.GetString(flags.FlagLogLevel)
+	logLvlStr := serverCtx.Viper.GetString(flags.FlagAppLogLevel)
+	tmLogLvlStr := serverCtx.Viper.GetString(flags.FlagTmLogLevel)
+
 	logLvl, err := zerolog.ParseLevel(logLvlStr)
 	if err != nil {
 		return fmt.Errorf("failed to parse log level (%s): %w", logLvlStr, err)
 	}
+	tmLogLvl, err := zerolog.ParseLevel(tmLogLvlStr)
+	if err != nil {
+		return fmt.Errorf("failed to parse log level (%s): %w", tmLogLvlStr, err)
+	}
 
 	serverCtx.Logger = ZeroLogWrapper{zerolog.New(logWriter).Level(logLvl).With().Timestamp().Logger()}
+	serverCtx.TmLogger = ZeroLogWrapper{zerolog.New(logWriter).Level(tmLogLvl).With().Timestamp().Logger()}
 
 	return SetCmdServerContext(cmd, serverCtx)
 }

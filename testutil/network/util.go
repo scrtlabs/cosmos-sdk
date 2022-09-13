@@ -27,7 +27,7 @@ import (
 )
 
 func startInProcess(cfg Config, val *Validator) error {
-	logger := val.Ctx.Logger
+	logger := val.Ctx.TmLogger
 	tmCfg := val.Ctx.Config
 	tmCfg.Instrumentation.Prometheus = false
 

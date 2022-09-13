@@ -20,6 +20,9 @@ const DefaultConfigTemplate = `# This is a TOML config file.
 # specified in this config (e.g. 0.25token1;0.0001token2).
 minimum-gas-prices = "{{ .BaseConfig.MinGasPrices }}"
 
+# Cosmos-sdk module log level (separate from the tendermint-only one in config.toml)
+app-log-level = "{{ .BaseConfig.AppLogLevel }}"
+
 # default: the last 100 states are kept in addition to every 500th state; pruning at 10 block intervals
 # nothing: all historic states will be saved, nothing will be deleted (i.e. archiving node)
 # everything: all saved states will be deleted, storing only the current and previous state; pruning at 10 block intervals

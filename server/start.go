@@ -288,7 +288,7 @@ func startInProcess(ctx *Context, clientCtx client.Context, appCreator types.App
 			genDocProvider,
 			node.DefaultDBProvider,
 			node.DefaultMetricsProvider(cfg.Instrumentation),
-			ctx.Logger,
+			ctx.TmLogger,
 		)
 		if err != nil {
 			return err

@@ -77,8 +77,13 @@ const (
 	FlagGRPCConcurrency  = "grpc-concurrency"
 
 	// Tendermint logging flags
-	FlagLogLevel  = "log_level"
-	FlagLogFormat = "log_format"
+	FlagTmLogLevel = "log_level"
+	FlagLogFormat  = "log_format"
+
+	// SDK logging flags
+	// Note: Would rather use app_log_level, but this has to match the app.config file
+	// or add code that checks both this flag and the config value, which I don't feel like doing right now
+	FlagAppLogLevel = "app-log-level"
 )
 
 // LineBreak can be included in a command list to provide a blank line

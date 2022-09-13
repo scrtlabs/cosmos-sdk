@@ -15,7 +15,7 @@ import (
 
 const (
 	defaultMinGasPrices = ""
-
+	defaultLogLevel     = "debug"
 	// DefaultGRPCAddress defines the default address to bind the gRPC server to.
 	DefaultGRPCAddress = "0.0.0.0:9090"
 
@@ -37,6 +37,8 @@ type BaseConfig struct {
 	// transaction. A transaction's fees must meet the minimum of any denomination
 	// specified in this config (e.g. 0.25token1;0.0001token2).
 	MinGasPrices string `mapstructure:"minimum-gas-prices"`
+
+	AppLogLevel string `mapstructure:"log-level"`
 
 	Pruning           string `mapstructure:"pruning"`
 	PruningKeepRecent string `mapstructure:"pruning-keep-recent"`
@@ -221,6 +223,7 @@ func DefaultConfig() *Config {
 	return &Config{
 		BaseConfig: BaseConfig{
 			MinGasPrices:      defaultMinGasPrices,
+			AppLogLevel:       defaultLogLevel,
 			InterBlockCache:   true,
 			Pruning:           storetypes.PruningOptionDefault,
 			PruningKeepRecent: "0",

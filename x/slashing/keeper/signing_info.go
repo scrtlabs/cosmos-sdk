@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	"fmt"
 	"time"
 
 	gogotypes "github.com/gogo/protobuf/types"
@@ -39,8 +40,7 @@ func (k Keeper) SetValidatorSigningInfo(ctx sdk.Context, address sdk.ConsAddress
 
 // IterateValidatorSigningInfos iterates over the stored ValidatorSigningInfo
 func (k Keeper) IterateValidatorSigningInfos(ctx sdk.Context,
-	handler func(address sdk.ConsAddress, info types.ValidatorSigningInfo) (stop bool),
-) {
+	handler func(address sdk.ConsAddress, info types.ValidatorSigningInfo) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 	iter := sdk.KVStorePrefixIterator(store, types.ValidatorSigningInfoKeyPrefix)
 	defer iter.Close()
@@ -129,16 +129,17 @@ func (k Keeper) Tombstone(ctx sdk.Context, consAddr sdk.ConsAddress) {
 	k.SetValidatorSigningInfo(ctx, consAddr, signInfo)
 }
 
-// Tombstone attempts to tombstone a validator. It will panic if signing info for
-// the given validator does not exist.
+
+// RevertTombstone attempts to revert a tombstone state of a validator.
+// Panics if signing info for the given validator does not exist.
 func (k Keeper) RevertTombstone(ctx sdk.Context, consAddr sdk.ConsAddress) {
 	signInfo, ok := k.GetValidatorSigningInfo(ctx, consAddr)
 	if !ok {
-		panic("cannot tombstone validator that does not have any signing information")
+		panic(fmt.Sprintf("cannot tombstone validator that does not have any signing information: %s", consAddr.String()))
 	}
 
 	if !signInfo.Tombstoned {
-		panic("cannot untombstone a validator that is not tombstoned")
+		panic(fmt.Sprintf("cannot untombstone a validator that is not tombstoned: %s", consAddr.String()))
 	}
 
 	signInfo.Tombstoned = false

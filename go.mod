@@ -139,7 +139,7 @@ replace (
 
 	github.com/jhump/protoreflect => github.com/jhump/protoreflect v1.9.0
 
-	github.com/tendermint/tendermint => github.com/scrtlabs/tendermint-random v0.0.2-0.20221117125740-173758e9facd
+	github.com/tendermint/tendermint => github.com/scrtlabs/tendermint-random v0.0.2-0.20221120223636-f9356e3e55b1
 
 	// latest grpc doesn't work with with our modified proto compiler, so we need to enforce
 	// the following version across all dependencies.

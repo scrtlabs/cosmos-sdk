@@ -683,8 +683,8 @@ github.com/ryanuber/columnize v0.0.0-20160712163229-9b3edd62028f/go.mod h1:sm1tb
 github.com/samuel/go-zookeeper v0.0.0-20190923202752-2cc03de413da/go.mod h1:gi+0XIa01GRL2eRQVjQkKGqKF3SF9vZR/HnPullcV2E=
 github.com/sasha-s/go-deadlock v0.3.1 h1:sqv7fDNShgjcaxkO0JNcOAlr8B9+cV5Ey/OB71efZx0=
 github.com/sasha-s/go-deadlock v0.3.1/go.mod h1:F73l+cr82YSh10GxyRI6qZiCgK64VaZjwesgfQ1/iLM=
-github.com/scrtlabs/tendermint-random v0.0.2-0.20221117125740-173758e9facd h1:ADmiU48dEkZ2x7i/Y7kBFAOLUCU6G4PdNYrH2blKzO0=
-github.com/scrtlabs/tendermint-random v0.0.2-0.20221117125740-173758e9facd/go.mod h1:hpgGT48f9P2sNHjnbdFQ51bRSBuB5r+7gortMjDibAw=
+github.com/scrtlabs/tendermint-random v0.0.2-0.20221120223636-f9356e3e55b1 h1:T64JNfbLPA4jpeeSthPrMK2jE7R9uvjsUZQEGU01yho=
+github.com/scrtlabs/tendermint-random v0.0.2-0.20221120223636-f9356e3e55b1/go.mod h1:a7nBICR7291F6ZVNrbgBIBHrRtZuGwO9J/D4YeLr3To=
 github.com/sean-/seed v0.0.0-20170313163322-e2103e2c3529/go.mod h1:DxrIzT+xaE7yg65j358z/aeFdxmN0P9QXhEzd20vsDc=
 github.com/segmentio/fasthash v1.0.3/go.mod h1:waKX8l2N8yckOgmSsXJi7x1ZfdKZ4x7KRMzBtS3oedY=
 github.com/shirou/gopsutil v2.20.5+incompatible/go.mod h1:5b4v6he4MtMOwMlS0TUMTu2PcXUg8+E1lC7eC3UO/RA=

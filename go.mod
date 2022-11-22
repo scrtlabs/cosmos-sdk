@@ -60,7 +60,6 @@ require (
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash v1.1.0 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
-	github.com/cosmos/gogoproto v1.4.3 // indirect
 	github.com/cosmos/ledger-go v0.9.2 // indirect
 	github.com/creachadair/taskgroup v0.3.2 // indirect
 	github.com/danieljoos/wincred v1.0.2 // indirect
@@ -139,7 +138,7 @@ replace (
 
 	github.com/jhump/protoreflect => github.com/jhump/protoreflect v1.9.0
 
-	github.com/tendermint/tendermint => github.com/scrtlabs/tendermint-random v0.0.2-0.20221120223636-f9356e3e55b1
+	github.com/tendermint/tendermint => github.com/scrtlabs/tendermint v0.34.23-0.20221122120019-d209042eab40
 
 	// latest grpc doesn't work with with our modified proto compiler, so we need to enforce
 	// the following version across all dependencies.

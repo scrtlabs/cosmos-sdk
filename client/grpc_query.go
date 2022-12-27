@@ -31,6 +31,8 @@ func (ctx Context) Invoke(grpcCtx gocontext.Context, method string, req, reply i
 	// 1. either we're broadcasting a Tx, in which call we call Tendermint's broadcast endpoint directly,
 	// 2. or we are querying for state, in which case we call ABCI's Query.
 
+	fmt.Println("************************************** TEST_0 **************************************")
+
 	// In both cases, we don't allow empty request args (it will panic unexpectedly).
 	if reflect.ValueOf(req).IsNil() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "request cannot be nil")
@@ -64,7 +66,11 @@ func (ctx Context) Invoke(grpcCtx gocontext.Context, method string, req, reply i
 		return err
 	}
 
+	fmt.Println("************************************** TEST_1 **************************************")
+
 	if ctx.GRPCClient != nil && isGRPCAllowed {
+
+		fmt.Println("************************************** TEST_2 **************************************")
 		md := metadata.Pairs(grpctypes.GRPCBlockHeightHeader, strconv.FormatInt(requestedHeight, 10))
 		context := metadata.NewOutgoingContext(grpcCtx, md)
 		// Case 2-1. Invoke grpc.
@@ -77,12 +83,13 @@ func (ctx Context) Invoke(grpcCtx gocontext.Context, method string, req, reply i
 
 		return err
 	}
-
 	// Case 2. Querying state.
 	reqBz, err := protoCodec.Marshal(req)
 	if err != nil {
 		return err
 	}
+
+	fmt.Println("************************************** TEST_3 **************************************")
 
 	abciReq := abci.RequestQuery{
 		Path:   method,
@@ -94,6 +101,8 @@ func (ctx Context) Invoke(grpcCtx gocontext.Context, method string, req, reply i
 	if err != nil {
 		return err
 	}
+
+	fmt.Println("************************************** TEST_4 **************************************")
 
 	err = protoCodec.Unmarshal(res.Value, reply)
 	if err != nil {

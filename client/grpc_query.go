@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"time"
 
 	gogogrpc "github.com/gogo/protobuf/grpc"
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -67,7 +68,14 @@ func (ctx Context) Invoke(grpcCtx gocontext.Context, method string, req, reply i
 		md := metadata.Pairs(grpctypes.GRPCBlockHeightHeader, strconv.FormatInt(requestedHeight, 10))
 		context := metadata.NewOutgoingContext(grpcCtx, md)
 		// Case 2-1. Invoke grpc.
-		return ctx.GRPCClient.Invoke(context, method, req, reply, opts...)
+		fmt.Println("***** BENCHMARK grpc_query.go *****")
+		before := time.Now()
+		err = ctx.GRPCClient.Invoke(context, method, req, reply, opts...)
+		after := time.Now()
+		fmt.Printf("ctx.GRPCClient.Invoke took %dms", after.UnixMilli()-before.UnixMilli())
+		fmt.Println("***** BENCHMARK grpc_query.go *****")
+
+		return err
 	}
 
 	// Case 2. Querying state.

@@ -62,6 +62,11 @@ func (ctx Context) Invoke(grpcCtx gocontext.Context, method string, req, reply i
 	grpcConcurrentEnabled := ctx.GRPCConcurrency
 	isGRPCAllowed := !isTendermintQuery && !isSimulationRequest && grpcConcurrentEnabled
 
+	fmt.Println("!isTendermintQuery: ", !isTendermintQuery)
+	fmt.Println("!isSimulationRequest: ", !isSimulationRequest)
+	fmt.Println("grpcConcurrentEnabled: ", grpcConcurrentEnabled)
+	fmt.Println("isGRPCAllowed: ", isGRPCAllowed)
+
 	requestedHeight, err := selectHeight(ctx, grpcCtx)
 	if err != nil {
 		return err

@@ -676,8 +676,8 @@ github.com/ryanuber/columnize v0.0.0-20160712163229-9b3edd62028f/go.mod h1:sm1tb
 github.com/samuel/go-zookeeper v0.0.0-20190923202752-2cc03de413da/go.mod h1:gi+0XIa01GRL2eRQVjQkKGqKF3SF9vZR/HnPullcV2E=
 github.com/sasha-s/go-deadlock v0.3.1 h1:sqv7fDNShgjcaxkO0JNcOAlr8B9+cV5Ey/OB71efZx0=
 github.com/sasha-s/go-deadlock v0.3.1/go.mod h1:F73l+cr82YSh10GxyRI6qZiCgK64VaZjwesgfQ1/iLM=
-github.com/scrtlabs/grpc-gateway v1.16.1-0.20221227180527-fbcf0f6748f5 h1:bIjXaHDpe/SxT8DWg4aTEgG5BbqlLwHxgJZd1VE0bE8=
-github.com/scrtlabs/grpc-gateway v1.16.1-0.20221227180527-fbcf0f6748f5/go.mod h1:BDjrQk3hbvj6Nolgz8mAMFbcEtjT1g+wF4CSlocrBnw=
+github.com/scrtlabs/grpc-gateway v1.16.1-0.20221227182855-d02557b4132e h1:aSupripcNrLeyi8fyg25p3xyZZIK/9ratmCMWP5UUFI=
+github.com/scrtlabs/grpc-gateway v1.16.1-0.20221227182855-d02557b4132e/go.mod h1:BDjrQk3hbvj6Nolgz8mAMFbcEtjT1g+wF4CSlocrBnw=
 github.com/scrtlabs/tendermint v0.34.22-secret h1:888xqMriDhzLD9iDXJUzwREUQ+3JdPaFg5gZT6rZfTo=
 github.com/scrtlabs/tendermint v0.34.22-secret/go.mod h1:YpP5vBEAKUT4g6oyfjKgFeZmdB/GjkJAxfF+cgmJg6Y=
 github.com/sean-/seed v0.0.0-20170313163322-e2103e2c3529/go.mod h1:DxrIzT+xaE7yg65j358z/aeFdxmN0P9QXhEzd20vsDc=

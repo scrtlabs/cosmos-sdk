@@ -135,7 +135,7 @@ replace (
 	// TODO Remove it: https://github.com/cosmos/cosmos-sdk/issues/10409
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.0
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-	github.com/grpc-ecosystem/grpc-gateway => github.com/scrtlabs/grpc-gateway v1.16.1-0.20221227182855-d02557b4132e
+	github.com/grpc-ecosystem/grpc-gateway => github.com/scrtlabs/grpc-gateway v1.16.1-0.20221227184400-5ed6a883daf0
 
 	github.com/jhump/protoreflect => github.com/jhump/protoreflect v1.9.0
 	github.com/tendermint/tendermint => github.com/scrtlabs/tendermint v0.34.22-secret

@@ -14,7 +14,9 @@ import (
 var commonArgs = []string{
 	fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 	fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
-	fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10))).String()),
+	fmt.Sprintf("--%s=%s", flags.FlagGasPrices,
+		sdk.NewDecCoins(sdk.NewDecCoinFromDec(sdk.DefaultBondDenom, sdk.NewDecWithPrec(4000000000000000, sdk.Precision))).String()),
+	//fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10))).String()),
 }
 
 // MsgSubmitProposal creates a tx for submit proposal

@@ -2,19 +2,22 @@ package testutil
 
 import (
 	"fmt"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/testutil"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	stakingcli "github.com/cosmos/cosmos-sdk/x/staking/client/cli"
 )
 
 var commonArgs = []string{
 	fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 	fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
-	fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10))).String()),
+	fmt.Sprintf("--%s=%s", flags.FlagGasPrices,
+		sdk.NewDecCoins(sdk.NewDecCoinFromDec(sdk.DefaultBondDenom, sdk.NewDecWithPrec(4000000000000000, sdk.Precision))).String()),
+
+	//fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(10))).String()),
 }
 
 // MsgRedelegateExec creates a redelegate message.

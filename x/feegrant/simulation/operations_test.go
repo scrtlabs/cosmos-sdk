@@ -26,10 +26,10 @@ type SimTestSuite struct {
 }
 
 func (suite *SimTestSuite) SetupTest() {
-	checkTx := false
-	app := simapp.Setup(checkTx)
+	// checkTx := false
+	app := simapp.Setup(false)
 	suite.app = app
-	suite.ctx = app.BaseApp.NewContext(checkTx, tmproto.Header{
+	suite.ctx = app.BaseApp.NewContext(false, tmproto.Header{
 		Time: time.Now(),
 	})
 }
@@ -112,7 +112,7 @@ func (suite *SimTestSuite) TestSimulateMsgGrantAllowance() {
 	require.NoError(err)
 
 	var msg feegrant.MsgGrantAllowance
-	suite.app.AppCodec().UnmarshalJSON(operationMsg.Msg, &msg)
+	suite.app.LegacyAmino().MustUnmarshalJSON(operationMsg.Msg, &msg)
 
 	require.True(operationMsg.OK)
 	require.Equal(accounts[2].Address.String(), msg.Granter)
@@ -154,7 +154,7 @@ func (suite *SimTestSuite) TestSimulateMsgRevokeAllowance() {
 	require.NoError(err)
 
 	var msg feegrant.MsgRevokeAllowance
-	suite.app.AppCodec().UnmarshalJSON(operationMsg.Msg, &msg)
+	suite.app.LegacyAmino().MustUnmarshalJSON(operationMsg.Msg, &msg)
 
 	require.True(operationMsg.OK)
 	require.Equal(granter.Address.String(), msg.Granter)

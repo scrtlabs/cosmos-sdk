@@ -55,6 +55,7 @@ func Test_runAddCmdLedgerWithCustomCoinType(t *testing.T) {
 		fmt.Sprintf("--%s=%s", cli.OutputFlag, OutputFormatText),
 		fmt.Sprintf("--%s=%s", flags.FlagKeyAlgorithm, string(hd.Secp256k1Type)),
 		fmt.Sprintf("--%s=%s", flags.FlagKeyringBackend, keyring.BackendTest),
+		fmt.Sprintf("--legacy-hd-path=true"),
 	})
 
 	mockIn := testutil.ApplyMockIODiscardOutErr(cmd)
@@ -103,6 +104,7 @@ func Test_runAddCmdLedger(t *testing.T) {
 		fmt.Sprintf("--%s=%s", flags.FlagKeyAlgorithm, string(hd.Secp256k1Type)),
 		fmt.Sprintf("--%s=%d", flagCoinType, sdk.CoinType),
 		fmt.Sprintf("--%s=%s", flags.FlagKeyringBackend, keyring.BackendTest),
+		fmt.Sprintf("--legacy-hd-path=true"),
 	})
 	mockIn.Reset("test1234\ntest1234\n")
 
@@ -140,6 +142,7 @@ func Test_runAddCmdLedgerDryRun(t *testing.T) {
 				"testkey",
 				fmt.Sprintf("--%s=%s", flags.FlagDryRun, "false"),
 				fmt.Sprintf("--%s=%s", flags.FlagUseLedger, "true"),
+				fmt.Sprintf("--legacy-hd-path=true"),
 			},
 			added: true,
 		},
@@ -149,6 +152,7 @@ func Test_runAddCmdLedgerDryRun(t *testing.T) {
 				"testkey",
 				fmt.Sprintf("--%s=%s", flags.FlagDryRun, "true"),
 				fmt.Sprintf("--%s=%s", flags.FlagUseLedger, "true"),
+				fmt.Sprintf("--legacy-hd-path=true"),
 			},
 			added: false,
 		},

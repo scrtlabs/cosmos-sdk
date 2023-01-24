@@ -80,10 +80,7 @@ func (s *IntegrationTestSuite) createGrant(granter, grantee sdk.Address) {
 	commonFlags := []string{
 		fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
 		fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-		fmt.Sprintf("--%s=%s", flags.FlagGasPrices,
-			sdk.NewDecCoins(sdk.NewDecCoinFromDec(s.cfg.BondDenom, sdk.NewDecWithPrec(4000000000000000, sdk.Precision))).String()),
-
-		//fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+		fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 	}
 
 	fee := sdk.NewCoin("stake", sdk.NewInt(100))

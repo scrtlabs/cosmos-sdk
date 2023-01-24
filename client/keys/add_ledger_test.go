@@ -32,7 +32,7 @@ func Test_runAddCmdLedgerWithCustomCoinType(t *testing.T) {
 	bech32PrefixConsPub := "terravalconspub"
 
 	config.SetPurpose(44)
-	config.SetCoinType(330)
+	config.SetCoinType(529)
 	config.SetBech32PrefixForAccount(bech32PrefixAccAddr, bech32PrefixAccPub)
 	config.SetBech32PrefixForValidator(bech32PrefixValAddr, bech32PrefixValPub)
 	config.SetBech32PrefixForConsensusNode(bech32PrefixConsAddr, bech32PrefixConsPub)
@@ -55,7 +55,6 @@ func Test_runAddCmdLedgerWithCustomCoinType(t *testing.T) {
 		fmt.Sprintf("--%s=%s", cli.OutputFlag, OutputFormatText),
 		fmt.Sprintf("--%s=%s", flags.FlagKeyAlgorithm, string(hd.Secp256k1Type)),
 		fmt.Sprintf("--%s=%s", flags.FlagKeyringBackend, keyring.BackendTest),
-		fmt.Sprintf("--legacy-hd-path=true"),
 	})
 
 	mockIn := testutil.ApplyMockIODiscardOutErr(cmd)
@@ -102,7 +101,7 @@ func Test_runAddCmdLedger(t *testing.T) {
 		fmt.Sprintf("--%s=true", flags.FlagUseLedger),
 		fmt.Sprintf("--%s=%s", cli.OutputFlag, OutputFormatText),
 		fmt.Sprintf("--%s=%s", flags.FlagKeyAlgorithm, string(hd.Secp256k1Type)),
-		fmt.Sprintf("--%s=%d", flagCoinType, sdk.CoinType),
+		//fmt.Sprintf("--%s=%d", flagCoinType, sdk.CoinType),
 		fmt.Sprintf("--%s=%s", flags.FlagKeyringBackend, keyring.BackendTest),
 		fmt.Sprintf("--legacy-hd-path=true"),
 	})

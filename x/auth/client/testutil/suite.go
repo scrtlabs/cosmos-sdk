@@ -674,7 +674,7 @@ func (s *IntegrationTestSuite) TestCLIMultisignInsufficientCosigners() {
 
 		fmt.Sprintf("--%s=%s", flags.FlagGasPrices,
 			sdk.NewDecCoins(sdk.NewDecCoinFromDec(s.cfg.BondDenom, sdk.NewDecWithPrec(4000000000000000, sdk.Precision))).String()),
-		//fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+		// fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 		fmt.Sprintf("--%s=true", flags.FlagGenerateOnly),
 	)
 	s.Require().NoError(err)
@@ -845,7 +845,7 @@ func (s *IntegrationTestSuite) TestSignWithMultisig() {
 		),
 		fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 		fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastSync),
-		//fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+		// fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 		fmt.Sprintf("--%s=%s", flags.FlagGasPrices,
 			sdk.NewDecCoins(sdk.NewDecCoin(s.cfg.BondDenom, sdk.Int(sdk.NewDecWithPrec(1, 3)))).String()),
 		fmt.Sprintf("--%s=true", flags.FlagGenerateOnly),
@@ -903,7 +903,7 @@ func (s *IntegrationTestSuite) TestCLIMultisign() {
 		),
 		fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 		fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
-		//fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+		// fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 		fmt.Sprintf("--%s=%s", flags.FlagGasPrices,
 			sdk.NewDecCoins(sdk.NewDecCoinFromDec(s.cfg.BondDenom, sdk.NewDecWithPrec(4000000000000000, sdk.Precision))).String()),
 		fmt.Sprintf("--%s=true", flags.FlagGenerateOnly),
@@ -977,7 +977,7 @@ func (s *IntegrationTestSuite) TestSignBatchMultisig() {
 		),
 		fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 		fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
-		//fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+		// fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 		fmt.Sprintf("--%s=%s", flags.FlagGasPrices,
 			sdk.NewDecCoins(sdk.NewDecCoin(s.cfg.BondDenom, sdk.Int(sdk.NewDecWithPrec(1, 3)))).String()),
 		fmt.Sprintf("--%s=true", flags.FlagGenerateOnly),
@@ -1046,7 +1046,7 @@ func (s *IntegrationTestSuite) TestMultisignBatch() {
 		fmt.Sprintf("--%s=%s", flags.FlagGasPrices,
 			sdk.NewDecCoins(sdk.NewDecCoin(s.cfg.BondDenom, sdk.Int(sdk.NewDecWithPrec(1, 3)))).String()),
 
-		//fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+		// fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 		fmt.Sprintf("--%s=true", flags.FlagGenerateOnly),
 	)
 	s.Require().NoError(err)

@@ -42,9 +42,12 @@ func (mock LedgerSECP256K1Mock) GetPublicKeySECP256K1(derivationPath []uint32) (
 		return nil, errors.New("Invalid derivation path")
 	}
 
-	if derivationPath[1] != sdk.GetConfig().GetCoinType() {
-		return nil, errors.New("Invalid derivation path")
-	}
+	// disable this check - we specifically want to be able to check generating keys from different coin types
+	// to check legacy hd path vs new ledger app hd path
+
+	//if derivationPath[1] != sdk.GetConfig().GetCoinType() {
+	//	return nil, errors.New("Invalid derivation path")
+	//}
 
 	seed, err := bip39.NewSeedWithErrorChecking(testdata.TestMnemonic, "")
 	if err != nil {

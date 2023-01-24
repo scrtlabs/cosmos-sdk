@@ -20,6 +20,7 @@ import (
 var (
 	FlagCommission       = "commission"
 	FlagMaxMessagesPerTx = "max-msgs"
+	FlagIsExpedited      = "is-expedited"
 )
 
 const (
@@ -41,6 +42,7 @@ func NewTxCmd() *cobra.Command {
 		NewWithdrawAllRewardsCmd(),
 		NewSetWithdrawAddrCmd(),
 		NewFundCommunityPoolCmd(),
+		NewTxRestakeCmd(),
 	)
 
 	return distTxCmd
@@ -278,7 +280,7 @@ func GetCmdSubmitProposal() *cobra.Command {
 The proposal details must be supplied via a JSON file.
 
 Example:
-$ %s tx gov submit-proposal community-pool-spend <path/to/proposal.json> --from=<key_or_address>
+$ %s tx gov submit-proposal community-pool-spend <path/to/proposal.json> --from=<key_or_address> --is-expedited=false
 
 Where proposal.json contains:
 
@@ -318,9 +320,15 @@ Where proposal.json contains:
 			if err != nil {
 				return err
 			}
+
+			isExpedited, err := cmd.Flags().GetBool(FlagIsExpedited)
+			if err != nil {
+				return err
+			}
+
 			content := types.NewCommunityPoolSpendProposal(proposal.Title, proposal.Description, recpAddr, amount)
 
-			msg, err := govtypes.NewMsgSubmitProposal(content, deposit, from)
+			msg, err := govtypes.NewMsgSubmitProposalWithExpedited(content, deposit, from, isExpedited)
 			if err != nil {
 				return err
 			}
@@ -328,6 +336,50 @@ Where proposal.json contains:
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
+
+	cmd.Flags().Bool(FlagIsExpedited, false, "If true, makes the proposal an expedited one")
+
+	return cmd
+}
+
+func NewTxRestakeCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "set-auto-restaking [validator] [true/false]",
+		Args:  cobra.ExactArgs(2),
+		Short: "Toggle automatic rewards compounding",
+		Long: strings.TrimSpace(
+			fmt.Sprintf(`Either enable or disable auto restaking
+
+Example:
+$ %s tx distribution set-auto-restaking false --from mykey
+`,
+				version.AppName,
+			),
+		),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			delegator := clientCtx.GetFromAddress()
+
+			validator, err := sdk.ValAddressFromBech32(args[0])
+			if err != nil {
+				return err
+			}
+
+			toggle := false
+			if args[1] == "true" {
+				toggle = true
+			}
+
+			msg := types.NewMsgSetAutoRestake(delegator, validator, toggle)
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
 
 	return cmd
 }

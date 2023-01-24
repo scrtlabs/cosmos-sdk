@@ -137,6 +137,7 @@ replace (
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 
 	github.com/jhump/protoreflect => github.com/jhump/protoreflect v1.9.0
+	github.com/tendermint/tendermint => github.com/scrtlabs/tendermint v0.34.22-secret
 
 	github.com/tendermint/tendermint => github.com/scrtlabs/tendermint v0.34.25-0.20230124163414-88562cd0420f
 

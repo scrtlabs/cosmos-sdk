@@ -9,7 +9,6 @@ import (
 )
 
 func (k Keeper) GetRestakeValidatorsForDelegator(ctx sdk.Context, delegator sdk.AccAddress) (validators []string) {
-
 	delegatorPrefix := keyPrefixFromDelegator(delegator)
 	store := ctx.KVStore(k.storeKey)
 	iter := sdk.KVStorePrefixIterator(store, delegatorPrefix)
@@ -18,9 +17,9 @@ func (k Keeper) GetRestakeValidatorsForDelegator(ctx sdk.Context, delegator sdk.
 	for ; iter.Valid(); iter.Next() {
 
 		key := iter.Key()
-		//k.Logger(ctx).Info(fmt.Sprintf("from iter - %s", hex.EncodeToString(key)))
+		// k.Logger(ctx).Info(fmt.Sprintf("from iter - %s", hex.EncodeToString(key)))
 		_, validator := addressesFromRestakeKeyStore(key)
-		//k.Logger(ctx).Info(fmt.Sprintf("from iter - %s %s - %s", delegator, validator, hex.EncodeToString(key)))
+		// k.Logger(ctx).Info(fmt.Sprintf("from iter - %s %s - %s", delegator, validator, hex.EncodeToString(key)))
 		validators = append(validators, validator.String())
 	}
 	return
@@ -68,6 +67,10 @@ func (k Keeper) PerformRestake(ctx sdk.Context, delegator sdk.AccAddress, valida
 
 	coinsToRedelegate := coins.AmountOf(baseDenom)
 
+	if coinsToRedelegate.IsZero() {
+		return sdkerrors.ErrInsufficientFunds
+	}
+
 	val := k.stakingKeeper.Validator(ctx, validator)
 
 	_, err = k.stakingKeeper.DoDelegate(ctx, delegator, coinsToRedelegate, 1, val, true)
@@ -85,7 +88,7 @@ func autoRestakeKey(delegator sdk.AccAddress, validator sdk.ValAddress) []byte {
 	delegator = address.MustLengthPrefix(delegator)
 	validator = address.MustLengthPrefix(validator)
 
-	//fmt.Println("saving key: ", hex.EncodeToString(delegator), hex.EncodeToString(validator))
+	// fmt.Println("saving key: ", hex.EncodeToString(delegator), hex.EncodeToString(validator))
 
 	////	l := 1 + len(grantee) + len(granter) + len(m)
 	////	key := make([]byte, l)
@@ -122,17 +125,16 @@ func addressesFromRestakeKeyStore(key []byte) (delegatorAddr sdk.AccAddress, val
 	return delegatorAddr, validatorAddr
 }
 
-// delegatorAddressFromRestakeKeyStore parses the delegator address only - will be useful for iterating by delegator
-// (probably)
-func delegatorAddressFromRestakeKeyStore(key []byte) sdk.AccAddress {
-	addrLen := key[0]
-	return sdk.AccAddress(key[1 : 1+addrLen])
-}
+// // delegatorAddressFromRestakeKeyStore parses the delegator address only - will be useful for iterating by delegator
+// // (probably)
+// func delegatorAddressFromRestakeKeyStore(key []byte) sdk.AccAddress {
+//	addrLen := key[0]
+//	return sdk.AccAddress(key[1 : 1+addrLen])
+// }
 
 // delegatorAddressFromRestakeKeyStore parses the delegator address only - will be useful for iterating by delegator
 // (probably)
 func keyPrefixFromDelegator(delegator sdk.AccAddress) []byte {
-
 	// this is a stupid function name
 	delegator = address.MustLengthPrefix(delegator)
 

@@ -2,7 +2,7 @@ package cli
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -47,7 +47,6 @@ func makeSignDocCmd() func(cmd *cobra.Command, args []string) error {
 
 		keybase := tx.NewFactoryCLI(ctx, cmd.Flags()).Keybase()
 		sig, err := signStdSignDoc(ctx, keybase, doc)
-
 		if err != nil {
 			return err
 		}
@@ -60,7 +59,7 @@ func makeSignDocCmd() func(cmd *cobra.Command, args []string) error {
 		}
 
 		fp, err := os.OpenFile(
-			viper.GetString(flags.FlagOutputDocument), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644,
+			viper.GetString(flags.FlagOutputDocument), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o644,
 		)
 		if err != nil {
 			return err
@@ -78,9 +77,9 @@ func readStdSignDocFromFile(filename string) (doc legacytx.StdSignDoc, err error
 	var bytes []byte
 
 	if filename == "-" {
-		bytes, err = ioutil.ReadAll(os.Stdin)
+		bytes, err = io.ReadAll(os.Stdin)
 	} else {
-		bytes, err = ioutil.ReadFile(filename)
+		bytes, err = os.ReadFile(filename)
 	}
 
 	if err != nil {
@@ -95,24 +94,24 @@ func readStdSignDocFromFile(filename string) (doc legacytx.StdSignDoc, err error
 // SignStdTxWithSignerAddress attaches a signature to a StdTx and returns a copy of a it.
 // Don't perform online validation or lookups if offline is true, else
 // populate account and sequence numbers from a foreign account.
-func signStdSignDoc(ctx client.Context, keybase keyring.Keyring, doc legacytx.StdSignDoc) (sig legacytx.StdSignature, err error) {
+func signStdSignDoc(ctx client.Context, keybase keyring.Keyring, doc legacytx.StdSignDoc) (sig legacytx.StdSignature, err error) { //nolint:staticcheck // this will be removed when proto is ready
 
 	sig, err = makeSignature(keybase, ctx.GetFromName(), doc)
 	if err != nil {
-		return legacytx.StdSignature{}, err
+		return legacytx.StdSignature{}, err //nolint:staticcheck // this will be removed when proto is ready
 	}
 
 	return sig, nil
 }
 
-func makeSignature(keybase keyring.Keyring, name string, doc legacytx.StdSignDoc) (legacytx.StdSignature, error) {
+func makeSignature(keybase keyring.Keyring, name string, doc legacytx.StdSignDoc) (legacytx.StdSignature, error) { //nolint:staticcheck // this will be removed when proto is ready
 	bz := sdk.MustSortJSON(legacy.Cdc.MustMarshalJSON(doc))
 
 	sigBytes, pubkey, err := keybase.Sign(name, bz)
 	if err != nil {
-		return legacytx.StdSignature{}, err
+		return legacytx.StdSignature{}, err //nolint:staticcheck // this will be removed when proto is ready
 	}
-	return legacytx.StdSignature{
+	return legacytx.StdSignature{ //nolint:staticcheck // this will be removed when proto is ready
 		PubKey:    pubkey,
 		Signature: sigBytes,
 	}, nil

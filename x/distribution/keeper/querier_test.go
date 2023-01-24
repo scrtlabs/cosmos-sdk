@@ -127,10 +127,13 @@ func TestQueries(t *testing.T) {
 
 	// test param queries
 	params := types.Params{
-		CommunityTax:        sdk.NewDecWithPrec(3, 1),
-		BaseProposerReward:  sdk.NewDecWithPrec(2, 1),
-		BonusProposerReward: sdk.NewDecWithPrec(1, 1),
-		WithdrawAddrEnabled: true,
+		CommunityTax:            sdk.NewDecWithPrec(3, 1),
+		BaseProposerReward:      sdk.NewDecWithPrec(2, 1),
+		BonusProposerReward:     sdk.NewDecWithPrec(1, 1),
+		WithdrawAddrEnabled:     true,
+		SecretFoundationTax:     sdk.NewDec(0),
+		MinimumRestakeThreshold: sdk.NewDec(100000),
+		RestakePeriod:           sdk.NewInt(1000),
 	}
 
 	app.DistrKeeper.SetParams(ctx, params)

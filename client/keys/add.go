@@ -208,11 +208,16 @@ func runAddCmd(ctx client.Context, cmd *cobra.Command, args []string, inBuf *buf
 
 	// If we're using ledger, only thing we need is the path and the bech32 prefix.
 	if useLedger {
-		legacyHdPath, _ := cmd.Flags().GetBool(flagLegacyHdPath)
-		if legacyHdPath {
-			coinType = sdk.CoinType
-		} else {
-			coinType = DefaultLedgerCoinType
+
+		// manual coin type should work if you really want to use it
+		if coinType != sdk.GetConfig().GetCoinType() {
+			legacyHdPath, _ := cmd.Flags().GetBool(flagLegacyHdPath)
+
+			if legacyHdPath {
+				coinType = sdk.CoinType
+			} else {
+				coinType = DefaultLedgerCoinType
+			}
 		}
 
 		bech32PrefixAccAddr := sdk.GetConfig().GetBech32AccountAddrPrefix()

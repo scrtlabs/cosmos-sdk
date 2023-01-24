@@ -8,6 +8,7 @@ import (
 	"io"
 	"os"
 	"path"
+	"path/filepath"
 	"testing"
 
 	"github.com/spf13/cobra"
@@ -37,11 +38,20 @@ func TestExportCmd_ConsensusParams(t *testing.T) {
 
 	output := &bytes.Buffer{}
 	cmd.SetOut(output)
-	cmd.SetArgs([]string{fmt.Sprintf("--%s=%s", flags.FlagHome, tempDir)})
+	cmd.SetArgs([]string{fmt.Sprintf("--%s=%s", flags.FlagHome, tempDir), filepath.Join(tempDir, "temp.json")})
 	require.NoError(t, cmd.ExecuteContext(ctx))
 
+	file, err := os.OpenFile(filepath.Join(tempDir, "temp.json"), os.O_CREATE|os.O_WRONLY, 0o600)
+	if err != nil {
+		return
+	}
+	_, err = file.ReadFrom(output)
+	if err != nil {
+		return
+	}
+
 	var exportedGenDoc tmtypes.GenesisDoc
-	err := tmjson.Unmarshal(output.Bytes(), &exportedGenDoc)
+	err = tmjson.Unmarshal(output.Bytes(), &exportedGenDoc)
 	if err != nil {
 		t.Fatalf("error unmarshaling exported genesis doc: %s", err)
 	}
@@ -59,7 +69,7 @@ func TestExportCmd_ConsensusParams(t *testing.T) {
 func TestExportCmd_HomeDir(t *testing.T) {
 	_, ctx, _, cmd := setupApp(t, t.TempDir())
 
-	cmd.SetArgs([]string{fmt.Sprintf("--%s=%s", flags.FlagHome, "foobar")})
+	cmd.SetArgs([]string{fmt.Sprintf("--%s=%s", flags.FlagHome, "foobar"), "yo.json"})
 
 	err := cmd.ExecuteContext(ctx)
 	require.EqualError(t, err, "stat foobar/config/genesis.json: no such file or directory")
@@ -106,12 +116,21 @@ func TestExportCmd_Height(t *testing.T) {
 
 			output := &bytes.Buffer{}
 			cmd.SetOut(output)
-			args := append(tc.flags, fmt.Sprintf("--%s=%s", flags.FlagHome, tempDir))
+			args := append(tc.flags, fmt.Sprintf("--%s=%s", flags.FlagHome, tempDir), filepath.Join(tempDir, "temp.json"))
 			cmd.SetArgs(args)
 			require.NoError(t, cmd.ExecuteContext(ctx))
 
+			file, err := os.OpenFile(filepath.Join(tempDir, "temp.json"), os.O_CREATE|os.O_WRONLY, 0o600)
+			if err != nil {
+				return
+			}
+			_, err = file.ReadFrom(output)
+			if err != nil {
+				return
+			}
+
 			var exportedGenDoc tmtypes.GenesisDoc
-			err := tmjson.Unmarshal(output.Bytes(), &exportedGenDoc)
+			err = tmjson.Unmarshal(output.Bytes(), &exportedGenDoc)
 			if err != nil {
 				t.Fatalf("error unmarshaling exported genesis doc: %s", err)
 			}

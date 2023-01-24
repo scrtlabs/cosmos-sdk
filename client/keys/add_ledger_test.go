@@ -32,7 +32,7 @@ func Test_runAddCmdLedgerWithCustomCoinType(t *testing.T) {
 	bech32PrefixConsPub := "terravalconspub"
 
 	config.SetPurpose(44)
-	config.SetCoinType(330)
+	config.SetCoinType(529)
 	config.SetBech32PrefixForAccount(bech32PrefixAccAddr, bech32PrefixAccPub)
 	config.SetBech32PrefixForValidator(bech32PrefixValAddr, bech32PrefixValPub)
 	config.SetBech32PrefixForConsensusNode(bech32PrefixConsAddr, bech32PrefixConsPub)
@@ -76,7 +76,7 @@ func Test_runAddCmdLedgerWithCustomCoinType(t *testing.T) {
 	require.Equal(t, "keyname1", key1.GetName())
 	require.Equal(t, keyring.TypeLedger, key1.GetType())
 	require.Equal(t,
-		"PubKeySecp256k1{03028F0D5A9FD41600191CDEFDEA05E77A68DFBCE286241C0190805B9346667D07}",
+		"PubKeySecp256k1{0267907C8CE4825C1C9F61FBB37C9F9512A0EB87529E4D4708BC1AD664B4F8D0FC}",
 		key1.GetPubKey().String())
 
 	config.SetPurpose(44)
@@ -101,8 +101,9 @@ func Test_runAddCmdLedger(t *testing.T) {
 		fmt.Sprintf("--%s=true", flags.FlagUseLedger),
 		fmt.Sprintf("--%s=%s", cli.OutputFlag, OutputFormatText),
 		fmt.Sprintf("--%s=%s", flags.FlagKeyAlgorithm, string(hd.Secp256k1Type)),
-		fmt.Sprintf("--%s=%d", flagCoinType, sdk.CoinType),
+		// fmt.Sprintf("--%s=%d", flagCoinType, sdk.CoinType),
 		fmt.Sprintf("--%s=%s", flags.FlagKeyringBackend, keyring.BackendTest),
+		fmt.Sprintf("--legacy-hd-path=true"),
 	})
 	mockIn.Reset("test1234\ntest1234\n")
 
@@ -140,6 +141,7 @@ func Test_runAddCmdLedgerDryRun(t *testing.T) {
 				"testkey",
 				fmt.Sprintf("--%s=%s", flags.FlagDryRun, "false"),
 				fmt.Sprintf("--%s=%s", flags.FlagUseLedger, "true"),
+				fmt.Sprintf("--legacy-hd-path=true"),
 			},
 			added: true,
 		},
@@ -149,6 +151,7 @@ func Test_runAddCmdLedgerDryRun(t *testing.T) {
 				"testkey",
 				fmt.Sprintf("--%s=%s", flags.FlagDryRun, "true"),
 				fmt.Sprintf("--%s=%s", flags.FlagUseLedger, "true"),
+				fmt.Sprintf("--legacy-hd-path=true"),
 			},
 			added: false,
 		},

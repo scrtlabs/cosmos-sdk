@@ -34,9 +34,7 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 	}
 
 	restakeFunc := func(delegator sdk.AccAddress, validator sdk.ValAddress) (stop bool) {
-
 		err := k.PerformRestake(ctx, delegator, validator)
-
 		if err != nil {
 			k.Logger(ctx).Info(fmt.Sprintf("Err: %s, Failed to perform restake for delegator-validator %s - %s", err, delegator, validator))
 		}
@@ -45,7 +43,15 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 	}
 
 	if ctx.BlockHeight()%k.GetRestakePeriod(ctx).Int64() == 0 {
-		k.IterateRestakeEntries(ctx, restakeFunc)
+		staleKeys := k.IterateRestakeEntries(ctx, restakeFunc)
+
+		for _, stale := range staleKeys {
+
+			err := k.DeleteAutoRestakeEntry(ctx, stale.Delegator, stale.Validator)
+			if err != nil {
+				k.Logger(ctx).Info(fmt.Sprintf("Err: %s, Failed to delete restake key", err))
+			}
+		}
 	}
 
 	// record the proposer for when we payout on the next block

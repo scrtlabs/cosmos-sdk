@@ -73,15 +73,12 @@ func (s *IntegrationTestSuite) TestGetCmdQueryParams() {
 		{
 			"json output",
 			[]string{fmt.Sprintf("--%s=json", tmcli.OutputFlag)},
-			`{"community_tax":"0.020000000000000000","base_proposer_reward":"0.010000000000000000","bonus_proposer_reward":"0.040000000000000000","withdraw_addr_enabled":true}`,
+			"{\"community_tax\":\"0.020000000000000000\",\"base_proposer_reward\":\"0.010000000000000000\",\"bonus_proposer_reward\":\"0.040000000000000000\",\"withdraw_addr_enabled\":true,\"secret_foundation_tax\":\"0.000000000000000000\",\"secret_foundation_address\":\"\",\"minimum_restake_threshold\":\"10000000.000000000000000000\",\"restake_period\":\"1000\"}",
 		},
 		{
 			"text output",
 			[]string{fmt.Sprintf("--%s=text", tmcli.OutputFlag)},
-			`base_proposer_reward: "0.010000000000000000"
-bonus_proposer_reward: "0.040000000000000000"
-community_tax: "0.020000000000000000"
-withdraw_addr_enabled: true`,
+			"base_proposer_reward: \"0.010000000000000000\"\nbonus_proposer_reward: \"0.040000000000000000\"\ncommunity_tax: \"0.020000000000000000\"\nminimum_restake_threshold: \"10000000.000000000000000000\"\nrestake_period: \"1000\"\nsecret_foundation_address: \"\"\nsecret_foundation_tax: \"0.000000000000000000\"\nwithdraw_addr_enabled: true",
 		},
 	}
 

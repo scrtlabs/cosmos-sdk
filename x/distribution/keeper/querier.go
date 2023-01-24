@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"encoding/json"
+
 	abci "github.com/tendermint/tendermint/abci/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -309,6 +310,9 @@ func queryRestakeEntriesForDelegator(ctx sdk.Context, _ []string, req abci.Reque
 	}
 
 	addr, err := sdk.AccAddressFromBech32(params.Delegator)
+	if err != nil {
+		return nil, err
+	}
 
 	validators := k.GetRestakeValidatorsForDelegator(ctx, addr)
 

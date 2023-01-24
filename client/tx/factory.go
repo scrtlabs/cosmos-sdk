@@ -76,8 +76,12 @@ func NewFactoryCLI(clientCtx client.Context, flagSet *pflag.FlagSet) Factory {
 	feesStr, _ := flagSet.GetString(flags.FlagFees)
 	f = f.WithFees(feesStr)
 
-	gasPricesStr, _ := flagSet.GetString(flags.FlagGasPrices)
-	f = f.WithGasPrices(gasPricesStr)
+	// I.G 24/01/23 - our default for gas-prices essentially disables manually specifying fees in the CLI.
+	// This changes behaviour for fees to override the gas prices
+	if feesStr != "" {
+		gasPricesStr, _ := flagSet.GetString(flags.FlagGasPrices)
+		f = f.WithGasPrices(gasPricesStr)
+	}
 
 	return f
 }
@@ -207,10 +211,13 @@ func (f Factory) BuildUnsignedTx(msgs ...sdk.Msg) (client.TxBuilder, error) {
 
 	fees := f.fees
 
-	if !f.gasPrices.IsZero() {
-		if !fees.IsZero() {
-			return nil, errors.New("cannot provide both fees and gas prices")
-		}
+	if !f.gasPrices.IsZero() && fees.IsZero() {
+		// I.G 24/01/23 - our default for gas-prices essentially disables manually specifying fees in the CLI.
+		// This changes behaviour for fees to override the gas prices
+
+		// if !fees.IsZero() {
+		//	return nil, errors.New("cannot provide both fees and gas prices")
+		// }
 
 		glDec := sdk.NewDec(int64(f.gas))
 

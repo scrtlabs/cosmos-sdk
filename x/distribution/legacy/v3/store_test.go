@@ -1,6 +1,8 @@
 package v3_test
 
 import (
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/testutil"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -8,7 +10,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/distribution/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestGovStoreMigrationToV4ConsensusVersion(t *testing.T) {

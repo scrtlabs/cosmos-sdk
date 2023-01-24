@@ -215,9 +215,9 @@ func (f Factory) BuildUnsignedTx(msgs ...sdk.Msg) (client.TxBuilder, error) {
 		// I.G 24/01/23 - our default for gas-prices essentially disables manually specifying fees in the CLI.
 		// This changes behaviour for fees to override the gas prices
 
-		//if !fees.IsZero() {
+		// if !fees.IsZero() {
 		//	return nil, errors.New("cannot provide both fees and gas prices")
-		//}
+		// }
 
 		glDec := sdk.NewDec(int64(f.gas))
 

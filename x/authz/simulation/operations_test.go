@@ -1,10 +1,11 @@
 package simulation_test
 
 import (
-	"github.com/cosmos/cosmos-sdk/codec"
 	"math/rand"
 	"testing"
 	"time"
+
+	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/stretchr/testify/suite"
 
@@ -27,7 +28,7 @@ type SimTestSuite struct {
 }
 
 func (suite *SimTestSuite) SetupTest() {
-	//checkTx := false
+	// checkTx := false
 	app := simapp.Setup(false)
 	suite.app = app
 	suite.legacyAmino = codec.NewLegacyAmino()

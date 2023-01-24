@@ -375,10 +375,7 @@ func (s *IntegrationTestSuite) TestNewSendTxCmdGenOnly() {
 	args := []string{
 		fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 		fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
-		fmt.Sprintf("--%s=%s", flags.FlagGasPrices,
-			sdk.NewDecCoins(sdk.NewDecCoinFromDec(s.cfg.BondDenom, sdk.NewDecWithPrec(4000000000000000, sdk.Precision))).String()),
-
-		// fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+		fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 		fmt.Sprintf("--%s=true", flags.FlagGenerateOnly),
 	}
 
@@ -419,23 +416,23 @@ func (s *IntegrationTestSuite) TestNewSendTxCmd() {
 			},
 			false, 0, &sdk.TxResponse{},
 		},
-		//{
-		//	"not enough fees",
-		//	val.Address,
-		//	val.Address,
-		//	sdk.NewCoins(
-		//		sdk.NewCoin(fmt.Sprintf("%stoken", val.Moniker), sdk.NewInt(10)),
-		//		sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10)),
-		//	),
-		//	[]string{
-		//		fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-		//		fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
-		//		fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(1))).String()),
-		//	},
-		//	false,
-		//	sdkerrors.ErrInsufficientFee.ABCICode(),
-		//	&sdk.TxResponse{},
-		//},
+		{
+			"not enough fees",
+			val.Address,
+			val.Address,
+			sdk.NewCoins(
+				sdk.NewCoin(fmt.Sprintf("%stoken", val.Moniker), sdk.NewInt(10)),
+				sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10)),
+			),
+			[]string{
+				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(1))).String()),
+			},
+			false,
+			sdkerrors.ErrInsufficientFee.ABCICode(),
+			&sdk.TxResponse{},
+		},
 		{
 			"not enough gas",
 			val.Address,
@@ -449,7 +446,7 @@ func (s *IntegrationTestSuite) TestNewSendTxCmd() {
 				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
 				fmt.Sprintf("--%s=%s", flags.FlagGasPrices,
 					sdk.NewDecCoins(sdk.NewDecCoinFromDec(s.cfg.BondDenom, sdk.NewDecWithPrec(4000000000000000, sdk.Precision))).String()),
-				// fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 				"--gas=10",
 			},
 			false,

@@ -454,15 +454,15 @@ func (s *IntegrationTestSuite) TestCLIQueryTxsCmdByEvents() {
 		expectEmpty bool
 	}{
 		// eh, fuck running tests with fees
-		//{
-		//	"fee event happy case",
-		//	[]string{
-		//		fmt.Sprintf("--events=tx.fee=%s",
-		//			sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
-		//		fmt.Sprintf("--%s=json", tmcli.OutputFlag),
-		//	},
-		//	false,
-		//},
+		{
+			"fee event happy case",
+			[]string{
+				fmt.Sprintf("--events=tx.fee=%s",
+					sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
+				fmt.Sprintf("--%s=json", tmcli.OutputFlag),
+			},
+			false,
+		},
 		{
 			"no matching fee event",
 			[]string{
@@ -1406,10 +1406,8 @@ func (s *IntegrationTestSuite) createBankMsg(val *network.Validator, toAddr sdk.
 	bankFlags := []string{
 		fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 		fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
-		//fmt.Sprintf("--%s=%s", flags.FlagFees,
-		//	sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
-		fmt.Sprintf("--%s=%s", flags.FlagGasPrices,
-			sdk.NewDecCoins(sdk.NewDecCoinFromDec(s.cfg.BondDenom, sdk.NewDecWithPrec(4000000000000000, sdk.Precision))).String()),
+		fmt.Sprintf("--%s=%s", flags.FlagFees,
+			sdk.NewCoins(sdk.NewCoin(s.cfg.BondDenom, sdk.NewInt(10))).String()),
 	}
 
 	bankFlags = append(bankFlags, extraFlags...)

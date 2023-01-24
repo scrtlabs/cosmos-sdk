@@ -131,6 +131,7 @@ func TestQueries(t *testing.T) {
 		BaseProposerReward:      sdk.NewDecWithPrec(2, 1),
 		BonusProposerReward:     sdk.NewDecWithPrec(1, 1),
 		WithdrawAddrEnabled:     true,
+		SecretFoundationTax:     sdk.NewDec(0),
 		MinimumRestakeThreshold: sdk.NewDec(100000),
 		RestakePeriod:           sdk.NewInt(1000),
 	}

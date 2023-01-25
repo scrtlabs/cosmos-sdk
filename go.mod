@@ -131,8 +131,6 @@ replace (
 	// vendor ics23
 	github.com/confio/ics23/go => ./ics23/go
 
-	github.com/cosmos/ledger-cosmos-go => github.com/chillyvee/ledger-cosmos-go v0.12.2
-
 	// Fix upstream GHSA-h395-qcrw-5vmq vulnerability.
 	// TODO Remove it: https://github.com/cosmos/cosmos-sdk/issues/10409
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.0

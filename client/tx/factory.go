@@ -78,7 +78,7 @@ func NewFactoryCLI(clientCtx client.Context, flagSet *pflag.FlagSet) Factory {
 
 	// I.G 24/01/23 - our default for gas-prices essentially disables manually specifying fees in the CLI.
 	// This changes behaviour for fees to override the gas prices
-	if feesStr != "" {
+	if feesStr == "" {
 		gasPricesStr, _ := flagSet.GetString(flags.FlagGasPrices)
 		f = f.WithGasPrices(gasPricesStr)
 	}

@@ -381,6 +381,31 @@ func (st *Store) Query(req abci.RequestQuery) (res abci.ResponseQuery) {
 	return res
 }
 
+func (st *Store) GetWithProof(key []byte) ([]byte, *tmcrypto.ProofOps) {
+	version := st.tree.Version()
+
+	value, err := st.tree.GetVersioned(key, version)
+	if err != nil {
+		panic(err)
+	}
+
+	// Continue to prove existence/absence of value
+	// Must convert store.Tree to iavl.MutableTree with given version to use in CreateProof
+	iTree, err := st.tree.GetImmutable(version)
+	if err != nil {
+		// sanity check: If value for given version was retrieved, immutable tree must also be retrievable
+		panic(fmt.Sprintf("version exists in store but could not retrieve corresponding versioned tree in store, %s", err.Error()))
+	}
+	mtree := &iavl.MutableTree{
+		ImmutableTree: iTree,
+	}
+
+	// get proof from tree and convert to merkle.Proof before adding to result
+	proof := getProofFromTree(mtree, key, value != nil)
+
+	return value, proof
+}
+
 // Takes a MutableTree, a key, and a flag for creating existence or absence proof and returns the
 // appropriate merkle.Proof. Since this must be called after querying for the value, this function should never error
 // Thus, it will panic on error rather than returning it

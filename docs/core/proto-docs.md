@@ -185,6 +185,8 @@
     - [StoreInfo](#cosmos.base.store.v1beta1.StoreInfo)
   
 - [cosmos/base/store/v1beta1/listening.proto](#cosmos/base/store/v1beta1/listening.proto)
+    - [BlockMetadata](#cosmos.base.store.v1beta1.BlockMetadata)
+    - [BlockMetadata.DeliverTx](#cosmos.base.store.v1beta1.BlockMetadata.DeliverTx)
     - [StoreKVPair](#cosmos.base.store.v1beta1.StoreKVPair)
   
 - [cosmos/base/tendermint/v1beta1/query.proto](#cosmos/base/tendermint/v1beta1/query.proto)
@@ -283,9 +285,9 @@
     - [QueryParamsRequest](#cosmos.distribution.v1beta1.QueryParamsRequest)
     - [QueryParamsResponse](#cosmos.distribution.v1beta1.QueryParamsResponse)
     - [QueryRestakeEntriesRequest](#cosmos.distribution.v1beta1.QueryRestakeEntriesRequest)
-    - [QueryRestakeEntriesResponse](#cosmos.distribution.v1beta1.QueryRestakeEntriesResponse)
     - [QueryRestakeThresholdRequest](#cosmos.distribution.v1beta1.QueryRestakeThresholdRequest)
     - [QueryRestakeThresholdResponse](#cosmos.distribution.v1beta1.QueryRestakeThresholdResponse)
+    - [QueryRestakingEntriesResponse](#cosmos.distribution.v1beta1.QueryRestakingEntriesResponse)
     - [QueryValidatorCommissionRequest](#cosmos.distribution.v1beta1.QueryValidatorCommissionRequest)
     - [QueryValidatorCommissionResponse](#cosmos.distribution.v1beta1.QueryValidatorCommissionResponse)
     - [QueryValidatorOutstandingRewardsRequest](#cosmos.distribution.v1beta1.QueryValidatorOutstandingRewardsRequest)
@@ -3010,6 +3012,43 @@ between a store name and the commit ID.
 
 
 
+<a name="cosmos.base.store.v1beta1.BlockMetadata"></a>
+
+### BlockMetadata
+BlockMetadata contains all the abci event data of a block
+the file streamer dump them into files together with the state changes.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `request_begin_block` | [tendermint.abci.RequestBeginBlock](#tendermint.abci.RequestBeginBlock) |  |  |
+| `response_begin_block` | [tendermint.abci.ResponseBeginBlock](#tendermint.abci.ResponseBeginBlock) |  |  |
+| `deliver_txs` | [BlockMetadata.DeliverTx](#cosmos.base.store.v1beta1.BlockMetadata.DeliverTx) | repeated |  |
+| `request_end_block` | [tendermint.abci.RequestEndBlock](#tendermint.abci.RequestEndBlock) |  |  |
+| `response_end_block` | [tendermint.abci.ResponseEndBlock](#tendermint.abci.ResponseEndBlock) |  |  |
+| `response_commit` | [tendermint.abci.ResponseCommit](#tendermint.abci.ResponseCommit) |  |  |
+
+
+
+
+
+
+<a name="cosmos.base.store.v1beta1.BlockMetadata.DeliverTx"></a>
+
+### BlockMetadata.DeliverTx
+DeliverTx encapulate deliver tx request and response.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `request` | [tendermint.abci.RequestDeliverTx](#tendermint.abci.RequestDeliverTx) |  |  |
+| `response` | [tendermint.abci.ResponseDeliverTx](#tendermint.abci.ResponseDeliverTx) |  |  |
+
+
+
+
+
+
 <a name="cosmos.base.store.v1beta1.StoreKVPair"></a>
 
 ### StoreKVPair
@@ -4367,21 +4406,6 @@ QueryRestakeThresholdRequest is the request type for the Query/Params RPC method
 
 
 
-<a name="cosmos.distribution.v1beta1.QueryRestakeEntriesResponse"></a>
-
-### QueryRestakeEntriesResponse
-QueryRestakeThresholdResponse is the request type for the Query/Params RPC method.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `validators` | [string](#string) | repeated | threshold = minimum amount in uscrt that you need to have delegated to enable restaking |
-
-
-
-
-
-
 <a name="cosmos.distribution.v1beta1.QueryRestakeThresholdRequest"></a>
 
 ### QueryRestakeThresholdRequest
@@ -4401,6 +4425,21 @@ QueryRestakeThresholdResponse is the request type for the Query/Params RPC metho
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `threshold` | [string](#string) |  | threshold = minimum amount in uscrt that you need to have delegated to enable restaking |
+
+
+
+
+
+
+<a name="cosmos.distribution.v1beta1.QueryRestakingEntriesResponse"></a>
+
+### QueryRestakingEntriesResponse
+QueryRestakeThresholdResponse is the request type for the Query/Params RPC method.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `validators` | [string](#string) | repeated | threshold = minimum amount in uscrt that you need to have delegated to enable restaking |
 
 
 
@@ -4531,7 +4570,7 @@ Query defines the gRPC querier service for distribution module.
 | `CommunityPool` | [QueryCommunityPoolRequest](#cosmos.distribution.v1beta1.QueryCommunityPoolRequest) | [QueryCommunityPoolResponse](#cosmos.distribution.v1beta1.QueryCommunityPoolResponse) | CommunityPool queries the community pool coins. | GET|/cosmos/distribution/v1beta1/community_pool|
 | `FoundationTax` | [QueryFoundationTaxRequest](#cosmos.distribution.v1beta1.QueryFoundationTaxRequest) | [QueryFoundationTaxResponse](#cosmos.distribution.v1beta1.QueryFoundationTaxResponse) | DelegatorWithdrawAddress queries withdraw address of a delegator. | GET|/cosmos/distribution/v1beta1/foundation_tax|
 | `RestakeThreshold` | [QueryRestakeThresholdRequest](#cosmos.distribution.v1beta1.QueryRestakeThresholdRequest) | [QueryRestakeThresholdResponse](#cosmos.distribution.v1beta1.QueryRestakeThresholdResponse) | RestakeThreshold queries the community pool coins. | GET|/cosmos/distribution/v1beta1/restake_threshold|
-| `RestakingEntries` | [QueryRestakeEntriesRequest](#cosmos.distribution.v1beta1.QueryRestakeEntriesRequest) | [QueryRestakeEntriesResponse](#cosmos.distribution.v1beta1.QueryRestakeEntriesResponse) | RestakeThreshold queries the community pool coins. | GET|/cosmos/distribution/v1beta1/restake_entries|
+| `RestakingEntries` | [QueryRestakeEntriesRequest](#cosmos.distribution.v1beta1.QueryRestakeEntriesRequest) | [QueryRestakingEntriesResponse](#cosmos.distribution.v1beta1.QueryRestakingEntriesResponse) | RestakeThreshold queries the community pool coins. | GET|/cosmos/distribution/v1beta1/restake_entries|
 
  <!-- end services -->
 
@@ -4696,7 +4735,7 @@ Msg defines the distribution Msg service.
 | `WithdrawDelegatorReward` | [MsgWithdrawDelegatorReward](#cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward) | [MsgWithdrawDelegatorRewardResponse](#cosmos.distribution.v1beta1.MsgWithdrawDelegatorRewardResponse) | WithdrawDelegatorReward defines a method to withdraw rewards of delegator from a single validator. | |
 | `WithdrawValidatorCommission` | [MsgWithdrawValidatorCommission](#cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission) | [MsgWithdrawValidatorCommissionResponse](#cosmos.distribution.v1beta1.MsgWithdrawValidatorCommissionResponse) | WithdrawValidatorCommission defines a method to withdraw the full commission to the validator address. | |
 | `FundCommunityPool` | [MsgFundCommunityPool](#cosmos.distribution.v1beta1.MsgFundCommunityPool) | [MsgFundCommunityPoolResponse](#cosmos.distribution.v1beta1.MsgFundCommunityPoolResponse) | FundCommunityPool defines a method to allow an account to directly fund the community pool. | |
-| `SetAutoRestake` | [MsgSetAutoRestake](#cosmos.distribution.v1beta1.MsgSetAutoRestake) | [MsgSetAutoRestakeResponse](#cosmos.distribution.v1beta1.MsgSetAutoRestakeResponse) |  | |
+| `SetAutoRestake` | [MsgSetAutoRestake](#cosmos.distribution.v1beta1.MsgSetAutoRestake) | [MsgSetAutoRestakeResponse](#cosmos.distribution.v1beta1.MsgSetAutoRestakeResponse) | SetAutoRestake enables or disables automatic restaking for a delegator validator pair | |
 
  <!-- end services -->
 

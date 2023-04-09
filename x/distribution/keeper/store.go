@@ -385,19 +385,29 @@ func (k Keeper) DeleteAllValidatorSlashEvents(ctx sdk.Context) {
 }
 
 // iterate over all restake entries
-func (k Keeper) IterateRestakeEntries(ctx sdk.Context, handler func(delegator sdk.AccAddress, validator sdk.ValAddress) (stop bool)) {
+func (k Keeper) IterateRestakeEntries(ctx sdk.Context, handler func(delegator sdk.AccAddress, validator sdk.ValAddress) (toRemove bool)) (staleKeys []EntryToRemove) {
 	store := ctx.KVStore(k.storeKey)
 	iter := sdk.KVStorePrefixIterator(store, types.AutoRestakeEntryPrefix)
 	defer iter.Close()
 	for ; iter.Valid(); iter.Next() {
 
 		key := iter.Key()
-		//k.Logger(ctx).Info(fmt.Sprintf("from iter - %s", hex.EncodeToString(key)))
+		// k.Logger(ctx).Info(fmt.Sprintf("from iter - %s", hex.EncodeToString(key)))
 		delegator, validator := addressesFromRestakeKeyStore(key)
-		//k.Logger(ctx).Info(fmt.Sprintf("from iter - %s %s - %s", delegator, validator, hex.EncodeToString(key)))
+		// k.Logger(ctx).Info(fmt.Sprintf("from iter - %s %s - %s", delegator, validator, hex.EncodeToString(key)))
 
 		if handler(delegator, validator) {
-			break
+			staleKeys = append(staleKeys,
+				EntryToRemove{
+					Delegator: delegator,
+					Validator: validator,
+				})
 		}
 	}
+	return staleKeys
+}
+
+type EntryToRemove struct {
+	Delegator sdk.AccAddress
+	Validator sdk.ValAddress
 }

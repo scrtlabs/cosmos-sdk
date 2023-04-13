@@ -111,6 +111,8 @@ type BaseApp struct { //nolint: maligned
 	// abciListeners for hooking into the ABCI message processing of the BaseApp
 	// and exposing the requests and responses to external consumers
 	abciListeners []ABCIListener
+
+	LastTxManager LastMsgMarkerContainer
 }
 
 type appStore struct {
@@ -742,8 +744,12 @@ func (app *BaseApp) runMsgs(ctx sdk.Context, msgs []sdk.Msg, mode runTxMode) (*s
 		Data: make([]*sdk.MsgData, 0, len(msgs)),
 	}
 
+	// Set the marker as false - future messages may toggle this flag
+	app.LastTxManager.SetMarker(false)
+
 	// NOTE: GasWanted is determined by the AnteHandler and GasUsed by the GasMeter.
 	for i, msg := range msgs {
+
 		// skip actual execution for (Re)CheckTx mode
 		if mode == runTxModeCheck || mode == runTxModeReCheck {
 			break
@@ -754,6 +760,10 @@ func (app *BaseApp) runMsgs(ctx sdk.Context, msgs []sdk.Msg, mode runTxMode) (*s
 			eventMsgName string // name to use as value in event `message.action`
 			err          error
 		)
+
+		if app.LastTxManager.GetMarker() {
+			return nil, sdkerrors.Wrapf(sdkerrors.ErrLastTx, "message was attempted but last message was marked by a contract; message index: %d", i)
+		}
 
 		if handler := app.msgServiceRouter.Handler(msg); handler != nil {
 			// ADR 031 request type routing

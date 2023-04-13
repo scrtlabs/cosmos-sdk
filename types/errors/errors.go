@@ -147,6 +147,9 @@ var (
 	// ErrPanic is only set when we recover from a panic, so we know to
 	// redact potentially sensitive system info
 	ErrPanic = Register(UndefinedCodespace, 111222, "panic")
+
+	// ErrLastTx defines an error occurred if we tried to execute another msg after the last one was set
+	ErrLastTx = Register(RootCodespace, 40404, "Cannot send messages after last tx marker was set")
 )
 
 // Register returns an error instance that should be used as the base for

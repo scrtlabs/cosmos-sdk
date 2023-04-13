@@ -761,7 +761,7 @@ func (app *BaseApp) runMsgs(ctx sdk.Context, msgs []sdk.Msg, mode runTxMode) (*s
 			err          error
 		)
 
-		if app.LastTxManager.GetMarker() == true {
+		if app.LastTxManager.GetMarker() {
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrLastTx, "message was attempted but last message was marked by a contract; message index: %d", i)
 		}
 

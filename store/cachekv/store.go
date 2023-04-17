@@ -48,6 +48,10 @@ func NewStore(parent types.KVStore) *Store {
 	}
 }
 
+func (store *Store) GetParent() types.KVStore {
+	return store.parent
+}
+
 // GetStoreType implements Store.
 func (store *Store) GetStoreType() types.StoreType {
 	return store.parent.GetStoreType()

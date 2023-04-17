@@ -27,6 +27,10 @@ func NewStore(parent types.KVStore, prefix []byte) Store {
 	}
 }
 
+func (store Store) GetParent() types.KVStore {
+	return store.parent
+}
+
 func cloneAppend(bz []byte, tail []byte) (res []byte) {
 	res = make([]byte, len(bz)+len(tail))
 	copy(res, bz)

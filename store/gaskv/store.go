@@ -28,6 +28,10 @@ func NewStore(parent types.KVStore, gasMeter types.GasMeter, gasConfig types.Gas
 	return kvs
 }
 
+func (gs *Store) GetParent() types.KVStore {
+	return gs.parent
+}
+
 // Implements Store.
 func (gs *Store) GetStoreType() types.StoreType {
 	return gs.parent.GetStoreType()

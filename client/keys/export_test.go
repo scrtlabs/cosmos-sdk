@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/cosmos/cosmos-sdk/client"
+	clienttestutil "github.com/cosmos/cosmos-sdk/client/testutil"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/testutil"
 	"github.com/cosmos/cosmos-sdk/testutil/testdata"
@@ -19,6 +20,7 @@ import (
 )
 
 func Test_runExportCmd(t *testing.T) {
+	cdc := clienttestutil.MakeTestCodec(t)
 	testCases := []struct {
 		name           string
 		keyringBackend string
@@ -85,11 +87,9 @@ func Test_runExportCmd(t *testing.T) {
 			mockInBuf := bufio.NewReader(mockIn)
 
 			// create a key
-			kb, err := keyring.New(sdk.KeyringServiceName(), tc.keyringBackend, kbHome, bufio.NewReader(mockInBuf))
+			kb, err := keyring.New(sdk.KeyringServiceName(), tc.keyringBackend, kbHome, bufio.NewReader(mockInBuf), cdc)
 			require.NoError(t, err)
-			t.Cleanup(func() {
-				kb.Delete("keyname1") // nolint:errcheck
-			})
+			t.Cleanup(cleanupKeys(t, kb, "keyname1"))
 
 			path := sdk.GetConfig().GetFullBIP44Path()
 			_, err = kb.NewAccount("keyname1", testdata.TestMnemonic, "", path, hd.Secp256k1)
@@ -98,7 +98,8 @@ func Test_runExportCmd(t *testing.T) {
 			clientCtx := client.Context{}.
 				WithKeyringDir(kbHome).
 				WithKeyring(kb).
-				WithInput(mockInBuf)
+				WithInput(mockInBuf).
+				WithCodec(cdc)
 			ctx := context.WithValue(context.Background(), client.ClientContextKey, &clientCtx)
 
 			err = cmd.ExecuteContext(ctx)

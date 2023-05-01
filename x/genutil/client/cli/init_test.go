@@ -9,13 +9,15 @@ import (
 	"testing"
 	"time"
 
+	abci_server "github.com/cometbft/cometbft/abci/server"
+	"github.com/cometbft/cometbft/libs/cli"
+	"github.com/cometbft/cometbft/libs/log"
+	tmtypes "github.com/cometbft/cometbft/types"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
-	abci_server "github.com/tendermint/tendermint/abci/server"
-	"github.com/tendermint/tendermint/libs/cli"
-	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
@@ -27,9 +29,13 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
 	genutiltest "github.com/cosmos/cosmos-sdk/x/genutil/client/testutil"
+	"github.com/cosmos/cosmos-sdk/x/staking"
 )
 
-var testMbm = module.NewBasicManager(genutil.AppModuleBasic{})
+var testMbm = module.NewBasicManager(
+	staking.AppModuleBasic{},
+	genutil.AppModuleBasic{},
+)
 
 func TestInitCmd(t *testing.T) {
 	tests := []struct {
@@ -116,6 +122,34 @@ func TestInitRecover(t *testing.T) {
 	require.NoError(t, cmd.ExecuteContext(ctx))
 }
 
+func TestInitDefaultBondDenom(t *testing.T) {
+	home := t.TempDir()
+	logger := log.NewNopLogger()
+	cfg, err := genutiltest.CreateDefaultTendermintConfig(home)
+	require.NoError(t, err)
+
+	serverCtx := server.NewContext(viper.New(), cfg, logger)
+	interfaceRegistry := types.NewInterfaceRegistry()
+	marshaler := codec.NewProtoCodec(interfaceRegistry)
+	clientCtx := client.Context{}.
+		WithCodec(marshaler).
+		WithLegacyAmino(makeCodec()).
+		WithHomeDir(home)
+
+	ctx := context.Background()
+	ctx = context.WithValue(ctx, client.ClientContextKey, &clientCtx)
+	ctx = context.WithValue(ctx, server.ServerContextKey, serverCtx)
+
+	cmd := genutilcli.InitCmd(testMbm, home)
+
+	cmd.SetArgs([]string{
+		"appnode-test",
+		fmt.Sprintf("--%s=%s", cli.HomeFlag, home),
+		fmt.Sprintf("--%s=testtoken", genutilcli.FlagDefaultBondDenom),
+	})
+	require.NoError(t, cmd.ExecuteContext(ctx))
+}
+
 func TestEmptyState(t *testing.T) {
 	home := t.TempDir()
 	logger := log.NewNopLogger()
@@ -197,11 +231,122 @@ func TestStartStandAlone(t *testing.T) {
 func TestInitNodeValidatorFiles(t *testing.T) {
 	home := t.TempDir()
 	cfg, err := genutiltest.CreateDefaultTendermintConfig(home)
-	nodeID, valPubKey, err := genutil.InitializeNodeValidatorFiles(cfg)
+	require.NoError(t, err)
 
-	require.Nil(t, err)
+	nodeID, valPubKey, err := genutil.InitializeNodeValidatorFiles(cfg)
+	require.NoError(t, err)
+
 	require.NotEqual(t, "", nodeID)
 	require.NotEqual(t, 0, len(valPubKey.Bytes()))
+}
+
+func TestInitConfig(t *testing.T) {
+	home := t.TempDir()
+	logger := log.NewNopLogger()
+	cfg, err := genutiltest.CreateDefaultTendermintConfig(home)
+	require.NoError(t, err)
+
+	serverCtx := server.NewContext(viper.New(), cfg, logger)
+	interfaceRegistry := types.NewInterfaceRegistry()
+	marshaler := codec.NewProtoCodec(interfaceRegistry)
+	clientCtx := client.Context{}.
+		WithCodec(marshaler).
+		WithLegacyAmino(makeCodec()).
+		WithChainID("foo"). // add chain-id to clientCtx
+		WithHomeDir(home)
+
+	ctx := context.Background()
+	ctx = context.WithValue(ctx, client.ClientContextKey, &clientCtx)
+	ctx = context.WithValue(ctx, server.ServerContextKey, serverCtx)
+
+	cmd := genutilcli.InitCmd(testMbm, home)
+	cmd.SetArgs([]string{"testnode"})
+
+	require.NoError(t, cmd.ExecuteContext(ctx))
+
+	old := os.Stdout
+	r, w, _ := os.Pipe()
+	os.Stdout = w
+
+	cmd = server.ExportCmd(nil, home)
+	require.NoError(t, cmd.ExecuteContext(ctx))
+
+	outC := make(chan string)
+	go func() {
+		var buf bytes.Buffer
+		io.Copy(&buf, r)
+		outC <- buf.String()
+	}()
+
+	w.Close()
+	os.Stdout = old
+	out := <-outC
+
+	require.Contains(t, out, "\"chain_id\": \"foo\"")
+}
+
+func TestInitWithHeight(t *testing.T) {
+	home := t.TempDir()
+	logger := log.NewNopLogger()
+	cfg, err := genutiltest.CreateDefaultTendermintConfig(home)
+	require.NoError(t, err)
+
+	serverCtx := server.NewContext(viper.New(), cfg, logger)
+	interfaceRegistry := types.NewInterfaceRegistry()
+	marshaler := codec.NewProtoCodec(interfaceRegistry)
+	clientCtx := client.Context{}.
+		WithCodec(marshaler).
+		WithLegacyAmino(makeCodec()).
+		WithChainID("foo"). // add chain-id to clientCtx
+		WithHomeDir(home)
+
+	ctx := context.Background()
+	ctx = context.WithValue(ctx, client.ClientContextKey, &clientCtx)
+	ctx = context.WithValue(ctx, server.ServerContextKey, serverCtx)
+
+	testInitialHeight := int64(333)
+
+	cmd := genutilcli.InitCmd(testMbm, home)
+	cmd.SetArgs([]string{"init-height-test", fmt.Sprintf("--%s=%d", flags.FlagInitHeight, testInitialHeight)})
+
+	require.NoError(t, cmd.ExecuteContext(ctx))
+
+	appGenesis, importErr := tmtypes.GenesisDocFromFile(cfg.GenesisFile())
+	require.NoError(t, importErr)
+
+	require.Equal(t, testInitialHeight, appGenesis.InitialHeight)
+}
+
+func TestInitWithNegativeHeight(t *testing.T) {
+	home := t.TempDir()
+	logger := log.NewNopLogger()
+	cfg, err := genutiltest.CreateDefaultTendermintConfig(home)
+	require.NoError(t, err)
+
+	serverCtx := server.NewContext(viper.New(), cfg, logger)
+	interfaceRegistry := types.NewInterfaceRegistry()
+	marshaler := codec.NewProtoCodec(interfaceRegistry)
+	clientCtx := client.Context{}.
+		WithCodec(marshaler).
+		WithLegacyAmino(makeCodec()).
+		WithChainID("foo"). // add chain-id to clientCtx
+		WithHomeDir(home)
+
+	ctx := context.Background()
+	ctx = context.WithValue(ctx, client.ClientContextKey, &clientCtx)
+	ctx = context.WithValue(ctx, server.ServerContextKey, serverCtx)
+
+	testInitialHeight := int64(-333)
+
+	cmd := genutilcli.InitCmd(testMbm, home)
+	cmd.SetArgs([]string{"init-height-test", fmt.Sprintf("--%s=%d", flags.FlagInitHeight, testInitialHeight)})
+
+	require.NoError(t, cmd.ExecuteContext(ctx))
+
+	appGenesis, importErr := tmtypes.GenesisDocFromFile(cfg.GenesisFile())
+	require.NoError(t, importErr)
+
+	require.Equal(t, int64(1), appGenesis.InitialHeight)
 }
 
 // custom tx codec

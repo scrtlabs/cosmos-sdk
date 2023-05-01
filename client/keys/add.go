@@ -3,12 +3,14 @@ package keys
 import (
 	"bufio"
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"sort"
 
-	bip39 "github.com/cosmos/go-bip39"
+	"github.com/cosmos/go-bip39"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -79,9 +81,18 @@ Example:
 	f.Bool(flags.FlagDryRun, false, "Perform action, but don't add key to local keystore")
 	f.String(flagHDPath, "", "Manual HD Path derivation (overrides BIP44 config)")
 	f.Uint32(flagCoinType, sdk.GetConfig().GetCoinType(), "coin type number for HD derivation")
-	f.Uint32(flagAccount, 0, "Account number for HD derivation")
-	f.Uint32(flagIndex, 0, "Address index number for HD derivation")
-	f.String(flags.FlagKeyAlgorithm, string(hd.Secp256k1Type), "Key signing algorithm to generate keys for")
+	f.Uint32(flagAccount, 0, "Account number for HD derivation (less than equal 2147483647)")
+	f.Uint32(flagIndex, 0, "Address index number for HD derivation (less than equal 2147483647)")
+	f.String(flags.FlagKeyType, string(hd.Secp256k1Type), "Key signing algorithm to generate keys for")
+
+	// support old flags name for backwards compatibility
+	f.SetNormalizeFunc(func(f *pflag.FlagSet, name string) pflag.NormalizedName {
+		if name == "algo" {
+			name = flags.FlagKeyType
+		}
+
+		return pflag.NormalizedName(name)
+	})
 
 	return cmd
 }
@@ -117,7 +128,7 @@ func runAddCmd(ctx client.Context, cmd *cobra.Command, args []string, inBuf *buf
 	outputFormat := ctx.OutputFormat
 
 	keyringAlgos, _ := kb.SupportedAlgorithms()
-	algoStr, _ := cmd.Flags().GetString(flags.FlagKeyAlgorithm)
+	algoStr, _ := cmd.Flags().GetString(flags.FlagKeyType)
 	algo, err := keyring.NewSigningAlgoFromString(algoStr, keyringAlgos)
 	if err != nil {
 		return err
@@ -125,7 +136,7 @@ func runAddCmd(ctx client.Context, cmd *cobra.Command, args []string, inBuf *buf
 
 	if dryRun, _ := cmd.Flags().GetBool(flags.FlagDryRun); dryRun {
 		// use in memory keybase
-		kb = keyring.NewInMemory()
+		kb = keyring.NewInMemory(ctx.Codec)
 	} else {
 		_, err = kb.Key(name)
 		if err == nil {
@@ -159,7 +170,11 @@ func runAddCmd(ctx client.Context, cmd *cobra.Command, args []string, inBuf *buf
 					return err
 				}
 
-				pks[i] = k.GetPubKey()
+				key, err := k.GetPubKey()
+				if err != nil {
+					return err
+				}
+				pks[i] = key
 			}
 
 			if noSort, _ := cmd.Flags().GetBool(flagNoSort); !noSort {
@@ -169,29 +184,28 @@ func runAddCmd(ctx client.Context, cmd *cobra.Command, args []string, inBuf *buf
 			}
 
 			pk := multisig.NewLegacyAminoPubKey(multisigThreshold, pks)
-			info, err := kb.SaveMultisig(name, pk)
+			k, err := kb.SaveMultisig(name, pk)
 			if err != nil {
 				return err
 			}
 
-			return printCreate(cmd, info, false, "", outputFormat)
+			return printCreate(cmd, k, false, "", outputFormat)
 		}
 	}
 
 	pubKey, _ := cmd.Flags().GetString(FlagPublicKey)
 	if pubKey != "" {
 		var pk cryptotypes.PubKey
-		err = ctx.Codec.UnmarshalInterfaceJSON([]byte(pubKey), &pk)
+		if err = ctx.Codec.UnmarshalInterfaceJSON([]byte(pubKey), &pk); err != nil {
+			return err
+		}
+
+		k, err := kb.SaveOfflineKey(name, pk)
 		if err != nil {
 			return err
 		}
 
-		info, err := kb.SavePubKey(name, pk, algo.Name())
-		if err != nil {
-			return err
-		}
-
-		return printCreate(cmd, info, false, "", outputFormat)
+		return printCreate(cmd, k, false, "", outputFormat)
 	}
 
 	coinType, _ := cmd.Flags().GetUint32(flagCoinType)
@@ -216,13 +230,12 @@ func runAddCmd(ctx client.Context, cmd *cobra.Command, args []string, inBuf *buf
 		}
 
 		bech32PrefixAccAddr := sdk.GetConfig().GetBech32AccountAddrPrefix()
-
-		info, err := kb.SaveLedgerKey(name, algo, bech32PrefixAccAddr, coinType, account, index)
+		k, err := kb.SaveLedgerKey(name, hd.Secp256k1, bech32PrefixAccAddr, coinType, account, index)
 		if err != nil {
 			return err
 		}
 
-		return printCreate(cmd, info, false, "", outputFormat)
+		return printCreate(cmd, k, false, "", outputFormat)
 	}
 
 	// Get bip39 mnemonic
@@ -284,7 +297,7 @@ func runAddCmd(ctx client.Context, cmd *cobra.Command, args []string, inBuf *buf
 		}
 	}
 
-	info, err := kb.NewAccount(name, mnemonic, bip39Passphrase, hdPath, algo)
+	k, err := kb.NewAccount(name, mnemonic, bip39Passphrase, hdPath, algo)
 	if err != nil {
 		return err
 	}
@@ -296,24 +309,25 @@ func runAddCmd(ctx client.Context, cmd *cobra.Command, args []string, inBuf *buf
 		mnemonic = ""
 	}
 
-	return printCreate(cmd, info, showMnemonic, mnemonic, outputFormat)
+	return printCreate(cmd, k, showMnemonic, mnemonic, outputFormat)
 }
 
-func printCreate(cmd *cobra.Command, info keyring.Info, showMnemonic bool, mnemonic string, outputFormat string) error {
+func printCreate(cmd *cobra.Command, k *keyring.Record, showMnemonic bool, mnemonic, outputFormat string) error {
 	switch outputFormat {
 	case OutputFormatText:
 		cmd.PrintErrln()
-		printKeyInfo(cmd.OutOrStdout(), info, keyring.MkAccKeyOutput, outputFormat)
+		if err := printKeyringRecord(cmd.OutOrStdout(), k, keyring.MkAccKeyOutput, outputFormat); err != nil {
+			return err
+		}
 
 		// print mnemonic unless requested not to.
 		if showMnemonic {
-			fmt.Fprintln(cmd.ErrOrStderr(), "\n**Important** write this mnemonic phrase in a safe place.")
-			fmt.Fprintln(cmd.ErrOrStderr(), "It is the only way to recover your account if you ever forget your password.")
-			fmt.Fprintln(cmd.ErrOrStderr(), "")
-			fmt.Fprintln(cmd.ErrOrStderr(), mnemonic)
+			if _, err := fmt.Fprintf(cmd.ErrOrStderr(), "\n**Important** write this mnemonic phrase in a safe place.\nIt is the only way to recover your account if you ever forget your password.\n\n%s\n", mnemonic); err != nil {
+				return fmt.Errorf("failed to print mnemonic: %v", err)
+			}
 		}
 	case OutputFormatJSON:
-		out, err := keyring.MkAccKeyOutput(info)
+		out, err := keyring.MkAccKeyOutput(k)
 		if err != nil {
 			return err
 		}
@@ -322,7 +336,7 @@ func printCreate(cmd *cobra.Command, info keyring.Info, showMnemonic bool, mnemo
 			out.Mnemonic = mnemonic
 		}
 
-		jsonString, err := KeysCdc.MarshalJSON(out)
+		jsonString, err := json.Marshal(out)
 		if err != nil {
 			return err
 		}

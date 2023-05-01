@@ -8,17 +8,20 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth/legacy/legacytx"
+	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
 )
 
+// Deprecated: Use WeightedProposalMsg instead.
 type WeightedProposalContent interface {
 	AppParamsKey() string                   // key used to retrieve the value of the weight from the simulation application params
 	DefaultWeight() int                     // default weight
 	ContentSimulatorFn() ContentSimulatorFn // content simulator function
 }
 
+// Deprecated: Use MsgSimulatorFn instead.
 type ContentSimulatorFn func(r *rand.Rand, ctx sdk.Context, accs []Account) Content
 
+// Deprecated: Use MsgSimulatorFn instead.
 type Content interface {
 	GetTitle() string
 	GetDescription() string
@@ -28,9 +31,17 @@ type Content interface {
 	String() string
 }
 
+type WeightedProposalMsg interface {
+	AppParamsKey() string           // key used to retrieve the value of the weight from the simulation application params
+	DefaultWeight() int             // default weight
+	MsgSimulatorFn() MsgSimulatorFn // msg simulator function
+}
+
+type MsgSimulatorFn func(r *rand.Rand, ctx sdk.Context, accs []Account) sdk.Msg
+
 type SimValFn func(r *rand.Rand) string
 
-type ParamChange interface {
+type LegacyParamChange interface {
 	Subspace() string
 	Key() string
 	SimValue() SimValFn
@@ -160,6 +171,10 @@ type SelectOpFn func(r *rand.Rand) Operation
 type AppStateFn func(r *rand.Rand, accs []Account, config Config) (
 	appState json.RawMessage, accounts []Account, chainId string, genesisTimestamp time.Time,
 )
+
+// AppStateFnWithExtendedCb returns the app state json bytes and the genesis accounts
+// Deprecated: Use AppStateFn instead. This will be removed in a future relase.
+type AppStateFnWithExtendedCb AppStateFn
 
 // RandomAccountFn returns a slice of n random simulation accounts
 type RandomAccountFn func(r *rand.Rand, n int) []Account

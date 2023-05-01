@@ -3,17 +3,17 @@ package cli
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"strings"
 
+	tmtypes "github.com/cometbft/cometbft/types"
 	"github.com/spf13/cobra"
-	tmtypes "github.com/tendermint/tendermint/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
-	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/version"
 	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -42,8 +42,10 @@ func GetQueryCmd() *cobra.Command {
 
 	cmd.AddCommand(
 		GetAccountCmd(),
+		GetAccountAddressByIDCmd(),
 		GetAccountsCmd(),
 		QueryParamsCmd(),
+		QueryModuleAccountsCmd(),
 		QueryModuleAccountByNameCmd(),
 	)
 
@@ -101,10 +103,58 @@ func GetAccountCmd() *cobra.Command {
 			queryClient := types.NewQueryClient(clientCtx)
 			res, err := queryClient.Account(cmd.Context(), &types.QueryAccountRequest{Address: key.String()})
 			if err != nil {
+				node, err2 := clientCtx.GetNode()
+				if err2 != nil {
+					return err2
+				}
+				status, err2 := node.Status(context.Background())
+				if err2 != nil {
+					return err2
+				}
+				catchingUp := status.SyncInfo.CatchingUp
+				if !catchingUp {
+					return errors.Wrapf(err, "your node may be syncing, please check node status using `/status`")
+				}
 				return err
 			}
 
 			return clientCtx.PrintProto(res.Account)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetAccountAddressByIDCmd returns a query account that will display the account address of a given account id.
+func GetAccountAddressByIDCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "address-by-acc-num [acc-num]",
+		Aliases: []string{"address-by-id"},
+		Short:   "Query for an address by account number",
+		Args:    cobra.ExactArgs(1),
+		Example: fmt.Sprintf("%s q auth address-by-acc-num 1", version.AppName),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			accNum, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			queryClient := types.NewQueryClient(clientCtx)
+			res, err := queryClient.AccountAddressByID(cmd.Context(), &types.QueryAccountAddressByIDRequest{
+				AccountId: accNum,
+			})
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
 		},
 	}
 
@@ -141,6 +191,33 @@ func GetAccountsCmd() *cobra.Command {
 
 	flags.AddQueryFlagsToCmd(cmd)
 	flags.AddPaginationFlagsToCmd(cmd, "all-accounts")
+
+	return cmd
+}
+
+// QueryAllModuleAccountsCmd returns a list of all the existing module accounts with their account information and permissions
+func QueryModuleAccountsCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "module-accounts",
+		Short: "Query all module accounts",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			queryClient := types.NewQueryClient(clientCtx)
+
+			res, err := queryClient.ModuleAccounts(context.Background(), &types.QueryModuleAccountsRequest{})
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
 
 	return cmd
 }
@@ -242,8 +319,8 @@ $ %s query txs --%s 'message.sender=cosmos1...&message.action=withdraw_delegator
 	}
 
 	flags.AddQueryFlagsToCmd(cmd)
-	cmd.Flags().Int(flags.FlagPage, rest.DefaultPage, "Query a specific page of paginated results")
-	cmd.Flags().Int(flags.FlagLimit, rest.DefaultLimit, "Query number of transactions results per page returned")
+	cmd.Flags().Int(flags.FlagPage, query.DefaultPage, "Query a specific page of paginated results")
+	cmd.Flags().Int(flags.FlagLimit, query.DefaultLimit, "Query number of transactions results per page returned")
 	cmd.Flags().String(flagEvents, "", fmt.Sprintf("list of transaction events in the form of %s", eventFormat))
 	cmd.MarkFlagRequired(flagEvents)
 
@@ -294,7 +371,7 @@ $ %s query tx --%s=%s <sig1_base64>,<sig2_base64...>
 				}
 			case typeSig:
 				{
-					sigParts, err := parseSigArgs(args)
+					sigParts, err := ParseSigArgs(args)
 					if err != nil {
 						return err
 					}
@@ -303,7 +380,7 @@ $ %s query tx --%s=%s <sig1_base64>,<sig2_base64...>
 						tmEvents[i] = fmt.Sprintf("%s.%s='%s'", sdk.EventTypeTx, sdk.AttributeKeySignature, sig)
 					}
 
-					txs, err := authtx.QueryTxsByEvents(clientCtx, tmEvents, rest.DefaultPage, query.DefaultLimit, "")
+					txs, err := authtx.QueryTxsByEvents(clientCtx, tmEvents, query.DefaultPage, query.DefaultLimit, "")
 					if err != nil {
 						return err
 					}
@@ -326,7 +403,7 @@ $ %s query tx --%s=%s <sig1_base64>,<sig2_base64...>
 					tmEvents := []string{
 						fmt.Sprintf("%s.%s='%s'", sdk.EventTypeTx, sdk.AttributeKeyAccountSequence, args[0]),
 					}
-					txs, err := authtx.QueryTxsByEvents(clientCtx, tmEvents, rest.DefaultPage, query.DefaultLimit, "")
+					txs, err := authtx.QueryTxsByEvents(clientCtx, tmEvents, query.DefaultPage, query.DefaultLimit, "")
 					if err != nil {
 						return err
 					}
@@ -352,8 +429,8 @@ $ %s query tx --%s=%s <sig1_base64>,<sig2_base64...>
 	return cmd
 }
 
-// parseSigArgs parses comma-separated signatures from the CLI arguments.
-func parseSigArgs(args []string) ([]string, error) {
+// ParseSigArgs parses comma-separated signatures from the CLI arguments.
+func ParseSigArgs(args []string) ([]string, error) {
 	if len(args) != 1 || args[0] == "" {
 		return nil, fmt.Errorf("argument should be comma-separated signatures")
 	}

@@ -3,12 +3,10 @@ package tx
 import (
 	"fmt"
 
-	signingtypes "github.com/cosmos/cosmos-sdk/types/tx/signing"
-
-	"github.com/cosmos/cosmos-sdk/codec"
-
 	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	signingtypes "github.com/cosmos/cosmos-sdk/types/tx/signing"
 	"github.com/cosmos/cosmos-sdk/x/auth/signing"
 )
 
@@ -42,7 +40,7 @@ func NewTxConfigWithHandler(protoCodec codec.ProtoCodecMarshaler, handler signin
 }
 
 func (g config) NewTxBuilder() client.TxBuilder {
-	return newBuilder()
+	return newBuilder(g.protoCodec)
 }
 
 // WrapTxBuilder returns a builder from provided transaction

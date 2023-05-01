@@ -73,7 +73,7 @@ func runConfigCmd(cmd *cobra.Command, args []string) error {
 			cmd.Println(conf.ChainID)
 		case flags.FlagKeyringBackend:
 			cmd.Println(conf.KeyringBackend)
-		case tmcli.OutputFlag:
+		case flags.FlagOutput:
 			cmd.Println(conf.Output)
 		case flags.FlagNode:
 			cmd.Println(conf.Node)
@@ -93,7 +93,7 @@ func runConfigCmd(cmd *cobra.Command, args []string) error {
 			conf.SetChainID(value)
 		case flags.FlagKeyringBackend:
 			conf.SetKeyringBackend(value)
-		case tmcli.OutputFlag:
+		case flags.FlagOutput:
 			conf.SetOutput(value)
 		case flags.FlagNode:
 			conf.SetNode(value)

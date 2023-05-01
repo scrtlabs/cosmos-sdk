@@ -2,207 +2,132 @@ package client_test
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/stretchr/testify/require"
-
+	dbm "github.com/cometbft/cometbft-db"
+	abci "github.com/cometbft/cometbft/abci/types"
+	tmjson "github.com/cometbft/cometbft/libs/json"
+	"github.com/cometbft/cometbft/libs/log"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/stretchr/testify/suite"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 
-	"github.com/cosmos/cosmos-sdk/testutil/network"
+	"cosmossdk.io/depinject"
+	"github.com/cosmos/cosmos-sdk/baseapp"
+	"github.com/cosmos/cosmos-sdk/codec"
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
+	"github.com/cosmos/cosmos-sdk/runtime"
+	"github.com/cosmos/cosmos-sdk/testutil/sims"
 	"github.com/cosmos/cosmos-sdk/testutil/testdata"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	grpctypes "github.com/cosmos/cosmos-sdk/types/grpc"
+	"github.com/cosmos/cosmos-sdk/x/auth/testutil"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	"github.com/cosmos/cosmos-sdk/x/bank/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 )
-
-const (
-	// if clientContextHeight or grpcHeight is set to this flag,
-	// the test assumes that the respective height is not provided.
-	heightNotSetFlag = int64(-1)
-	// given the current block time, this should never be reached by the time
-	// a test is run.
-	invalidBeyondLatestHeight = 1_000_000_000
-	// if this flag is set to expectedHeight, an error is assumed.
-	errorHeightFlag = int64(-2)
-)
-
-type testcase struct {
-	clientContextHeight int64
-	grpcHeight          int64
-	expectedHeight      int64
-}
 
 type IntegrationTestSuite struct {
 	suite.Suite
 
-	network *network.Network
+	ctx                   sdk.Context
+	genesisAccount        *authtypes.BaseAccount
+	bankClient            types.QueryClient
+	testClient            testdata.QueryClient
+	genesisAccountBalance int64
 }
 
 func (s *IntegrationTestSuite) SetupSuite() {
 	s.T().Log("setting up integration test suite")
+	var (
+		interfaceRegistry codectypes.InterfaceRegistry
+		bankKeeper        bankkeeper.BaseKeeper
+		appBuilder        *runtime.AppBuilder
+		cdc               codec.Codec
+	)
 
-	s.network = network.New(s.T(), network.DefaultConfig())
-	s.Require().NotNil(s.network)
+	// TODO duplicated from testutils/sims/app_helpers.go
+	// need more composable startup options for simapp, this test needed a handle to the closed over genesis account
+	// to query balances
+	err := depinject.Inject(testutil.AppConfig, &interfaceRegistry, &bankKeeper, &appBuilder, &cdc)
+	s.NoError(err)
 
-	_, err := s.network.WaitForHeight(3)
-	s.Require().NoError(err)
+	app := appBuilder.Build(log.NewNopLogger(), dbm.NewMemDB(), nil)
+	err = app.Load(true)
+	s.NoError(err)
+
+	valSet, err := sims.CreateRandomValidatorSet()
+	s.NoError(err)
+
+	// generate genesis account
+	s.genesisAccountBalance = 100000000000000
+	senderPrivKey := secp256k1.GenPrivKey()
+	acc := authtypes.NewBaseAccount(senderPrivKey.PubKey().Address().Bytes(), senderPrivKey.PubKey(), 0, 0)
+	balance := banktypes.Balance{
+		Address: acc.GetAddress().String(),
+		Coins:   sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(s.genesisAccountBalance))),
+	}
+
+	genesisState, err := sims.GenesisStateWithValSet(cdc, app.DefaultGenesis(), valSet, []authtypes.GenesisAccount{acc}, balance)
+	s.NoError(err)
+
+	stateBytes, err := tmjson.MarshalIndent(genesisState, "", " ")
+	s.NoError(err)
+
+	// init chain will set the validator set and initialize the genesis accounts
+	app.InitChain(
+		abci.RequestInitChain{
+			Validators:      []abci.ValidatorUpdate{},
+			ConsensusParams: sims.DefaultConsensusParams,
+			AppStateBytes:   stateBytes,
+		},
+	)
+
+	app.Commit()
+	app.BeginBlock(abci.RequestBeginBlock{Header: tmproto.Header{
+		Height:             app.LastBlockHeight() + 1,
+		AppHash:            app.LastCommitID().Hash,
+		ValidatorsHash:     valSet.Hash(),
+		NextValidatorsHash: valSet.Hash(),
+	}})
+
+	// end of app init
+
+	s.ctx = app.BaseApp.NewContext(false, tmproto.Header{})
+	queryHelper := baseapp.NewQueryServerTestHelper(s.ctx, interfaceRegistry)
+	types.RegisterQueryServer(queryHelper, bankKeeper)
+	testdata.RegisterQueryServer(queryHelper, testdata.QueryImpl{})
+	s.bankClient = types.NewQueryClient(queryHelper)
+	s.testClient = testdata.NewQueryClient(queryHelper)
+	s.genesisAccount = acc
 }
 
 func (s *IntegrationTestSuite) TearDownSuite() {
 	s.T().Log("tearing down integration test suite")
-	s.network.Cleanup()
 }
 
-func (s *IntegrationTestSuite) TestGRPCQuery_TestService() {
-	val0 := s.network.Validators[0]
+func (s *IntegrationTestSuite) TestGRPCQuery() {
+	denom := sdk.DefaultBondDenom
 
 	// gRPC query to test service should work
-	testClient := testdata.NewQueryClient(val0.ClientCtx)
-	testRes, err := testClient.Echo(context.Background(), &testdata.EchoRequest{Message: "hello"})
+	testRes, err := s.testClient.Echo(context.Background(), &testdata.EchoRequest{Message: "hello"})
 	s.Require().NoError(err)
 	s.Require().Equal("hello", testRes.Message)
-}
 
-func (s *IntegrationTestSuite) TestGRPCQuery_BankService_VariousInputs() {
-	val0 := s.network.Validators[0]
-
-	const method = "/cosmos.bank.v1beta1.Query/Balance"
-
-	testcases := map[string]testcase{
-		"clientContextHeight 1; grpcHeight not set - clientContextHeight selected": {
-			clientContextHeight: 1, // chosen
-			grpcHeight:          heightNotSetFlag,
-			expectedHeight:      1,
-		},
-		"clientContextHeight not set; grpcHeight is 2 - grpcHeight is chosen": {
-			clientContextHeight: heightNotSetFlag,
-			grpcHeight:          2, // chosen
-			expectedHeight:      2,
-		},
-		"both not set - 0 returned": {
-			clientContextHeight: heightNotSetFlag,
-			grpcHeight:          heightNotSetFlag,
-			expectedHeight:      3, // latest height
-		},
-		"clientContextHeight 3; grpcHeight is 0 - grpcHeight is chosen": {
-			clientContextHeight: 1,
-			grpcHeight:          0, // chosen
-			expectedHeight:      3, // latest height
-		},
-		"clientContextHeight 3; grpcHeight is 3 - 3 is returned": {
-			clientContextHeight: 3,
-			grpcHeight:          3,
-			expectedHeight:      3,
-		},
-		"clientContextHeight is 1_000_000_000; grpcHeight is 1_000_000_000 - requested beyond latest height - error": {
-			clientContextHeight: invalidBeyondLatestHeight,
-			grpcHeight:          invalidBeyondLatestHeight,
-			expectedHeight:      errorHeightFlag,
-		},
-	}
-
-	for name, tc := range testcases {
-		s.T().Run(name, func(t *testing.T) {
-			// Setup
-			clientCtx := val0.ClientCtx
-			clientCtx.GRPCConcurrency = true
-			clientCtx.Height = 0
-
-			if tc.clientContextHeight != heightNotSetFlag {
-				clientCtx = clientCtx.WithHeight(tc.clientContextHeight)
-			}
-
-			grpcContext := context.Background()
-			if tc.grpcHeight != heightNotSetFlag {
-				header := metadata.Pairs(grpctypes.GRPCBlockHeightHeader, fmt.Sprintf("%d", tc.grpcHeight))
-				grpcContext = metadata.NewOutgoingContext(grpcContext, header)
-			}
-
-			// Test
-			var header metadata.MD
-			denom := fmt.Sprintf("%stoken", val0.Moniker)
-			request := &banktypes.QueryBalanceRequest{Address: val0.Address.String(), Denom: denom}
-			response := &banktypes.QueryBalanceResponse{}
-			err := clientCtx.Invoke(grpcContext, method, request, response, grpc.Header(&header))
-
-			// Assert results
-			if tc.expectedHeight == errorHeightFlag {
-				s.Require().Error(err)
-				return
-			}
-
-			s.Require().NoError(err)
-			s.Require().Equal(
-				sdk.NewCoin(denom, s.network.Config.AccountTokens),
-				*response.GetBalance(),
-			)
-			blockHeight := header.Get(grpctypes.GRPCBlockHeightHeader)
-			s.Require().Equal([]string{fmt.Sprintf("%d", tc.expectedHeight)}, blockHeight)
-		})
-	}
+	// gRPC query to bank service should work
+	var header metadata.MD
+	res, err := s.bankClient.Balance(
+		context.Background(),
+		&banktypes.QueryBalanceRequest{Address: s.genesisAccount.GetAddress().String(), Denom: denom},
+		grpc.Header(&header), // Also fetch grpc header
+	)
+	s.Require().NoError(err)
+	bal := res.GetBalance()
+	s.Equal(sdk.NewCoin(denom, sdk.NewInt(s.genesisAccountBalance)), *bal)
 }
 
 func TestIntegrationTestSuite(t *testing.T) {
 	suite.Run(t, new(IntegrationTestSuite))
-}
-
-//			grpcContxt := context.Background()
-//			if tc.grpcHeight != heightNotSetFlag {
-//				header := metadata.Pairs(grpctypes.GRPCBlockHeightHeader, fmt.Sprintf("%d", tc.grpcHeight))
-//				grpcContxt = metadata.NewOutgoingContext(grpcContxt, header)
-//			}
-//
-//			height, err := client.SelectHeight(clientCtx, grpcContxt)
-//			require.NoError(t, err)
-//			require.Equal(t, tc.expectedHeight, height)
-//		})
-//	}
-//}
-
-func TestSelectHeight(t *testing.T) {
-	testcases := map[string]testcase{
-		"clientContextHeight 1; grpcHeight not set - clientContextHeight selected": {
-			clientContextHeight: 1,
-			grpcHeight:          heightNotSetFlag,
-			expectedHeight:      1,
-		},
-		"clientContextHeight not set; grpcHeight is 2 - grpcHeight is chosen": {
-			clientContextHeight: heightNotSetFlag,
-			grpcHeight:          2,
-			expectedHeight:      2,
-		},
-		"both not set - 0 returned": {
-			clientContextHeight: heightNotSetFlag,
-			grpcHeight:          heightNotSetFlag,
-			expectedHeight:      0,
-		},
-		"clientContextHeight 3; grpcHeight is 0 - grpcHeight is chosen": {
-			clientContextHeight: 3,
-			grpcHeight:          0,
-			expectedHeight:      0,
-		},
-	}
-
-	for name, tc := range testcases {
-		t.Run(name, func(t *testing.T) {
-			clientCtx := client.Context{}
-			if tc.clientContextHeight != heightNotSetFlag {
-				clientCtx = clientCtx.WithHeight(tc.clientContextHeight)
-			}
-
-			grpcContxt := context.Background()
-			if tc.grpcHeight != heightNotSetFlag {
-				header := metadata.Pairs(grpctypes.GRPCBlockHeightHeader, fmt.Sprintf("%d", tc.grpcHeight))
-				grpcContxt = metadata.NewOutgoingContext(grpcContxt, header)
-			}
-
-			height, err := client.SelectHeight(clientCtx, grpcContxt)
-			require.NoError(t, err)
-			require.Equal(t, tc.expectedHeight, height)
-		})
-	}
 }

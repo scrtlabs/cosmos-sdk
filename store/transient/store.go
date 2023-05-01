@@ -1,9 +1,10 @@
 package transient
 
 import (
-	dbm "github.com/tendermint/tm-db"
+	dbm "github.com/cometbft/cometbft-db"
 
 	"github.com/cosmos/cosmos-sdk/store/dbadapter"
+	pruningtypes "github.com/cosmos/cosmos-sdk/store/pruning/types"
 	"github.com/cosmos/cosmos-sdk/store/types"
 )
 
@@ -29,11 +30,13 @@ func (ts *Store) Commit() (id types.CommitID) {
 	return
 }
 
-func (ts *Store) SetPruning(_ types.PruningOptions) {}
+func (ts *Store) SetPruning(_ pruningtypes.PruningOptions) {}
 
 // GetPruning is a no-op as pruning options cannot be directly set on this store.
 // They must be set on the root commit multi-store.
-func (ts *Store) GetPruning() types.PruningOptions { return types.PruningOptions{} }
+func (ts *Store) GetPruning() pruningtypes.PruningOptions {
+	return pruningtypes.NewPruningOptions(pruningtypes.PruningUndefined)
+}
 
 // Implements CommitStore
 func (ts *Store) LastCommitID() (id types.CommitID) {

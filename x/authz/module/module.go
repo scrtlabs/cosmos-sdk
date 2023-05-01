@@ -3,16 +3,22 @@ package authz
 import (
 	"context"
 	"encoding/json"
-	"math/rand"
+	"fmt"
 
-	"github.com/gorilla/mux"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+	abci "github.com/cometbft/cometbft/abci/types"
+	gwruntime "github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
-	abci "github.com/tendermint/tendermint/abci/types"
 
+	modulev1 "cosmossdk.io/api/cosmos/authz/module/v1"
+	"cosmossdk.io/core/appmodule"
+
+	"cosmossdk.io/depinject"
+
+	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdkclient "github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
+	store "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/module"
@@ -24,7 +30,7 @@ import (
 )
 
 var (
-	_ module.AppModule           = AppModule{}
+	_ module.BeginBlockAppModule = AppModule{}
 	_ module.AppModuleBasic      = AppModuleBasic{}
 	_ module.AppModuleSimulation = AppModule{}
 )
@@ -44,6 +50,11 @@ func (AppModuleBasic) Name() string {
 func (am AppModule) RegisterServices(cfg module.Configurator) {
 	authz.RegisterQueryServer(cfg.QueryServer(), am.keeper)
 	authz.RegisterMsgServer(cfg.MsgServer(), am.keeper)
+	m := keeper.NewMigrator(am.keeper)
+	err := cfg.RegisterMigration(authz.ModuleName, 1, m.Migrate1to2)
+	if err != nil {
+		panic(fmt.Sprintf("failed to migrate x/%s from version 1 to 2: %v", authz.ModuleName, err))
+	}
 }
 
 // RegisterLegacyAminoCodec registers the authz module's types for the given codec.
@@ -72,13 +83,11 @@ func (AppModuleBasic) ValidateGenesis(cdc codec.JSONCodec, config sdkclient.TxEn
 	return authz.ValidateGenesis(data)
 }
 
-// RegisterRESTRoutes registers the REST routes for the authz module.
-func (AppModuleBasic) RegisterRESTRoutes(clientCtx sdkclient.Context, r *mux.Router) {
-}
-
 // RegisterGRPCGatewayRoutes registers the gRPC Gateway routes for the authz module.
-func (a AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx sdkclient.Context, mux *runtime.ServeMux) {
-	authz.RegisterQueryHandlerClient(context.Background(), mux, authz.NewQueryClient(clientCtx))
+func (a AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx sdkclient.Context, mux *gwruntime.ServeMux) {
+	if err := authz.RegisterQueryHandlerClient(context.Background(), mux, authz.NewQueryClient(clientCtx)); err != nil {
+		panic(err)
+	}
 }
 
 // GetQueryCmd returns the cli query commands for the authz module
@@ -111,6 +120,14 @@ func NewAppModule(cdc codec.Codec, keeper keeper.Keeper, ak authz.AccountKeeper,
 	}
 }
 
+var _ appmodule.AppModule = AppModule{}
+
+// IsOnePerModuleType implements the depinject.OnePerModuleType interface.
+func (am AppModule) IsOnePerModuleType() {}
+
+// IsAppModule implements the appmodule.AppModule interface.
+func (am AppModule) IsAppModule() {}
+
 // Name returns the authz module's name.
 func (AppModule) Name() string {
 	return authz.ModuleName
@@ -119,20 +136,7 @@ func (AppModule) Name() string {
 // RegisterInvariants does nothing, there are no invariants to enforce
 func (AppModule) RegisterInvariants(_ sdk.InvariantRegistry) {}
 
-// Route returns the message routing key for the staking module.
-func (am AppModule) Route() sdk.Route {
-	return sdk.NewRoute(authz.RouterKey, nil)
-}
-
 func (am AppModule) NewHandler() sdk.Handler {
-	return nil
-}
-
-// QuerierRoute returns the route we respond to for abci queries
-func (AppModule) QuerierRoute() string { return "" }
-
-// LegacyQuerierHandler returns the authz module sdk.Querier.
-func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
 	return nil
 }
 
@@ -153,9 +157,43 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 }
 
 // ConsensusVersion implements AppModule/ConsensusVersion.
-func (AppModule) ConsensusVersion() uint64 { return 1 }
+func (AppModule) ConsensusVersion() uint64 { return 2 }
 
-func (am AppModule) BeginBlock(ctx sdk.Context, req abci.RequestBeginBlock) {}
+// BeginBlock returns the begin blocker for the authz module.
+func (am AppModule) BeginBlock(ctx sdk.Context, req abci.RequestBeginBlock) {
+	BeginBlocker(ctx, am.keeper)
+}
+
+func init() {
+	appmodule.Register(
+		&modulev1.Module{},
+		appmodule.Provide(ProvideModule),
+	)
+}
+
+type AuthzInputs struct {
+	depinject.In
+
+	Key              *store.KVStoreKey
+	Cdc              codec.Codec
+	AccountKeeper    authz.AccountKeeper
+	BankKeeper       authz.BankKeeper
+	Registry         cdctypes.InterfaceRegistry
+	MsgServiceRouter *baseapp.MsgServiceRouter
+}
+
+type AuthzOutputs struct {
+	depinject.Out
+
+	AuthzKeeper keeper.Keeper
+	Module      appmodule.AppModule
+}
+
+func ProvideModule(in AuthzInputs) AuthzOutputs {
+	k := keeper.NewKeeper(in.Key, in.Cdc, in.MsgServiceRouter, in.AccountKeeper)
+	m := NewAppModule(in.Cdc, k, in.AccountKeeper, in.BankKeeper, in.Registry)
+	return AuthzOutputs{AuthzKeeper: k, Module: m}
+}
 
 // ____________________________________________________________________________
 
@@ -166,17 +204,6 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 	simulation.RandomizedGenState(simState)
 }
 
-// ProposalContents returns all the authz content functions used to
-// simulate governance proposals.
-func (am AppModule) ProposalContents(simState module.SimulationState) []simtypes.WeightedProposalContent {
-	return nil
-}
-
-// RandomizedParams creates randomized authz param changes for the simulator.
-func (AppModule) RandomizedParams(r *rand.Rand) []simtypes.ParamChange {
-	return nil
-}
-
 // RegisterStoreDecoder registers a decoder for authz module's types
 func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 	sdr[keeper.StoreKey] = simulation.NewDecodeStore(am.cdc)
@@ -185,7 +212,8 @@ func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 // WeightedOperations returns the all the gov module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
 	return simulation.WeightedOperations(
+		am.registry,
 		simState.AppParams, simState.Cdc,
-		am.accountKeeper, am.bankKeeper, am.keeper, am.cdc,
+		am.accountKeeper, am.bankKeeper, am.keeper,
 	)
 }

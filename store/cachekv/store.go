@@ -5,21 +5,19 @@ import (
 	"io"
 	"sort"
 	"sync"
-	"time"
 
-	dbm "github.com/tendermint/tm-db"
+	dbm "github.com/cometbft/cometbft-db"
+	"github.com/cometbft/cometbft/libs/math"
 
 	"github.com/cosmos/cosmos-sdk/internal/conv"
 	"github.com/cosmos/cosmos-sdk/store/cachekv/internal"
 	"github.com/cosmos/cosmos-sdk/store/tracekv"
 	"github.com/cosmos/cosmos-sdk/store/types"
-	"github.com/cosmos/cosmos-sdk/telemetry"
 	"github.com/cosmos/cosmos-sdk/types/kv"
-	"github.com/tendermint/tendermint/libs/math"
 )
 
-// If value is nil but deleted is false, it means the parent doesn't have the
-// key.  (No need to delete upon Write())
+// cValue represents a cached value.
+// If dirty is true, it indicates the cached value is different from the underlying value.
 type cValue struct {
 	value []byte
 	dirty bool
@@ -29,9 +27,8 @@ type cValue struct {
 type Store struct {
 	mtx           sync.Mutex
 	cache         map[string]*cValue
-	deleted       map[string]struct{}
 	unsortedCache map[string]struct{}
-	sortedCache   *internal.BTree // always ascending sorted
+	sortedCache   internal.BTree // always ascending sorted
 	parent        types.KVStore
 }
 
@@ -41,7 +38,6 @@ var _ types.CacheKVStore = (*Store)(nil)
 func NewStore(parent types.KVStore) *Store {
 	return &Store{
 		cache:         make(map[string]*cValue),
-		deleted:       make(map[string]struct{}),
 		unsortedCache: make(map[string]struct{}),
 		sortedCache:   internal.NewBTree(),
 		parent:        parent,
@@ -63,7 +59,7 @@ func (store *Store) Get(key []byte) (value []byte) {
 	cacheValue, ok := store.cache[conv.UnsafeBytesToStr(key)]
 	if !ok {
 		value = store.parent.Get(key)
-		store.setCacheValue(key, value, false, false)
+		store.setCacheValue(key, value, false)
 	} else {
 		value = cacheValue.value
 	}
@@ -79,7 +75,7 @@ func (store *Store) Set(key []byte, value []byte) {
 	types.AssertValidKey(key)
 	types.AssertValidValue(value)
 
-	store.setCacheValue(key, value, false, true)
+	store.setCacheValue(key, value, true)
 }
 
 // Has implements types.KVStore.
@@ -92,19 +88,17 @@ func (store *Store) Has(key []byte) bool {
 func (store *Store) Delete(key []byte) {
 	store.mtx.Lock()
 	defer store.mtx.Unlock()
-	defer telemetry.MeasureSince(time.Now(), "store", "cachekv", "delete")
 
 	types.AssertValidKey(key)
-	store.setCacheValue(key, nil, true, true)
+	store.setCacheValue(key, nil, true)
 }
 
 // Implements Cachetypes.KVStore.
 func (store *Store) Write() {
 	store.mtx.Lock()
 	defer store.mtx.Unlock()
-	defer telemetry.MeasureSince(time.Now(), "store", "cachekv", "write")
 
-	if len(store.cache) == 0 && len(store.deleted) == 0 && len(store.unsortedCache) == 0 {
+	if len(store.cache) == 0 && len(store.unsortedCache) == 0 {
 		store.sortedCache = internal.NewBTree()
 		return
 	}
@@ -124,19 +118,16 @@ func (store *Store) Write() {
 	// TODO: Consider allowing usage of Batch, which would allow the write to
 	// at least happen atomically.
 	for _, key := range keys {
-		if store.isDeleted(key) {
-			// We use []byte(key) instead of conv.UnsafeStrToBytes because we cannot
-			// be sure if the underlying store might do a save with the byteslice or
-			// not. Once we get confirmation that .Delete is guaranteed not to
-			// save the byteslice, then we can assume only a read-only copy is sufficient.
-			store.parent.Delete([]byte(key))
-			continue
-		}
-
+		// We use []byte(key) instead of conv.UnsafeStrToBytes because we cannot
+		// be sure if the underlying store might do a save with the byteslice or
+		// not. Once we get confirmation that .Delete is guaranteed not to
+		// save the byteslice, then we can assume only a read-only copy is sufficient.
 		cacheValue := store.cache[key]
 		if cacheValue.value != nil {
-			// It already exists in the parent, hence delete it.
+			// It already exists in the parent, hence update it.
 			store.parent.Set([]byte(key), cacheValue.value)
+		} else {
+			store.parent.Delete([]byte(key))
 		}
 	}
 
@@ -145,9 +136,6 @@ func (store *Store) Write() {
 	// Please see https://bencher.orijtech.com/perfclinic/mapclearing/
 	for key := range store.cache {
 		delete(store.cache, key)
-	}
-	for key := range store.deleted {
-		delete(store.deleted, key)
 	}
 	for key := range store.unsortedCache {
 		delete(store.unsortedCache, key)
@@ -182,16 +170,24 @@ func (store *Store) iterator(start, end []byte, ascending bool) types.Iterator {
 	store.mtx.Lock()
 	defer store.mtx.Unlock()
 
-	var parent, cache types.Iterator
+	store.dirtyItems(start, end)
+	isoSortedCache := store.sortedCache.Copy()
+
+	var (
+		err           error
+		parent, cache types.Iterator
+	)
 
 	if ascending {
 		parent = store.parent.Iterator(start, end)
+		cache, err = isoSortedCache.Iterator(start, end)
 	} else {
 		parent = store.parent.ReverseIterator(start, end)
+		cache, err = isoSortedCache.ReverseIterator(start, end)
 	}
-
-	store.dirtyItems(start, end)
-	cache = internal.NewMemIterator(start, end, store.sortedCache, store.deleted, ascending)
+	if err != nil {
+		panic(err)
+	}
 
 	return internal.NewCacheMergeIterator(parent, cache, ascending)
 }
@@ -314,7 +310,22 @@ func (store *Store) dirtyItems(start, end []byte) {
 	}
 	sort.Strings(strL)
 
-	startIndex, endIndex := findStartEndIndex(strL, startStr, endStr, end)
+	// Now find the values within the domain
+	//  [start, end)
+	startIndex := findStartIndex(strL, startStr)
+	if startIndex < 0 {
+		startIndex = 0
+	}
+
+	var endIndex int
+	if end == nil {
+		endIndex = len(strL) - 1
+	} else {
+		endIndex = findEndIndex(strL, endStr)
+	}
+	if endIndex < 0 {
+		endIndex = len(strL) - 1
+	}
 
 	// Since we spent cycles to sort the values, we should process and remove a reasonable amount
 	// ensure start to end is at least minSortSize in size
@@ -338,49 +349,7 @@ func (store *Store) dirtyItems(start, end []byte) {
 	store.clearUnsortedCacheSubset(kvL, stateAlreadySorted)
 }
 
-func findStartEndIndex(strL []string, startStr, endStr string, end []byte) (int, int) {
-	// Now find the values within the domain
-	//  [start, end)
-	startIndex := findStartIndex(strL, startStr)
-	if startIndex < 0 {
-		startIndex = 0
-	}
-
-	var endIndex int
-	if end == nil {
-		endIndex = len(strL) - 1
-	} else {
-		endIndex = findEndIndex(strL, endStr)
-	}
-	if endIndex < 0 {
-		endIndex = len(strL) - 1
-	}
-
-	return startIndex, endIndex
-}
-
 func (store *Store) clearUnsortedCacheSubset(unsorted []*kv.Pair, sortState sortState) {
-	store.deleteKeysFromUnsortedCache(unsorted)
-
-	if sortState == stateUnsorted {
-		sort.Slice(unsorted, func(i, j int) bool {
-			return bytes.Compare(unsorted[i].Key, unsorted[j].Key) < 0
-		})
-	}
-
-	for _, item := range unsorted {
-		if item.Value == nil {
-			// deleted element, tracked by store.deleted
-			// setting arbitrary value
-			store.sortedCache.Set(item.Key, []byte{})
-			continue
-		}
-
-		store.sortedCache.Set(item.Key, item.Value)
-	}
-}
-
-func (store *Store) deleteKeysFromUnsortedCache(unsorted []*kv.Pair) {
 	n := len(store.unsortedCache)
 	if len(unsorted) == n { // This pattern allows the Go compiler to emit the map clearing idiom for the entire map.
 		for key := range store.unsortedCache {
@@ -391,31 +360,31 @@ func (store *Store) deleteKeysFromUnsortedCache(unsorted []*kv.Pair) {
 			delete(store.unsortedCache, conv.UnsafeBytesToStr(kv.Key))
 		}
 	}
+
+	if sortState == stateUnsorted {
+		sort.Slice(unsorted, func(i, j int) bool {
+			return bytes.Compare(unsorted[i].Key, unsorted[j].Key) < 0
+		})
+	}
+
+	for _, item := range unsorted {
+		// sortedCache is able to store `nil` value to represent deleted items.
+		store.sortedCache.Set(item.Key, item.Value)
+	}
 }
 
 //----------------------------------------
 // etc
 
 // Only entrypoint to mutate store.cache.
-func (store *Store) setCacheValue(key, value []byte, deleted bool, dirty bool) {
-	types.AssertValidKey(key)
-
+// A `nil` value means a deletion.
+func (store *Store) setCacheValue(key, value []byte, dirty bool) {
 	keyStr := conv.UnsafeBytesToStr(key)
 	store.cache[keyStr] = &cValue{
 		value: value,
 		dirty: dirty,
 	}
-	if deleted {
-		store.deleted[keyStr] = struct{}{}
-	} else {
-		delete(store.deleted, keyStr)
-	}
 	if dirty {
 		store.unsortedCache[keyStr] = struct{}{}
 	}
-}
-
-func (store *Store) isDeleted(key string) bool {
-	_, ok := store.deleted[key]
-	return ok
 }

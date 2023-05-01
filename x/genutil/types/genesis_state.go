@@ -2,11 +2,10 @@ package types
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
+	"os"
 
-	tmos "github.com/tendermint/tendermint/libs/os"
-	tmtypes "github.com/tendermint/tendermint/types"
+	tmtypes "github.com/cometbft/cometbft/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -79,7 +78,7 @@ func GenesisStateFromGenDoc(genDoc tmtypes.GenesisDoc) (genesisState map[string]
 //
 // NOTE: The pubkey input is this machines pubkey.
 func GenesisStateFromGenFile(genFile string) (genesisState map[string]json.RawMessage, genDoc *tmtypes.GenesisDoc, err error) {
-	if !tmos.FileExists(genFile) {
+	if _, err := os.Stat(genFile); os.IsNotExist(err) {
 		return genesisState, genDoc,
 			fmt.Errorf("%s does not exist, run `init` first", genFile)
 	}
@@ -94,25 +93,39 @@ func GenesisStateFromGenFile(genFile string) (genesisState map[string]json.RawMe
 }
 
 // ValidateGenesis validates GenTx transactions
-func ValidateGenesis(genesisState *GenesisState, txJSONDecoder sdk.TxDecoder) error {
-	for i, genTx := range genesisState.GenTxs {
-		var tx sdk.Tx
-		tx, err := txJSONDecoder(genTx)
+func ValidateGenesis(genesisState *GenesisState, txJSONDecoder sdk.TxDecoder, validator MessageValidator) error {
+	for _, genTx := range genesisState.GenTxs {
+		_, err := ValidateAndGetGenTx(genTx, txJSONDecoder, validator)
 		if err != nil {
 			return err
 		}
-
-		msgs := tx.GetMsgs()
-		if len(msgs) != 1 {
-			return errors.New(
-				"must provide genesis Tx with exactly 1 CreateValidator message")
-		}
-
-		// TODO: abstract back to staking
-		if _, ok := msgs[0].(*stakingtypes.MsgCreateValidator); !ok {
-			return fmt.Errorf(
-				"genesis transaction %v does not contain a MsgCreateValidator", i)
-		}
 	}
 	return nil
+}
+
+type MessageValidator func([]sdk.Msg) error
+
+func DefaultMessageValidator(msgs []sdk.Msg) error {
+	if len(msgs) != 1 {
+		return fmt.Errorf("unexpected number of GenTx messages; got: %d, expected: 1", len(msgs))
+	}
+	if _, ok := msgs[0].(*stakingtypes.MsgCreateValidator); !ok {
+		return fmt.Errorf("unexpected GenTx message type; expected: MsgCreateValidator, got: %T", msgs[0])
+	}
+	if err := msgs[0].ValidateBasic(); err != nil {
+		return fmt.Errorf("invalid GenTx '%s': %w", msgs[0], err)
+	}
+
+	return nil
+}
+
+// ValidateAndGetGenTx validates the genesis transaction and returns GenTx if valid
+// it cannot verify the signature as it is stateless validation
+func ValidateAndGetGenTx(genTx json.RawMessage, txJSONDecoder sdk.TxDecoder, validator MessageValidator) (sdk.Tx, error) {
+	tx, err := txJSONDecoder(genTx)
+	if err != nil {
+		return tx, fmt.Errorf("failed to decode gentx: %s, error: %s", genTx, err)
+	}
+
+	return tx, validator(tx.GetMsgs())
 }

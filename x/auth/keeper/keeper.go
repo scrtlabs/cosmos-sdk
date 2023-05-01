@@ -3,15 +3,16 @@ package keeper
 import (
 	"fmt"
 
-	gogotypes "github.com/gogo/protobuf/types"
-	"github.com/tendermint/tendermint/libs/log"
+	"github.com/cometbft/cometbft/libs/log"
+	gogotypes "github.com/cosmos/gogoproto/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/address"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
-	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 )
 
 // AccountKeeperI is the interface contract that x/auth's keeper implements.
@@ -44,19 +45,26 @@ type AccountKeeperI interface {
 	GetSequence(sdk.Context, sdk.AccAddress) (uint64, error)
 
 	// Fetch the next account number, and increment the internal counter.
-	GetNextAccountNumber(sdk.Context) uint64
+	NextAccountNumber(sdk.Context) uint64
+
+	// GetModulePermissions fetches per-module account permissions
+	GetModulePermissions() map[string]types.PermissionsForAddress
 }
 
 // AccountKeeper encodes/decodes accounts using the go-amino (binary)
 // encoding/decoding library.
 type AccountKeeper struct {
-	key           sdk.StoreKey
-	cdc           codec.BinaryCodec
-	paramSubspace paramtypes.Subspace
-	permAddrs     map[string]types.PermissionsForAddress
+	storeKey  storetypes.StoreKey
+	cdc       codec.BinaryCodec
+	permAddrs map[string]types.PermissionsForAddress
 
 	// The prototypical AccountI constructor.
-	proto func() types.AccountI
+	proto      func() types.AccountI
+	addressCdc address.Codec
+
+	// the address capable of executing a MsgUpdateParams message. Typically, this
+	// should be the x/gov module account.
+	authority string
 }
 
 var _ AccountKeeperI = &AccountKeeper{}
@@ -68,26 +76,29 @@ var _ AccountKeeperI = &AccountKeeper{}
 // and don't have to fit into any predefined structure. This auth module does not use account permissions internally, though other modules
 // may use auth.Keeper to access the accounts permissions map.
 func NewAccountKeeper(
-	cdc codec.BinaryCodec, key sdk.StoreKey, paramstore paramtypes.Subspace, proto func() types.AccountI,
-	maccPerms map[string][]string,
+	cdc codec.BinaryCodec, storeKey storetypes.StoreKey, proto func() types.AccountI,
+	maccPerms map[string][]string, bech32Prefix string, authority string,
 ) AccountKeeper {
-	// set KeyTable if it has not already been set
-	if !paramstore.HasKeyTable() {
-		paramstore = paramstore.WithKeyTable(types.ParamKeyTable())
-	}
-
 	permAddrs := make(map[string]types.PermissionsForAddress)
 	for name, perms := range maccPerms {
 		permAddrs[name] = types.NewPermissionsForAddress(name, perms)
 	}
 
+	bech32Codec := newBech32Codec(bech32Prefix)
+
 	return AccountKeeper{
-		key:           key,
-		proto:         proto,
-		cdc:           cdc,
-		paramSubspace: paramstore,
-		permAddrs:     permAddrs,
+		storeKey:   storeKey,
+		proto:      proto,
+		cdc:        cdc,
+		permAddrs:  permAddrs,
+		addressCdc: bech32Codec,
+		authority:  authority,
 	}
+}
+
+// GetAuthority returns the x/auth module's authority.
+func (ak AccountKeeper) GetAuthority() string {
+	return ak.authority
 }
 
 // Logger returns a module-specific logger.
@@ -115,11 +126,11 @@ func (ak AccountKeeper) GetSequence(ctx sdk.Context, addr sdk.AccAddress) (uint6
 	return acc.GetSequence(), nil
 }
 
-// GetNextAccountNumber returns and increments the global account number counter.
+// NextAccountNumber returns and increments the global account number counter.
 // If the global account number is not set, it initializes it with value 0.
-func (ak AccountKeeper) GetNextAccountNumber(ctx sdk.Context) uint64 {
+func (ak AccountKeeper) NextAccountNumber(ctx sdk.Context) uint64 {
 	var accNumber uint64
-	store := ctx.KVStore(ak.key)
+	store := ctx.KVStore(ak.storeKey)
 
 	bz := store.Get(types.GlobalAccountNumberKey)
 	if bz == nil {
@@ -140,6 +151,11 @@ func (ak AccountKeeper) GetNextAccountNumber(ctx sdk.Context) uint64 {
 	store.Set(types.GlobalAccountNumberKey, bz)
 
 	return accNumber
+}
+
+// GetModulePermissions fetches per-module account permissions.
+func (ak AccountKeeper) GetModulePermissions() map[string]types.PermissionsForAddress {
+	return ak.permAddrs
 }
 
 // ValidatePermissions validates that the module account has been granted
@@ -235,3 +251,13 @@ func (ak AccountKeeper) UnmarshalAccount(bz []byte) (types.AccountI, error) {
 
 // GetCodec return codec.Codec object used by the keeper
 func (ak AccountKeeper) GetCodec() codec.BinaryCodec { return ak.cdc }
+
+// add getter for bech32Prefix
+func (ak AccountKeeper) getBech32Prefix() (string, error) {
+	bech32Codec, ok := ak.addressCdc.(bech32Codec)
+	if !ok {
+		return "", fmt.Errorf("unable cast addressCdc to bech32Codec; expected %T got %T", bech32Codec, ak.addressCdc)
+	}
+
+	return bech32Codec.bech32Prefix, nil
+}

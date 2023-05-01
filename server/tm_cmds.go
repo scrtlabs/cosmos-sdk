@@ -5,11 +5,11 @@ package server
 import (
 	"fmt"
 
+	"github.com/cometbft/cometbft/p2p"
+	pvm "github.com/cometbft/cometbft/privval"
+	tversion "github.com/cometbft/cometbft/version"
 	"github.com/spf13/cobra"
-	"github.com/tendermint/tendermint/p2p"
-	pvm "github.com/tendermint/tendermint/privval"
-	tversion "github.com/tendermint/tendermint/version"
-	yaml "gopkg.in/yaml.v2"
+	"sigs.k8s.io/yaml"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
@@ -29,6 +29,7 @@ func ShowNodeIDCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
+
 			fmt.Println(nodeKey.ID())
 			return nil
 		},
@@ -49,15 +50,18 @@ func ShowValidatorCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
+
 			sdkPK, err := cryptocodec.FromTmPubKeyInterface(pk)
 			if err != nil {
 				return err
 			}
+
 			clientCtx := client.GetClientContextFromCmd(cmd)
 			bz, err := clientCtx.Codec.MarshalInterfaceJSON(sdkPK)
 			if err != nil {
 				return err
 			}
+
 			fmt.Println(string(bz))
 			return nil
 		},
@@ -76,6 +80,7 @@ func ShowAddressCmd() *cobra.Command {
 			cfg := serverCtx.Config
 
 			privValidator := pvm.LoadFilePV(cfg.PrivValidatorKeyFile(), cfg.PrivValidatorStateFile())
+
 			valConsAddr := (sdk.ConsAddress)(privValidator.GetAddress())
 			fmt.Println(valConsAddr.String())
 			return nil
@@ -90,9 +95,7 @@ func VersionCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "version",
 		Short: "Print tendermint libraries' version",
-		Long: `Print protocols' and libraries' version numbers
-against which this app has been compiled.
-`,
+		Long:  "Print protocols' and libraries' version numbers against which this app has been compiled.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			bs, err := yaml.Marshal(&struct {
 				Tendermint    string

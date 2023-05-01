@@ -18,8 +18,12 @@
   - x/genutil/**/*
 "C:x/gov":
   - x/gov/**/*
+"C:x/group":
+  - x/group/**/*
 "C:x/mint":
   - x/mint/**/*
+"C:x/nft":
+  - x/nft/**/*
 "C:x/params":
   - x/params/**/*
 "C:Simulations":
@@ -32,9 +36,10 @@
 "C:x/upgrade":
   - x/upgrade/**/*
 "C:Cosmovisor":
-  - cosmovisor/**/*
+  - tools/cosmovisor/**/*
 "C:Rosetta":
   - contrib/rosetta/**/*
+  - tools/rosetta/**/*
 "C:Keys":
   - client/keys/**/*
 "Type: Build":
@@ -52,3 +57,9 @@
   - x/*/client/**/*
 "Type: ADR":
   - docs/architecture/**/*
+"C:container":
+  - container/**/*
+"C:Store":
+  - store/**/*
+"C:orm":
+  - orm/**/*

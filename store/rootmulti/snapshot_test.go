@@ -12,14 +12,14 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/tendermint/tendermint/libs/log"
 
+	dbm "github.com/cometbft/cometbft-db"
+	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/snapshots"
 	snapshottypes "github.com/cosmos/cosmos-sdk/snapshots/types"
 	"github.com/cosmos/cosmos-sdk/store/iavl"
 	"github.com/cosmos/cosmos-sdk/store/rootmulti"
 	"github.com/cosmos/cosmos-sdk/store/types"
-	dbm "github.com/tendermint/tm-db"
 )
 
 func newMultiStoreWithGeneratedData(db dbm.DB, stores uint8, storeKeys uint64) *rootmulti.Store {
@@ -128,7 +128,7 @@ func TestMultistoreSnapshot_Checksum(t *testing.T) {
 			"aa048b4ee0f484965d7b3b06822cf0772cdcaad02f3b1b9055e69f2cb365ef3c",
 			"7921eaa3ed4921341e504d9308a9877986a879fe216a099c86e8db66fcba4c63",
 			"a4a864e6c02c9fca5837ec80dc84f650b25276ed7e4820cf7516ced9f9901b86",
-			"8ca5b957e36fa13e704c31494649b2a74305148d70d70f0f26dee066b615c1d0",
+			"980925390cc50f14998ecb1e87de719ca9dd7e72f5fefbe445397bf670f36c31",
 		}},
 	}
 	for _, tc := range testcases {
@@ -211,7 +211,8 @@ func TestMultistoreSnapshotRestore(t *testing.T) {
 	require.Equal(t, *dummyExtensionItem.GetExtension(), *nextItem.GetExtension())
 
 	assert.Equal(t, source.LastCommitID(), target.LastCommitID())
-	for key, sourceStore := range source.GetStores() {
+	for _, key := range source.StoreKeysByName() {
+		sourceStore := source.GetStoreByName(key.Name()).(types.CommitKVStore)
 		targetStore := target.GetStoreByName(key.Name()).(types.CommitKVStore)
 		switch sourceStore.GetStoreType() {
 		case types.StoreTypeTransient:
@@ -235,7 +236,7 @@ func benchmarkMultistoreSnapshot(b *testing.B, stores uint8, storeKeys uint64) {
 
 	for i := 0; i < b.N; i++ {
 		target := rootmulti.NewStore(dbm.NewMemDB(), log.NewNopLogger())
-		for key := range source.GetStores() {
+		for _, key := range source.StoreKeysByName() {
 			target.MountStoreWithDB(key, types.StoreTypeIAVL, nil)
 		}
 		err := target.LoadLatestVersion()
@@ -270,7 +271,7 @@ func benchmarkMultistoreSnapshotRestore(b *testing.B, stores uint8, storeKeys ui
 
 	for i := 0; i < b.N; i++ {
 		target := rootmulti.NewStore(dbm.NewMemDB(), log.NewNopLogger())
-		for key := range source.GetStores() {
+		for _, key := range source.StoreKeysByName() {
 			target.MountStoreWithDB(key, types.StoreTypeIAVL, nil)
 		}
 		err := target.LoadLatestVersion()

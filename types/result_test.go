@@ -6,12 +6,12 @@ import (
 	"strings"
 	"testing"
 
+	abci "github.com/cometbft/cometbft/abci/types"
+	"github.com/cometbft/cometbft/libs/bytes"
+	coretypes "github.com/cometbft/cometbft/rpc/core/types"
 	"github.com/golang/protobuf/proto"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	abci "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/libs/bytes"
-	ctypes "github.com/tendermint/tendermint/rpc/core/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/testutil/testdata"
@@ -42,13 +42,17 @@ func (s *resultTestSuite) TestParseABCILog() {
 
 func (s *resultTestSuite) TestABCIMessageLog() {
 	cdc := codec.NewLegacyAmino()
-	events := sdk.Events{sdk.NewEvent("transfer", sdk.NewAttribute("sender", "foo"))}
+	events := sdk.Events{
+		sdk.NewEvent("transfer", sdk.NewAttribute("sender", "foo")),
+		sdk.NewEvent("transfer", sdk.NewAttribute("sender", "bar")),
+	}
 	msgLog := sdk.NewABCIMessageLog(0, "", events)
 	msgLogs := sdk.ABCIMessageLogs{msgLog}
 	bz, err := cdc.MarshalJSON(msgLogs)
 
 	s.Require().NoError(err)
 	s.Require().Equal(string(bz), msgLogs.String())
+	s.Require().Equal(`[{"msg_index":0,"events":[{"type":"transfer","attributes":[{"key":"sender","value":"foo"}]},{"type":"transfer","attributes":[{"key":"sender","value":"bar"}]}]}]`, msgLogs.String())
 }
 
 func (s *resultTestSuite) TestNewSearchTxsResult() {
@@ -73,7 +77,7 @@ func (s *resultTestSuite) TestResponseResultTx() {
 		GasWanted: 100,
 		GasUsed:   90,
 	}
-	resultTx := &ctypes.ResultTx{
+	resultTx := &coretypes.ResultTx{
 		Hash:     bytes.HexBytes([]byte("test")),
 		Height:   10,
 		TxResult: deliverTxResult,
@@ -116,7 +120,7 @@ txhash: "74657374"
 	s.Require().True(sdk.TxResponse{}.Empty())
 	s.Require().False(want.Empty())
 
-	resultBroadcastTx := &ctypes.ResultBroadcastTx{
+	resultBroadcastTx := &coretypes.ResultBroadcastTx{
 		Code:      1,
 		Codespace: "codespace",
 		Data:      []byte("data"),
@@ -135,93 +139,6 @@ txhash: "74657374"
 	s.Require().Equal((*sdk.TxResponse)(nil), sdk.NewResponseFormatBroadcastTx(nil))
 }
 
-func (s *resultTestSuite) TestResponseFormatBroadcastTxCommit() {
-	// test nil
-	s.Require().Equal((*sdk.TxResponse)(nil), sdk.NewResponseFormatBroadcastTxCommit(nil))
-
-	logs, err := sdk.ParseABCILogs(`[]`)
-	s.Require().NoError(err)
-
-	// test checkTx
-	checkTxResult := &ctypes.ResultBroadcastTxCommit{
-		Height: 10,
-		Hash:   bytes.HexBytes([]byte("test")),
-		CheckTx: abci.ResponseCheckTx{
-			Code:      90,
-			Data:      nil,
-			Log:       `[]`,
-			Info:      "info",
-			GasWanted: 99,
-			GasUsed:   100,
-			Codespace: "codespace",
-			Events: []abci.Event{
-				{
-					Type: "message",
-					Attributes: []abci.EventAttribute{
-						{
-							Key:   []byte("action"),
-							Value: []byte("foo"),
-							Index: true,
-						},
-					},
-				},
-			},
-		},
-	}
-	deliverTxResult := &ctypes.ResultBroadcastTxCommit{
-		Height: 10,
-		Hash:   bytes.HexBytes([]byte("test")),
-		DeliverTx: abci.ResponseDeliverTx{
-			Code:      90,
-			Data:      nil,
-			Log:       `[]`,
-			Info:      "info",
-			GasWanted: 99,
-			GasUsed:   100,
-			Codespace: "codespace",
-			Events: []abci.Event{
-				{
-					Type: "message",
-					Attributes: []abci.EventAttribute{
-						{
-							Key:   []byte("action"),
-							Value: []byte("foo"),
-							Index: true,
-						},
-					},
-				},
-			},
-		},
-	}
-	want := &sdk.TxResponse{
-		Height:    10,
-		TxHash:    "74657374",
-		Codespace: "codespace",
-		Code:      90,
-		Data:      "",
-		RawLog:    `[]`,
-		Logs:      logs,
-		Info:      "info",
-		GasWanted: 99,
-		GasUsed:   100,
-		Events: []abci.Event{
-			{
-				Type: "message",
-				Attributes: []abci.EventAttribute{
-					{
-						Key:   []byte("action"),
-						Value: []byte("foo"),
-						Index: true,
-					},
-				},
-			},
-		},
-	}
-
-	s.Require().Equal(want, sdk.NewResponseFormatBroadcastTxCommit(checkTxResult))
-	s.Require().Equal(want, sdk.NewResponseFormatBroadcastTxCommit(deliverTxResult))
-}
-
 func TestWrapServiceResult(t *testing.T) {
 	ctx := sdk.Context{}
 
@@ -229,14 +146,14 @@ func TestWrapServiceResult(t *testing.T) {
 	require.Nil(t, res)
 	require.NotNil(t, err)
 
-	res, err = sdk.WrapServiceResult(ctx, nil, nil)
+	res, err = sdk.WrapServiceResult(ctx, &testdata.Dog{}, nil)
 	require.NotNil(t, res)
 	require.Nil(t, err)
 	require.Empty(t, res.Events)
 
 	ctx = ctx.WithEventManager(sdk.NewEventManager())
 	ctx.EventManager().EmitEvent(sdk.NewEvent("test"))
-	res, err = sdk.WrapServiceResult(ctx, nil, nil)
+	res, err = sdk.WrapServiceResult(ctx, &testdata.Dog{}, nil)
 	require.NotNil(t, res)
 	require.Nil(t, err)
 	require.Len(t, res.Events, 1)

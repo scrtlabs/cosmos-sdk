@@ -10,7 +10,7 @@ import (
 
 var _ authz.MsgServer = Keeper{}
 
-// GrantAuthorization implements the MsgServer.Grant method to create a new grant.
+// Grant implements the MsgServer.Grant method to create a new grant.
 func (k Keeper) Grant(goCtx context.Context, msg *authz.MsgGrant) (*authz.MsgGrantResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	grantee, err := sdk.AccAddressFromBech32(msg.Grantee)
@@ -18,19 +18,26 @@ func (k Keeper) Grant(goCtx context.Context, msg *authz.MsgGrant) (*authz.MsgGra
 		return nil, err
 	}
 
+	// create the account if it is not in account state
+	granteeAcc := k.authKeeper.GetAccount(ctx, grantee)
+	if granteeAcc == nil {
+		granteeAcc = k.authKeeper.NewAccountWithAddress(ctx, grantee)
+		k.authKeeper.SetAccount(ctx, granteeAcc)
+	}
+
 	granter, err := sdk.AccAddressFromBech32(msg.Granter)
 	if err != nil {
 		return nil, err
 	}
 
-	authorization := msg.GetAuthorization()
-	if authorization == nil {
-		return nil, sdkerrors.ErrUnpackAny.Wrap("Authorization is not present in the msg")
+	authorization, err := msg.GetAuthorization()
+	if err != nil {
+		return nil, err
 	}
 
 	t := authorization.MsgTypeURL()
 	if k.router.HandlerByTypeURL(t) == nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidType, "%s doesn't exist.", t)
+		return nil, sdkerrors.ErrInvalidType.Wrapf("%s doesn't exist.", t)
 	}
 
 	err = k.SaveGrant(ctx, grantee, granter, authorization, msg.Grant.Expiration)
@@ -41,7 +48,7 @@ func (k Keeper) Grant(goCtx context.Context, msg *authz.MsgGrant) (*authz.MsgGra
 	return &authz.MsgGrantResponse{}, nil
 }
 
-// RevokeAuthorization implements the MsgServer.Revoke method.
+// Revoke implements the MsgServer.Revoke method.
 func (k Keeper) Revoke(goCtx context.Context, msg *authz.MsgRevoke) (*authz.MsgRevokeResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	grantee, err := sdk.AccAddressFromBech32(msg.Grantee)

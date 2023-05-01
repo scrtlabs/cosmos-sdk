@@ -7,7 +7,8 @@ import (
 
 	"github.com/spf13/viper"
 
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
+	clientflags "github.com/cosmos/cosmos-sdk/client/flags"
+	pruningtypes "github.com/cosmos/cosmos-sdk/store/pruning/types"
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -16,11 +17,14 @@ import (
 const (
 	defaultMinGasPrices = ""
 
+	// DefaultAPIAddress defines the default address to bind the API server to.
+	DefaultAPIAddress = "tcp://localhost:1317"
+
 	// DefaultGRPCAddress defines the default address to bind the gRPC server to.
-	DefaultGRPCAddress = "0.0.0.0:9090"
+	DefaultGRPCAddress = "localhost:9090"
 
 	// DefaultGRPCWebAddress defines the default address to bind the gRPC-web server to.
-	DefaultGRPCWebAddress = "0.0.0.0:9091"
+	DefaultGRPCWebAddress = "localhost:9091"
 
 	// DefaultGRPCMaxRecvMsgSize defines the default gRPC max message size in
 	// bytes the server can receive.
@@ -29,6 +33,9 @@ const (
 	// DefaultGRPCMaxSendMsgSize defines the default gRPC max message size in
 	// bytes the server can send.
 	DefaultGRPCMaxSendMsgSize = math.MaxInt32
+
+	// FileStreamer defines the store streaming type for file streaming.
+	FileStreamer = "file"
 )
 
 // BaseConfig defines the server's basic configuration
@@ -40,7 +47,6 @@ type BaseConfig struct {
 
 	Pruning           string `mapstructure:"pruning"`
 	PruningKeepRecent string `mapstructure:"pruning-keep-recent"`
-	PruningKeepEvery  string `mapstructure:"pruning-keep-every"`
 	PruningInterval   string `mapstructure:"pruning-interval"`
 
 	// HaltHeight contains a non-zero block height at which a node will gracefully
@@ -84,6 +90,13 @@ type BaseConfig struct {
 
 	// IAVLDisableFastNode enables or disables the fast sync node.
 	IAVLDisableFastNode bool `mapstructure:"iavl-disable-fastnode"`
+
+	// IAVLLazyLoading enable/disable the lazy loading of iavl store.
+	IAVLLazyLoading bool `mapstructure:"iavl-lazy-loading"`
+
+	// AppDBBackend defines the type of Database to use for the application and snapshots databases.
+	// An empty string indicates that the Tendermint config's DBBackend value should be used.
+	AppDBBackend string `mapstructure:"app-db-backend"`
 }
 
 // APIConfig defines the API listener configuration.
@@ -109,7 +122,7 @@ type APIConfig struct {
 	// RPCWriteTimeout defines the Tendermint RPC write timeout (in seconds)
 	RPCWriteTimeout uint `mapstructure:"rpc-write-timeout"`
 
-	// RPCMaxBodyBytes defines the Tendermint maximum response body (in bytes)
+	// RPCMaxBodyBytes defines the Tendermint maximum request body (in bytes)
 	RPCMaxBodyBytes uint `mapstructure:"rpc-max-body-bytes"`
 
 	// TODO: TLS/Proxy configuration.
@@ -138,6 +151,15 @@ type RosettaConfig struct {
 
 	// Offline defines if the server must be run in offline mode
 	Offline bool `mapstructure:"offline"`
+
+	// EnableFeeSuggestion defines if the server should suggest fee by default
+	EnableFeeSuggestion bool `mapstructure:"enable-fee-suggestion"`
+
+	// GasToSuggest defines gas limit when calculating the fee
+	GasToSuggest int `mapstructure:"gas-to-suggest"`
+
+	// DenomToSuggest defines the defult denom for fee suggestion
+	DenomToSuggest string `mapstructure:"denom-to-suggest"`
 }
 
 // GRPCConfig defines configuration for the gRPC server.
@@ -174,12 +196,22 @@ type GRPCWebConfig struct {
 // StateSyncConfig defines the state sync snapshot configuration.
 type StateSyncConfig struct {
 	// SnapshotInterval sets the interval at which state sync snapshots are taken.
-	// 0 disables snapshots. Must be a multiple of PruningKeepEvery.
+	// 0 disables snapshots.
 	SnapshotInterval uint64 `mapstructure:"snapshot-interval"`
 
 	// SnapshotKeepRecent sets the number of recent state sync snapshots to keep.
 	// 0 keeps all snapshots.
 	SnapshotKeepRecent uint32 `mapstructure:"snapshot-keep-recent"`
+}
+
+// MempoolConfig defines the configurations for the SDK built-in app-side mempool
+// implementations.
+type MempoolConfig struct {
+	// MaxTxs defines the behavior of the mempool. A negative value indicates
+	// the mempool is disabled entirely, zero indicates that the mempool is
+	// unbounded in how many txs it may contain, and a positive value indicates
+	// the maximum amount of txs it may contain.
+	MaxTxs int
 }
 
 type (
@@ -226,6 +258,7 @@ type Config struct {
 	StateSync StateSyncConfig  `mapstructure:"state-sync"`
 	Store     StoreConfig      `mapstructure:"store"`
 	Streamers StreamersConfig  `mapstructure:"streamers"`
+	Mempool   MempoolConfig    `mapstructure:"mempool"`
 }
 
 // SetMinGasPrices sets the validator's minimum gas prices.
@@ -261,14 +294,15 @@ func DefaultConfig() *Config {
 		BaseConfig: BaseConfig{
 			MinGasPrices:        defaultMinGasPrices,
 			InterBlockCache:     true,
-			Pruning:             storetypes.PruningOptionDefault,
+			Pruning:             pruningtypes.PruningOptionDefault,
 			PruningKeepRecent:   "0",
-			PruningKeepEvery:    "0",
 			PruningInterval:     "0",
 			MinRetainBlocks:     0,
 			IndexEvents:         make([]string, 0),
-			IAVLCacheSize:       781250, // 50 MB
-			IAVLDisableFastNode: true,
+			IAVLCacheSize:       781250,
+			IAVLDisableFastNode: false,
+			IAVLLazyLoading:     false,
+			AppDBBackend:        "",
 		},
 		Telemetry: telemetry.Config{
 			Enabled:      false,
@@ -277,7 +311,7 @@ func DefaultConfig() *Config {
 		API: APIConfig{
 			Enable:             false,
 			Swagger:            false,
-			Address:            "tcp://0.0.0.0:1317",
+			Address:            DefaultAPIAddress,
 			MaxOpenConnections: 1000,
 			RPCReadTimeout:     10,
 			RPCMaxBodyBytes:    1000000,
@@ -290,12 +324,15 @@ func DefaultConfig() *Config {
 			Concurrency:    true,
 		},
 		Rosetta: RosettaConfig{
-			Enable:     false,
-			Address:    ":8080",
-			Blockchain: "app",
-			Network:    "network",
-			Retries:    3,
-			Offline:    false,
+			Enable:              false,
+			Address:             ":8080",
+			Blockchain:          "app",
+			Network:             "network",
+			Retries:             3,
+			Offline:             false,
+			EnableFeeSuggestion: false,
+			GasToSuggest:        clientflags.DefaultGasLimit,
+			DenomToSuggest:      "uatom",
 		},
 		GRPCWeb: GRPCWebConfig{
 			Enable:  true,
@@ -319,6 +356,9 @@ func DefaultConfig() *Config {
 				Fsync: false,
 			},
 		},
+		Mempool: MempoolConfig{
+			MaxTxs: 5_000,
+		},
 	}
 }
 
@@ -336,9 +376,9 @@ func (c Config) ValidateBasic() error {
 	if c.BaseConfig.MinGasPrices == "" {
 		return sdkerrors.ErrAppConfig.Wrap("set min gas price in app.toml or flag or env variable")
 	}
-	if c.Pruning == storetypes.PruningOptionEverything && c.StateSync.SnapshotInterval > 0 {
+	if c.Pruning == pruningtypes.PruningOptionEverything && c.StateSync.SnapshotInterval > 0 {
 		return sdkerrors.ErrAppConfig.Wrapf(
-			"cannot enable state sync snapshots with '%s' pruning setting", storetypes.PruningOptionEverything,
+			"cannot enable state sync snapshots with '%s' pruning setting", pruningtypes.PruningOptionEverything,
 		)
 	}
 

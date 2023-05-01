@@ -8,44 +8,51 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	"github.com/cosmos/cosmos-sdk/x/gov/types"
+	v1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 )
 
 // EndBlocker called every block, process inflation, update validator set.
-func EndBlocker(ctx sdk.Context, keeper keeper.Keeper) {
+func EndBlocker(ctx sdk.Context, keeper *keeper.Keeper) {
 	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyEndBlocker)
 
 	logger := keeper.Logger(ctx)
 
-	// delete inactive proposal from store and its deposits
-	keeper.IterateInactiveProposalsQueue(ctx, ctx.BlockHeader().Time, func(proposal types.Proposal) bool {
-		keeper.DeleteProposal(ctx, proposal.ProposalId)
-		keeper.DeleteDeposits(ctx, proposal.ProposalId)
+	// delete dead proposals from store and returns theirs deposits.
+	// A proposal is dead when it's inactive and didn't get enough deposit on time to get into voting phase.
+	keeper.IterateInactiveProposalsQueue(ctx, ctx.BlockHeader().Time, func(proposal v1.Proposal) bool {
+		keeper.DeleteProposal(ctx, proposal.Id)
+
+		params := keeper.GetParams(ctx)
+		if !params.BurnProposalDepositPrevote {
+			keeper.RefundAndDeleteDeposits(ctx, proposal.Id) // refund deposit if proposal got removed without getting 100% of the proposal
+		} else {
+			keeper.DeleteAndBurnDeposits(ctx, proposal.Id) // burn the deposit if proposal got removed without getting 100% of the proposal
+		}
 
 		// called when proposal become inactive
-		keeper.AfterProposalFailedMinDeposit(ctx, proposal.ProposalId)
+		keeper.Hooks().AfterProposalFailedMinDeposit(ctx, proposal.Id)
 
 		ctx.EventManager().EmitEvent(
 			sdk.NewEvent(
 				types.EventTypeInactiveProposal,
-				sdk.NewAttribute(types.AttributeKeyProposalID, fmt.Sprintf("%d", proposal.ProposalId)),
+				sdk.NewAttribute(types.AttributeKeyProposalID, fmt.Sprintf("%d", proposal.Id)),
 				sdk.NewAttribute(types.AttributeKeyProposalResult, types.AttributeValueProposalDropped),
 			),
 		)
 
 		logger.Info(
 			"proposal did not meet minimum deposit; deleted",
-			"proposal", proposal.ProposalId,
+			"proposal", proposal.Id,
 			"is_expedited", proposal.IsExpedited,
-			"title", proposal.GetTitle(),
-			"min_deposit", proposal.GetMinDepositFromParams(keeper.GetDepositParams(ctx)).String(),
-			"total_deposit", proposal.TotalDeposit.String(),
+			"min_deposit", sdk.NewCoins(params.MinDeposit...).String(),
+			"total_deposit", sdk.NewCoins(proposal.TotalDeposit...).String(),
 		)
 
 		return false
 	})
 
 	// fetch active proposals whose voting periods have ended (are passed the block time)
-	keeper.IterateActiveProposalsQueue(ctx, ctx.BlockHeader().Time, func(proposal types.Proposal) bool {
+	keeper.IterateActiveProposalsQueue(ctx, ctx.BlockHeader().Time, func(proposal v1.Proposal) bool {
 		var tagValue, logMsg string
 
 		passes, burnDeposits, tallyResults := keeper.Tally(ctx, proposal)
@@ -56,41 +63,58 @@ func EndBlocker(ctx sdk.Context, keeper keeper.Keeper) {
 		// EXCEPT when an expedited proposal fails.
 		if !(proposal.IsExpedited && !passes) {
 			if burnDeposits {
-				keeper.DeleteDeposits(ctx, proposal.ProposalId)
+				keeper.DeleteAndBurnDeposits(ctx, proposal.Id)
 			} else {
-				keeper.RefundDeposits(ctx, proposal.ProposalId)
+				keeper.RefundAndDeleteDeposits(ctx, proposal.Id)
 			}
 		}
 
-		keeper.RemoveFromActiveProposalQueue(ctx, proposal.ProposalId, proposal.VotingEndTime)
-
 		if passes {
-			handler := keeper.Router().GetRoute(proposal.ProposalRoute())
-			cacheCtx, writeCache := ctx.CacheContext()
+			var (
+				idx    int
+				events sdk.Events
+				msg    sdk.Msg
+			)
 
-			// The proposal handler may execute state mutating logic depending
-			// on the proposal content. If the handler fails, no state mutation
-			// is written and the error message is logged.
-			err := handler(cacheCtx, proposal.GetContent())
+			// attempt to execute all messages within the passed proposal
+			// Messages may mutate state thus we use a cached context. If one of
+			// the handlers fails, no state mutation is written and the error
+			// message is logged.
+			cacheCtx, writeCache := ctx.CacheContext()
+			messages, err := proposal.GetMsgs()
 			if err == nil {
-				proposal.Status = types.StatusPassed
+				for idx, msg = range messages {
+					handler := keeper.Router().Handler(msg)
+
+					var res *sdk.Result
+					res, err = handler(cacheCtx, msg)
+					if err != nil {
+						break
+					}
+
+					events = append(events, res.GetEvents()...)
+				}
+			}
+
+			// `err == nil` when all handlers passed.
+			// Or else, `idx` and `err` are populated with the msg index and error.
+			if err == nil {
+				proposal.Status = v1.StatusPassed
 				tagValue = types.AttributeValueProposalPassed
 				logMsg = "passed"
 
-				// The cached context is created with a new EventManager. However, since
-				// the proposal handler execution was successful, we want to track/keep
-				// any events emitted, so we re-emit to "merge" the events into the
-				// original Context's EventManager.
-				ctx.EventManager().EmitEvents(cacheCtx.EventManager().Events())
-
 				// write state to the underlying multi-store
 				writeCache()
+
+				// propagate the msg events to the current context
+				ctx.EventManager().EmitEvents(events)
 			} else {
-				proposal.Status = types.StatusFailed
+				proposal.Status = v1.StatusFailed
 				tagValue = types.AttributeValueProposalFailed
-				logMsg = fmt.Sprintf("passed, but failed on execution: %s", err)
+				logMsg = fmt.Sprintf("passed, but msg %d (%s) failed on execution: %s", idx, sdk.MsgTypeURL(msg), err)
 			}
 		} else {
+
 			if proposal.IsExpedited {
 				// When expedited proposal fails, it is converted
 				// to a regular proposal. As a result, the voting period is extended, and,
@@ -98,7 +122,7 @@ func EndBlocker(ctx sdk.Context, keeper keeper.Keeper) {
 				// according to the regular proposal rules.
 				proposal.IsExpedited = false
 				votingParams := keeper.GetVotingParams(ctx)
-				proposal.VotingEndTime = proposal.VotingStartTime.Add(votingParams.VotingPeriod)
+				proposal.VotingEndTime = v1.VotingStartTime.Add(votingParams.VotingPeriod)
 
 				keeper.InsertActiveProposalQueue(ctx, proposal.ProposalId, proposal.VotingEndTime)
 
@@ -107,29 +131,30 @@ func EndBlocker(ctx sdk.Context, keeper keeper.Keeper) {
 			} else {
 				// When regular proposal fails, it is rejected and
 				// the proposal with that id is done forever.
-				proposal.Status = types.StatusRejected
+				proposal.Status = v1.StatusRejected
 				tagValue = types.AttributeValueProposalRejected
 				logMsg = "rejected"
 			}
 		}
 
-		proposal.FinalTallyResult = tallyResults
+		proposal.FinalTallyResult = &tallyResults
+
 		keeper.SetProposal(ctx, proposal)
+		keeper.RemoveFromActiveProposalQueue(ctx, proposal.Id, *proposal.VotingEndTime)
 
 		// when proposal become active
-		keeper.AfterProposalVotingPeriodEnded(ctx, proposal.ProposalId)
+		keeper.Hooks().AfterProposalVotingPeriodEnded(ctx, proposal.Id)
 
 		logger.Info(
 			"proposal tallied",
-			"proposal", proposal.ProposalId,
-			"title", proposal.GetTitle(),
-			"result", logMsg,
+			"proposal", proposal.Id,
+			"results", logMsg,
 		)
 
 		ctx.EventManager().EmitEvent(
 			sdk.NewEvent(
 				types.EventTypeActiveProposal,
-				sdk.NewAttribute(types.AttributeKeyProposalID, fmt.Sprintf("%d", proposal.ProposalId)),
+				sdk.NewAttribute(types.AttributeKeyProposalID, fmt.Sprintf("%d", proposal.Id)),
 				sdk.NewAttribute(types.AttributeKeyProposalResult, tagValue),
 			),
 		)

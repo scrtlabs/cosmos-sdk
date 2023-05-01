@@ -9,9 +9,10 @@ import (
 	"sync"
 	"testing"
 
+	abci "github.com/cometbft/cometbft/abci/types"
+	"github.com/cometbft/cometbft/libs/log"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/stretchr/testify/require"
-	abci "github.com/tendermint/tendermint/abci/types"
-	types1 "github.com/tendermint/tendermint/proto/tendermint/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	codecTypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -24,18 +25,17 @@ var (
 	testMarshaller               = codec.NewProtoCodec(interfaceRegistry)
 	testStreamingService         *StreamingService
 	testListener1, testListener2 types.WriteListener
-	emptyContext                 = sdk.NewContext(nil, types1.Header{}, false, nil)
-	emptyContextWrap             = sdk.WrapSDKContext(emptyContext)
+	emptyContext                 = sdk.Context{}
 
 	// test abci message types
 	mockHash          = []byte{1, 2, 3, 4, 5, 6, 7, 8, 9}
 	testBeginBlockReq = abci.RequestBeginBlock{
-		Header: types1.Header{
+		Header: tmproto.Header{
 			Height: 1,
 		},
-		ByzantineValidators: []abci.Evidence{},
+		ByzantineValidators: []abci.Misbehavior{},
 		Hash:                mockHash,
-		LastCommitInfo: abci.LastCommitInfo{
+		LastCommitInfo: abci.CommitInfo{
 			Round: 1,
 			Votes: []abci.VoteInfo{},
 		},
@@ -55,7 +55,7 @@ var (
 	}
 	testEndBlockRes = abci.ResponseEndBlock{
 		Events:                []abci.Event{},
-		ConsensusParamUpdates: &abci.ConsensusParams{},
+		ConsensusParamUpdates: &tmproto.ConsensusParams{},
 		ValidatorUpdates:      []abci.ValidatorUpdate{},
 	}
 	testCommitRes = abci.ResponseCommit{
@@ -120,7 +120,7 @@ func TestFileStreamingService(t *testing.T) {
 
 	testKeys := []types.StoreKey{mockStoreKey1, mockStoreKey2}
 	var err error
-	testStreamingService, err = NewStreamingService(testDir, testPrefix, testKeys, testMarshaller, true, false, false)
+	testStreamingService, err = NewStreamingService(testDir, testPrefix, testKeys, testMarshaller, log.NewNopLogger(), true, false, false)
 	require.Nil(t, err)
 	require.IsType(t, &StreamingService{}, testStreamingService)
 	require.Equal(t, testPrefix, testStreamingService.filePrefix)
@@ -178,7 +178,7 @@ func testListenBlock(t *testing.T) {
 	expectKVPairsStore2 = append(expectKVPairsStore2, expectedKVPair2)
 
 	// send the ABCI messages
-	err = testStreamingService.ListenBeginBlock(emptyContextWrap, testBeginBlockReq, testBeginBlockRes)
+	err = testStreamingService.ListenBeginBlock(emptyContext, testBeginBlockReq, testBeginBlockRes)
 	require.Nil(t, err)
 
 	// write state changes
@@ -215,7 +215,7 @@ func testListenBlock(t *testing.T) {
 	expectKVPairsStore2 = append(expectKVPairsStore2, expectedKVPair2, expectedKVPair3)
 
 	// send the ABCI messages
-	err = testStreamingService.ListenDeliverTx(emptyContextWrap, testDeliverTxReq1, testDeliverTxRes1)
+	err = testStreamingService.ListenDeliverTx(emptyContext, testDeliverTxReq1, testDeliverTxRes1)
 	require.Nil(t, err)
 
 	// write state changes
@@ -252,7 +252,7 @@ func testListenBlock(t *testing.T) {
 	expectKVPairsStore2 = append(expectKVPairsStore2, expectedKVPair1, expectedKVPair3)
 
 	// send the ABCI messages
-	err = testStreamingService.ListenDeliverTx(emptyContextWrap, testDeliverTxReq2, testDeliverTxRes2)
+	err = testStreamingService.ListenDeliverTx(emptyContext, testDeliverTxReq2, testDeliverTxRes2)
 	require.Nil(t, err)
 
 	// write state changes
@@ -289,16 +289,17 @@ func testListenBlock(t *testing.T) {
 	expectKVPairsStore2 = append(expectKVPairsStore2, expectedKVPair3)
 
 	// send the ABCI messages
-	err = testStreamingService.ListenEndBlock(emptyContextWrap, testEndBlockReq, testEndBlockRes)
+	err = testStreamingService.ListenEndBlock(emptyContext, testEndBlockReq, testEndBlockRes)
 	require.Nil(t, err)
 
-	err = testStreamingService.ListenCommit(emptyContextWrap, testCommitRes)
+	err = testStreamingService.ListenCommit(emptyContext, testCommitRes)
 	require.Nil(t, err)
 
 	// load the file, checking that it was created with the expected name
 	metaFileName := fmt.Sprintf("%s-block-%d-meta", testPrefix, testBeginBlockReq.GetHeader().Height)
 	dataFileName := fmt.Sprintf("%s-block-%d-data", testPrefix, testBeginBlockReq.GetHeader().Height)
 	metaFileBytes, err := readInFile(metaFileName)
+	require.Nil(t, err)
 	dataFileBytes, err := readInFile(dataFileName)
 	require.Nil(t, err)
 

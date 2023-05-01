@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	dbm "github.com/tendermint/tm-db"
+	dbm "github.com/cometbft/cometbft-db"
 
 	"github.com/cosmos/cosmos-sdk/store/cachekv"
 	"github.com/cosmos/cosmos-sdk/store/dbadapter"
@@ -107,6 +107,11 @@ func (cms Store) SetTracingContext(tc types.TraceContext) types.MultiStore {
 // TracingEnabled returns if tracing is enabled for the MultiStore.
 func (cms Store) TracingEnabled() bool {
 	return cms.traceWriter != nil
+}
+
+// LatestVersion returns the branch version of the store
+func (cms Store) LatestVersion() int64 {
+	panic("cannot get latest version from branch cached multi-store")
 }
 
 // GetStoreType returns the type of the store.

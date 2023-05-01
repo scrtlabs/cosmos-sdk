@@ -8,23 +8,27 @@ import (
 	"math/rand"
 	"time"
 
+	"cosmossdk.io/math"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/gov/types"
+	v1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 )
 
 // Simulation parameter constants
 const (
-	DepositParamsMinDeposit           = "deposit_params_min_deposit"
+	DepositParamsMinDeposit    = "deposit_params_min_deposit"
 	DepositParamsMinExpeditedDeposit  = "deposit_params_min_expedited_deposit"
-	DepositParamsDepositPeriod        = "deposit_params_deposit_period"
-	VotingParamsVotingPeriod          = "voting_params_voting_period"
+	DepositParamsDepositPeriod = "deposit_params_deposit_period"
+	DepositMinInitialRatio     = "deposit_params_min_initial_ratio"
+	VotingParamsVotingPeriod   = "voting_params_voting_period"
 	ExpeditedVotingParamsVotingPeriod = "expedited_voting_params_voting_period"
-	TallyParamsQuorum                 = "tally_params_quorum"
-	TallyParamsThreshold              = "tally_params_threshold"
+	TallyParamsQuorum          = "tally_params_quorum"
+	TallyParamsThreshold       = "tally_params_threshold"
 	TallyParamsExpeditedThreshold     = "tally_params_expedited_threshold"
-	TallyParamsVeto                   = "tally_params_veto"
+	TallyParamsVeto            = "tally_params_veto"
 
 	// ExpeditedThreshold must be at least as large as the regular Threshold
 	// Therefore, we use this break out point in randomization.
@@ -35,12 +39,12 @@ const (
 	expeditedMaxVotingPeriod = 60 * 60 * 24 * 2
 )
 
-// GenDepositParamsDepositPeriod randomized DepositParamsDepositPeriod
+// GenDepositParamsDepositPeriod returns randomized DepositParamsDepositPeriod
 func GenDepositParamsDepositPeriod(r *rand.Rand) time.Duration {
 	return time.Duration(simulation.RandIntBetween(r, 1, 2*60*60*24*2)) * time.Second
 }
 
-// GenDepositParamsMinDeposit randomized DepositParamsMinDeposit
+// GenDepositParamsMinDeposit returns randomized DepositParamsMinDeposit
 func GenDepositParamsMinDeposit(r *rand.Rand) sdk.Coins {
 	return sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, int64(simulation.RandIntBetween(r, 1, 1e3/2))))
 }
@@ -50,7 +54,12 @@ func GenDepositParamsMinExpeditedDeposit(r *rand.Rand) sdk.Coins {
 	return sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, int64(simulation.RandIntBetween(r, 1e3/2, 1e3))))
 }
 
-// GenVotingParamsVotingPeriod randomized VotingParamsVotingPeriod
+// GenDepositMinInitialRatio returns randomized DepositMinInitialRatio
+func GenDepositMinInitialDepositRatio(r *rand.Rand) sdk.Dec {
+	return sdk.NewDec(int64(simulation.RandIntBetween(r, 0, 99))).Quo(sdk.NewDec(100))
+}
+
+// GenVotingParamsVotingPeriod returns randomized VotingParamsVotingPeriod
 func GenVotingParamsVotingPeriod(r *rand.Rand) time.Duration {
 	return time.Duration(simulation.RandIntBetween(r, expeditedMaxVotingPeriod, 2*expeditedMaxVotingPeriod)) * time.Second
 }
@@ -60,23 +69,23 @@ func GenVotingParamsExpeditedVotingPeriod(r *rand.Rand) time.Duration {
 	return time.Duration(simulation.RandIntBetween(r, 1, expeditedMaxVotingPeriod)) * time.Second
 }
 
-// GenTallyParamsQuorum randomized TallyParamsQuorum
-func GenTallyParamsQuorum(r *rand.Rand) sdk.Dec {
+// GenTallyParamsQuorum returns randomized TallyParamsQuorum
+func GenTallyParamsQuorum(r *rand.Rand) math.LegacyDec {
 	return sdk.NewDecWithPrec(int64(simulation.RandIntBetween(r, 334, 500)), 3)
 }
 
+// GenTallyParamsThreshold returns randomized TallyParamsThreshold
+func GenTallyParamsThreshold(r *rand.Rand) math.LegacyDec {
+	return sdk.NewDecWithPrec(int64(simulation.RandIntBetween(r, 450, 550)), 3)
 // GenTallyParamsThreshold randomized TallyParamsThreshold
-func GenTallyParamsThreshold(r *rand.Rand) sdk.Dec {
-	return sdk.NewDecWithPrec(int64(simulation.RandIntBetween(r, 450, tallyNonExpeditedMax+1)), 3)
-}
 
 // GenTallyParamsExpeditedThreshold randomized TallyParamsExpeditedThreshold
-func GenTallyParamsExpeditedThreshold(r *rand.Rand) sdk.Dec {
+func GenTallyParamsExpeditedThreshold(r *rand.Rand) math.LegacyDec {
 	return sdk.NewDecWithPrec(int64(simulation.RandIntBetween(r, tallyNonExpeditedMax, 550)), 3)
 }
 
-// GenTallyParamsVeto randomized TallyParamsVeto
-func GenTallyParamsVeto(r *rand.Rand) sdk.Dec {
+// GenTallyParamsVeto returns randomized TallyParamsVeto
+func GenTallyParamsVeto(r *rand.Rand) math.LegacyDec {
 	return sdk.NewDecWithPrec(int64(simulation.RandIntBetween(r, 250, 334)), 3)
 }
 
@@ -100,6 +109,12 @@ func RandomizedGenState(simState *module.SimulationState) {
 	simState.AppParams.GetOrGenerate(
 		simState.Cdc, DepositParamsDepositPeriod, &depositPeriod, simState.Rand,
 		func(r *rand.Rand) { depositPeriod = GenDepositParamsDepositPeriod(r) },
+	)
+
+	var minInitialDepositRatio sdk.Dec
+	simState.AppParams.GetOrGenerate(
+		simState.Cdc, DepositMinInitialRatio, &minInitialDepositRatio, simState.Rand,
+		func(r *rand.Rand) { minInitialDepositRatio = GenDepositMinInitialDepositRatio(r) },
 	)
 
 	var votingPeriod time.Duration
@@ -138,11 +153,9 @@ func RandomizedGenState(simState *module.SimulationState) {
 		func(r *rand.Rand) { veto = GenTallyParamsVeto(r) },
 	)
 
-	govGenesis := types.NewGenesisState(
+	govGenesis := v1.NewGenesisState(
 		startingProposalID,
-		types.NewDepositParams(minDeposit, depositPeriod, minExpeditedDeposit),
-		types.NewVotingParams(votingPeriod, expeditedVotingPeriod),
-		types.NewTallyParams(quorum, threshold, expeditedThreshold, veto),
+		v1.NewParams(minDeposit, depositPeriod, votingPeriod, quorum.String(), threshold.String(), veto.String(), minInitialDepositRatio.String(), simState.Rand.Intn(2) == 0, simState.Rand.Intn(2) == 0, simState.Rand.Intn(2) == 0),
 	)
 
 	bz, err := json.MarshalIndent(&govGenesis, "", " ")

@@ -3,25 +3,21 @@ package auth_test
 import (
 	"testing"
 
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/stretchr/testify/require"
-	abcitypes "github.com/tendermint/tendermint/abci/types"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
-	"github.com/cosmos/cosmos-sdk/simapp"
+	simtestutil "github.com/cosmos/cosmos-sdk/testutil/sims"
+	"github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	"github.com/cosmos/cosmos-sdk/x/auth/testutil"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 )
 
 func TestItCreatesModuleAccountOnInitBlock(t *testing.T) {
-	app := simapp.Setup(false)
+	var accountKeeper keeper.AccountKeeper
+	app, err := simtestutil.SetupAtGenesis(testutil.AppConfig, &accountKeeper)
+	require.NoError(t, err)
+
 	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
-
-	app.InitChain(
-		abcitypes.RequestInitChain{
-			AppStateBytes: []byte("{}"),
-			ChainId:       "test-chain-id",
-		},
-	)
-
-	acc := app.AccountKeeper.GetAccount(ctx, types.NewModuleAddress(types.FeeCollectorName))
+	acc := accountKeeper.GetAccount(ctx, types.NewModuleAddress(types.FeeCollectorName))
 	require.NotNil(t, acc)
 }

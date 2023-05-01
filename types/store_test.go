@@ -3,9 +3,9 @@ package types_test
 import (
 	"testing"
 
+	dbm "github.com/cometbft/cometbft-db"
+	"github.com/cometbft/cometbft/libs/log"
 	"github.com/stretchr/testify/suite"
-	"github.com/tendermint/tendermint/libs/log"
-	dbm "github.com/tendermint/tm-db"
 
 	"github.com/cosmos/cosmos-sdk/store/rootmulti"
 	"github.com/cosmos/cosmos-sdk/store/types"
@@ -45,10 +45,10 @@ func (s *storeTestSuite) TestPrefixEndBytes() {
 }
 
 func (s *storeTestSuite) TestCommitID() {
-	var empty sdk.CommitID
+	var empty types.CommitID
 	s.Require().True(empty.IsZero())
 
-	nonempty := sdk.CommitID{
+	nonempty := types.CommitID{
 		Version: 1,
 		Hash:    []byte("testhash"),
 	}
@@ -56,7 +56,7 @@ func (s *storeTestSuite) TestCommitID() {
 }
 
 func (s *storeTestSuite) TestNewTransientStoreKeys() {
-	s.Require().Equal(map[string]*sdk.TransientStoreKey{}, sdk.NewTransientStoreKeys())
+	s.Require().Equal(map[string]*types.TransientStoreKey{}, sdk.NewTransientStoreKeys())
 	s.Require().Equal(1, len(sdk.NewTransientStoreKeys("one")))
 }
 

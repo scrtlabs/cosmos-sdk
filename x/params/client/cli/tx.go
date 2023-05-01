@@ -10,7 +10,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	paramscutils "github.com/cosmos/cosmos-sdk/x/params/client/utils"
 	paramproposal "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 )
@@ -83,7 +83,7 @@ Where proposal.json contains:
 				return err
 			}
 
-			msg, err := govtypes.NewMsgSubmitProposalWithExpedited(content, deposit, from, isExpedited)
+			msg, err := govv1beta1.NewMsgSubmitProposalWithExpedited(content, deposit, from, isExpedited)
 			if err != nil {
 				return err
 			}

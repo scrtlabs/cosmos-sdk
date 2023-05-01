@@ -7,8 +7,7 @@ import (
 	"fmt"
 	"math/rand"
 
-	"github.com/cosmos/cosmos-sdk/types/simulation"
-
+	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/distribution/types"
@@ -17,18 +16,10 @@ import (
 // Simulation parameter constants
 const (
 	CommunityTax            = "community_tax"
-	BaseProposerReward      = "base_proposer_reward"
-	BonusProposerReward     = "bonus_proposer_reward"
 	WithdrawEnabled         = "withdraw_enabled"
-	FoundationTax           = "foundation_tax"
 	MinimumRestakeThreshold = "minimum_restake_threshold"
 	RestakePeriod           = "restake_period"
 )
-
-// GenSecretFoundationTax returns a randomized secret foundation tax parameter.
-func GenSecretFoundationTax(r *rand.Rand) sdk.Dec {
-	return sdk.NewDecWithPrec(1, 2).Add(sdk.NewDecWithPrec(int64(r.Intn(30)), 2))
-}
 
 // GenMinimumRestakeThreshold returns a randomized restake threshold.
 func GenMinimumRestakeThreshold(r *rand.Rand) sdk.Dec {
@@ -41,17 +32,7 @@ func GenRestakePeriod(r *rand.Rand) sdk.Int {
 }
 
 // GenCommunityTax randomized CommunityTax
-func GenCommunityTax(r *rand.Rand) sdk.Dec {
-	return sdk.NewDecWithPrec(1, 2).Add(sdk.NewDecWithPrec(int64(r.Intn(30)), 2))
-}
-
-// GenBaseProposerReward randomized BaseProposerReward
-func GenBaseProposerReward(r *rand.Rand) sdk.Dec {
-	return sdk.NewDecWithPrec(1, 2).Add(sdk.NewDecWithPrec(int64(r.Intn(30)), 2))
-}
-
-// GenBonusProposerReward randomized BonusProposerReward
-func GenBonusProposerReward(r *rand.Rand) sdk.Dec {
+func GenCommunityTax(r *rand.Rand) math.LegacyDec {
 	return sdk.NewDecWithPrec(1, 2).Add(sdk.NewDecWithPrec(int64(r.Intn(30)), 2))
 }
 
@@ -68,27 +49,10 @@ func RandomizedGenState(simState *module.SimulationState) {
 		func(r *rand.Rand) { communityTax = GenCommunityTax(r) },
 	)
 
-	var baseProposerReward sdk.Dec
-	simState.AppParams.GetOrGenerate(
-		simState.Cdc, BaseProposerReward, &baseProposerReward, simState.Rand,
-		func(r *rand.Rand) { baseProposerReward = GenBaseProposerReward(r) },
-	)
-
-	var bonusProposerReward sdk.Dec
-	simState.AppParams.GetOrGenerate(
-		simState.Cdc, BonusProposerReward, &bonusProposerReward, simState.Rand,
-		func(r *rand.Rand) { bonusProposerReward = GenBonusProposerReward(r) },
-	)
-
 	var withdrawEnabled bool
 	simState.AppParams.GetOrGenerate(
 		simState.Cdc, WithdrawEnabled, &withdrawEnabled, simState.Rand,
 		func(r *rand.Rand) { withdrawEnabled = GenWithdrawEnabled(r) },
-	)
-	var foundationTax sdk.Dec
-	simState.AppParams.GetOrGenerate(
-		simState.Cdc, FoundationTax, &foundationTax, simState.Rand,
-		func(r *rand.Rand) { foundationTax = GenSecretFoundationTax(r) },
 	)
 
 	var restakeThreshold sdk.Dec
@@ -108,12 +72,8 @@ func RandomizedGenState(simState *module.SimulationState) {
 	distrGenesis := types.GenesisState{
 		FeePool: types.InitialFeePool(),
 		Params: types.Params{
-			CommunityTax:            communityTax,
-			SecretFoundationTax:     foundationTax,
-			SecretFoundationAddress: foundationTaxAcc.Address.String(),
-			BaseProposerReward:      baseProposerReward,
-			BonusProposerReward:     bonusProposerReward,
-			WithdrawAddrEnabled:     withdrawEnabled,
+			CommunityTax:        communityTax,
+			WithdrawAddrEnabled: withdrawEnabled,
 			MinimumRestakeThreshold: restakeThreshold,
 			RestakePeriod:           restakePeriod,
 		},

@@ -10,8 +10,8 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/gogo/protobuf/proto"
-	db "github.com/tendermint/tm-db"
+	db "github.com/cometbft/cometbft-db"
+	"github.com/cosmos/gogoproto/proto"
 
 	"github.com/cosmos/cosmos-sdk/snapshots/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -145,13 +145,13 @@ func (s *Store) Load(height uint64, format uint32) (*types.Snapshot, <-chan io.R
 			ch <- pr
 			chunk, err := s.loadChunkFile(height, format, i)
 			if err != nil {
-				pw.CloseWithError(err)
+				_ = pw.CloseWithError(err)
 				return
 			}
 			defer chunk.Close()
 			_, err = io.Copy(pw, chunk)
 			if err != nil {
-				pw.CloseWithError(err)
+				_ = pw.CloseWithError(err)
 				return
 			}
 			chunk.Close()
@@ -259,7 +259,7 @@ func (s *Store) Save(
 	snapshotHasher := sha256.New()
 	chunkHasher := sha256.New()
 	for chunkBody := range chunks {
-		defer chunkBody.Close() //nolint: staticcheck
+		defer chunkBody.Close() //nolint:staticcheck
 		dir := s.pathSnapshot(height, format)
 		err = os.MkdirAll(dir, 0o755)
 		if err != nil {
@@ -270,7 +270,7 @@ func (s *Store) Save(
 		if err != nil {
 			return nil, sdkerrors.Wrapf(err, "failed to create snapshot chunk file %q", path)
 		}
-		defer file.Close() //nolint: staticcheck
+		defer file.Close() //nolint:staticcheck
 
 		chunkHasher.Reset()
 		_, err = io.Copy(io.MultiWriter(file, chunkHasher, snapshotHasher), chunkBody)

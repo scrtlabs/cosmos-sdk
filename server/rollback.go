@@ -3,14 +3,17 @@ package server
 import (
 	"fmt"
 
+	tmcmd "github.com/cometbft/cometbft/cmd/cometbft/commands"
+	"github.com/spf13/cobra"
+
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/server/types"
-	"github.com/spf13/cobra"
-	tmcmd "github.com/tendermint/tendermint/cmd/tendermint/commands"
 )
 
 // NewRollbackCmd creates a command to rollback tendermint and multistore state by one height.
 func NewRollbackCmd(appCreator types.AppCreator, defaultNodeHome string) *cobra.Command {
+	var removeBlock bool
+
 	cmd := &cobra.Command{
 		Use:   "rollback",
 		Short: "rollback cosmos-sdk and tendermint state by one height",
@@ -18,7 +21,7 @@ func NewRollbackCmd(appCreator types.AppCreator, defaultNodeHome string) *cobra.
 A state rollback is performed to recover from an incorrect application state transition,
 when Tendermint has persisted an incorrect app hash and is thus unable to make
 progress. Rollback overwrites a state at height n with the state at height n - 1.
-The application also roll back to height n - 1. No blocks are removed, so upon
+The application also rolls back to height n - 1. No blocks are removed, so upon
 restarting Tendermint the transactions in block n will be re-executed against the
 application.
 `,
@@ -26,13 +29,13 @@ application.
 			ctx := GetServerContextFromCmd(cmd)
 			cfg := ctx.Config
 			home := cfg.RootDir
-			db, err := openDB(home)
+			db, err := openDB(home, GetAppDBBackend(ctx.Viper))
 			if err != nil {
 				return err
 			}
 			app := appCreator(ctx.Logger, db, nil, ctx.Viper)
 			// rollback tendermint state
-			height, hash, err := tmcmd.RollbackState(ctx.Config)
+			height, hash, err := tmcmd.RollbackState(ctx.Config, removeBlock)
 			if err != nil {
 				return fmt.Errorf("failed to rollback tendermint state: %w", err)
 			}
@@ -48,5 +51,6 @@ application.
 	}
 
 	cmd.Flags().String(flags.FlagHome, defaultNodeHome, "The application home directory")
+	cmd.Flags().BoolVar(&removeBlock, "hard", false, "remove last block as well as state")
 	return cmd
 }

@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"io"
 
+	tmtypes "github.com/cometbft/cometbft/types"
 	amino "github.com/tendermint/go-amino"
-	tmtypes "github.com/tendermint/tendermint/types"
 
 	"github.com/cosmos/cosmos-sdk/codec/types"
 )
@@ -47,7 +47,6 @@ func MarshalJSONIndent(cdc *LegacyAmino, obj interface{}) ([]byte, error) {
 	if err = json.Indent(&out, bz, "", "  "); err != nil {
 		return nil, err
 	}
-
 	return out.Bytes(), nil
 }
 

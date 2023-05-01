@@ -3,7 +3,7 @@ package codec_test
 import (
 	"testing"
 
-	"github.com/gogo/protobuf/proto"
+	"github.com/cosmos/gogoproto/proto"
 	"github.com/stretchr/testify/require"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -28,7 +28,7 @@ func testInterfaceMarshaling(require *require.Assertions, cdc interfaceMarshaler
 	var animal testdata.Animal
 	if isAminoBin {
 		require.PanicsWithValue("Unmarshal expects a pointer", func() {
-			cdc.unmarshal(bz, animal)
+			_ = cdc.unmarshal(bz, animal)
 		})
 	} else {
 		err = cdc.unmarshal(bz, animal)

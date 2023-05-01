@@ -1,18 +1,17 @@
-# Cosmos SDK v0.45.12 Release Notes
+# Cosmos SDK v0.47.2 Release Notes
 
-This release introduces a number of bug fixes and improvements. Notably with an update to State Streaming APIs.
+💬 [**Release Discussion**](https://github.com/cosmos/community)
 
-Moreover, this release contains a store fix. The changes have been tested against the Cosmos Hub and Juno mainnet with no issues. However, there is a low probability of an edge case happening. Hence, it is recommended to do a **coordinated upgrade** to avoid any issues.
+## 📝 Changelog
 
-Please see the [CHANGELOG](https://github.com/cosmos/cosmos-sdk/blob/release/v0.45.x/CHANGELOG.md) for an exhaustive list of changes.
+Check out the [changelog](https://github.com/cosmos/cosmos-sdk/blob/v0.47.2/CHANGELOG.md) for an exhaustive list of changes or [compare changes](https://github.com/cosmos/cosmos-sdk/compare/release/v0.47.1...v0.47.2) from last release.
 
-**Full Commit History**: https://github.com/cosmos/cosmos-sdk/compare/v0.45.11...v0.45.12
+Refer to the [upgrading guide](https://github.com/cosmos/cosmos-sdk/blob/release/v0.47.x/UPGRADING.md) when migrating from `v0.46.x` to `v0.47.0`.
 
-**NOTE:** The changes mentioned in `v0.45.9` are **no longer required**. The following replace directive can be removed from the chains.
+## 🚀 Highlights
 
-```go
-# Can be deleted from go.mod
-replace github.com/confio/ics23/go => github.com/cosmos/cosmos-sdk/ics23/go v0.8.0
-```
+For this second patch release of the `v0.47.x` line, we focused on fixing bugs and improving the developer experience.
+Missed the v0.47.0 announcement? Read it [here](https://github.com/cosmos/cosmos-sdk/releases/tag/v0.47.0).
 
-Instead, `github.com/confio/ics23/go` must be **bumped to `v0.9.0`**.
+Notably, [a fix](https://github.com/cosmos/cosmos-sdk/pull/15683) for loading archival states (thank you @catShaark).
+Additionally, the release fixes an issue where querying previous block heights would return an incorrect timestamp.

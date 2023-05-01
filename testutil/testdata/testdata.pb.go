@@ -6,8 +6,8 @@ package testdata
 import (
 	fmt "fmt"
 	types "github.com/cosmos/cosmos-sdk/codec/types"
-	_ "github.com/gogo/protobuf/gogoproto"
-	proto "github.com/gogo/protobuf/proto"
+	_ "github.com/cosmos/gogoproto/gogoproto"
+	proto "github.com/cosmos/gogoproto/proto"
 	io "io"
 	math "math"
 	math_bits "math/bits"
@@ -128,6 +128,58 @@ func (m *Cat) GetLives() int32 {
 	return 0
 }
 
+type Bird struct {
+	Species string `protobuf:"bytes,1,opt,name=species,proto3" json:"species,omitempty"`
+	Color   int32  `protobuf:"varint,2,opt,name=color,proto3" json:"color,omitempty"`
+}
+
+func (m *Bird) Reset()         { *m = Bird{} }
+func (m *Bird) String() string { return proto.CompactTextString(m) }
+func (*Bird) ProtoMessage()    {}
+func (*Bird) Descriptor() ([]byte, []int) {
+	return fileDescriptor_40c4782d007dfce9, []int{2}
+}
+func (m *Bird) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Bird) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Bird.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Bird) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Bird.Merge(m, src)
+}
+func (m *Bird) XXX_Size() int {
+	return m.Size()
+}
+func (m *Bird) XXX_DiscardUnknown() {
+	xxx_messageInfo_Bird.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Bird proto.InternalMessageInfo
+
+func (m *Bird) GetSpecies() string {
+	if m != nil {
+		return m.Species
+	}
+	return ""
+}
+
+func (m *Bird) GetColor() int32 {
+	if m != nil {
+		return m.Color
+	}
+	return 0
+}
+
 type HasAnimal struct {
 	Animal *types.Any `protobuf:"bytes,1,opt,name=animal,proto3" json:"animal,omitempty"`
 	X      int64      `protobuf:"varint,2,opt,name=x,proto3" json:"x,omitempty"`
@@ -137,7 +189,7 @@ func (m *HasAnimal) Reset()         { *m = HasAnimal{} }
 func (m *HasAnimal) String() string { return proto.CompactTextString(m) }
 func (*HasAnimal) ProtoMessage()    {}
 func (*HasAnimal) Descriptor() ([]byte, []int) {
-	return fileDescriptor_40c4782d007dfce9, []int{2}
+	return fileDescriptor_40c4782d007dfce9, []int{3}
 }
 func (m *HasAnimal) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -188,7 +240,7 @@ func (m *HasHasAnimal) Reset()         { *m = HasHasAnimal{} }
 func (m *HasHasAnimal) String() string { return proto.CompactTextString(m) }
 func (*HasHasAnimal) ProtoMessage()    {}
 func (*HasHasAnimal) Descriptor() ([]byte, []int) {
-	return fileDescriptor_40c4782d007dfce9, []int{3}
+	return fileDescriptor_40c4782d007dfce9, []int{4}
 }
 func (m *HasHasAnimal) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -232,7 +284,7 @@ func (m *HasHasHasAnimal) Reset()         { *m = HasHasHasAnimal{} }
 func (m *HasHasHasAnimal) String() string { return proto.CompactTextString(m) }
 func (*HasHasHasAnimal) ProtoMessage()    {}
 func (*HasHasHasAnimal) Descriptor() ([]byte, []int) {
-	return fileDescriptor_40c4782d007dfce9, []int{4}
+	return fileDescriptor_40c4782d007dfce9, []int{5}
 }
 func (m *HasHasHasAnimal) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -279,7 +331,7 @@ func (m *BadMultiSignature) Reset()         { *m = BadMultiSignature{} }
 func (m *BadMultiSignature) String() string { return proto.CompactTextString(m) }
 func (*BadMultiSignature) ProtoMessage()    {}
 func (*BadMultiSignature) Descriptor() ([]byte, []int) {
-	return fileDescriptor_40c4782d007dfce9, []int{5}
+	return fileDescriptor_40c4782d007dfce9, []int{6}
 }
 func (m *BadMultiSignature) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -322,42 +374,117 @@ func (m *BadMultiSignature) GetMaliciousField() []byte {
 	return nil
 }
 
+type TableModel struct {
+	Id       uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name     string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Number   uint64 `protobuf:"varint,3,opt,name=number,proto3" json:"number,omitempty"`
+	Metadata []byte `protobuf:"bytes,4,opt,name=metadata,proto3" json:"metadata,omitempty"`
+}
+
+func (m *TableModel) Reset()         { *m = TableModel{} }
+func (m *TableModel) String() string { return proto.CompactTextString(m) }
+func (*TableModel) ProtoMessage()    {}
+func (*TableModel) Descriptor() ([]byte, []int) {
+	return fileDescriptor_40c4782d007dfce9, []int{7}
+}
+func (m *TableModel) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TableModel) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TableModel.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TableModel) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TableModel.Merge(m, src)
+}
+func (m *TableModel) XXX_Size() int {
+	return m.Size()
+}
+func (m *TableModel) XXX_DiscardUnknown() {
+	xxx_messageInfo_TableModel.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TableModel proto.InternalMessageInfo
+
+func (m *TableModel) GetId() uint64 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+func (m *TableModel) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *TableModel) GetNumber() uint64 {
+	if m != nil {
+		return m.Number
+	}
+	return 0
+}
+
+func (m *TableModel) GetMetadata() []byte {
+	if m != nil {
+		return m.Metadata
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*Dog)(nil), "testdata.Dog")
 	proto.RegisterType((*Cat)(nil), "testdata.Cat")
+	proto.RegisterType((*Bird)(nil), "testdata.Bird")
 	proto.RegisterType((*HasAnimal)(nil), "testdata.HasAnimal")
 	proto.RegisterType((*HasHasAnimal)(nil), "testdata.HasHasAnimal")
 	proto.RegisterType((*HasHasHasAnimal)(nil), "testdata.HasHasHasAnimal")
 	proto.RegisterType((*BadMultiSignature)(nil), "testdata.BadMultiSignature")
+	proto.RegisterType((*TableModel)(nil), "testdata.TableModel")
 }
 
 func init() { proto.RegisterFile("testdata.proto", fileDescriptor_40c4782d007dfce9) }
 
 var fileDescriptor_40c4782d007dfce9 = []byte{
-	// 365 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x92, 0x31, 0x4f, 0xc2, 0x40,
-	0x18, 0x86, 0x39, 0x0b, 0x28, 0x9f, 0x0d, 0xc4, 0x0b, 0x43, 0x65, 0xa8, 0xa4, 0x8b, 0x0c, 0xd2,
-	0x26, 0x12, 0x17, 0x36, 0xc0, 0x28, 0x0b, 0x4b, 0xdd, 0x5c, 0xc8, 0x95, 0x1e, 0xed, 0x85, 0xb6,
-	0x67, 0xb8, 0xab, 0x01, 0x7f, 0x85, 0x7f, 0xc1, 0x7f, 0xe3, 0xc8, 0xe8, 0x68, 0xe0, 0x8f, 0x98,
-	0x5e, 0xa9, 0x30, 0x32, 0xf5, 0x7d, 0xdf, 0xaf, 0xef, 0x93, 0xef, 0x92, 0x0f, 0xea, 0x92, 0x0a,
-	0xe9, 0x13, 0x49, 0xec, 0xb7, 0x25, 0x97, 0x1c, 0x5f, 0x14, 0xbe, 0xd5, 0x0c, 0x78, 0xc0, 0x55,
-	0xe8, 0x64, 0x2a, 0x9f, 0xb7, 0xae, 0x03, 0xce, 0x83, 0x88, 0x3a, 0xca, 0x79, 0xe9, 0xdc, 0x21,
-	0xc9, 0x3a, 0x1f, 0x59, 0x5d, 0xd0, 0x1e, 0x79, 0x80, 0x31, 0x94, 0x05, 0xfb, 0xa0, 0x06, 0x6a,
-	0xa3, 0x4e, 0xcd, 0x55, 0x3a, 0xcb, 0x12, 0x12, 0x53, 0xe3, 0x2c, 0xcf, 0x32, 0x6d, 0x3d, 0x80,
-	0x36, 0x22, 0x12, 0x1b, 0x70, 0x1e, 0xf3, 0x84, 0x2d, 0xe8, 0x72, 0xdf, 0x28, 0x2c, 0x6e, 0x42,
-	0x25, 0x62, 0xef, 0x54, 0xa8, 0x56, 0xc5, 0xcd, 0x8d, 0xf5, 0x0c, 0xb5, 0x31, 0x11, 0x83, 0x84,
-	0xc5, 0x24, 0xc2, 0x77, 0x50, 0x25, 0x4a, 0xa9, 0xee, 0xe5, 0x7d, 0xd3, 0xce, 0xd7, 0xb3, 0x8b,
-	0xf5, 0xec, 0x41, 0xb2, 0x76, 0xf7, 0xff, 0x60, 0x1d, 0xd0, 0x4a, 0xc1, 0x34, 0x17, 0xad, 0xac,
-	0x11, 0xe8, 0x63, 0x22, 0x0e, 0xac, 0x1e, 0x40, 0x48, 0xc4, 0xf4, 0x04, 0x5e, 0x2d, 0x2c, 0x4a,
-	0xd6, 0x04, 0x1a, 0x39, 0xe4, 0xc0, 0xe9, 0x43, 0x3d, 0xe3, 0x9c, 0xc8, 0xd2, 0xc3, 0xa3, 0xae,
-	0xe5, 0xc1, 0xd5, 0x90, 0xf8, 0x93, 0x34, 0x92, 0xec, 0x85, 0x05, 0x09, 0x91, 0xe9, 0x92, 0x62,
-	0x13, 0x40, 0x14, 0x46, 0x18, 0xa8, 0xad, 0x75, 0x74, 0xf7, 0x28, 0xc1, 0xb7, 0xd0, 0x88, 0x49,
-	0xc4, 0x66, 0x8c, 0xa7, 0x62, 0x3a, 0x67, 0x34, 0xf2, 0x8d, 0x4a, 0x1b, 0x75, 0x74, 0xb7, 0xfe,
-	0x1f, 0x3f, 0x65, 0x69, 0xbf, 0xbc, 0xf9, 0xba, 0x41, 0xc3, 0xf1, 0xf7, 0xd6, 0x44, 0x9b, 0xad,
-	0x89, 0x7e, 0xb7, 0x26, 0xfa, 0xdc, 0x99, 0xa5, 0xcd, 0xce, 0x2c, 0xfd, 0xec, 0xcc, 0xd2, 0xab,
-	0x1d, 0x30, 0x19, 0xa6, 0x9e, 0x3d, 0xe3, 0xb1, 0x33, 0xe3, 0x22, 0xe6, 0x62, 0xff, 0xe9, 0x0a,
-	0x7f, 0xe1, 0x64, 0x87, 0x91, 0x4a, 0x16, 0x39, 0xc5, 0x85, 0x78, 0x55, 0xf5, 0x92, 0xde, 0x5f,
-	0x00, 0x00, 0x00, 0xff, 0xff, 0xa3, 0x51, 0x62, 0x40, 0x44, 0x02, 0x00, 0x00,
+	// 443 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x92, 0xc1, 0x6e, 0xd3, 0x30,
+	0x1c, 0xc6, 0xeb, 0x26, 0x2d, 0xeb, 0x9f, 0xa8, 0x13, 0x56, 0x85, 0x42, 0x0f, 0x61, 0xca, 0x85,
+	0x1e, 0x58, 0x22, 0x31, 0xc1, 0x61, 0xb7, 0x75, 0x08, 0x7a, 0xe9, 0x25, 0x70, 0xe2, 0x32, 0x39,
+	0xb1, 0x97, 0x5a, 0x73, 0xe2, 0x29, 0x76, 0xd0, 0xc6, 0x53, 0xf0, 0x0a, 0xbc, 0x0d, 0xc7, 0x1e,
+	0x39, 0xa2, 0xf6, 0x45, 0x90, 0x9d, 0x78, 0xdb, 0x81, 0x43, 0x4f, 0xf9, 0xbe, 0xcf, 0xfe, 0x7d,
+	0x89, 0x9d, 0x3f, 0x4c, 0x35, 0x53, 0x9a, 0x12, 0x4d, 0x92, 0xdb, 0x46, 0x6a, 0x89, 0x8f, 0x9c,
+	0x9f, 0xcf, 0x4a, 0x59, 0x4a, 0x1b, 0xa6, 0x46, 0x75, 0xeb, 0xf3, 0x57, 0xa5, 0x94, 0xa5, 0x60,
+	0xa9, 0x75, 0x79, 0x7b, 0x9d, 0x92, 0xfa, 0xbe, 0x5b, 0x8a, 0x4f, 0xc1, 0xfb, 0x28, 0x4b, 0x8c,
+	0xc1, 0x57, 0xfc, 0x07, 0x0b, 0xd1, 0x09, 0x5a, 0x4c, 0x32, 0xab, 0x4d, 0x56, 0x93, 0x8a, 0x85,
+	0xc3, 0x2e, 0x33, 0x3a, 0x7e, 0x0f, 0xde, 0x25, 0xd1, 0x38, 0x84, 0x67, 0x95, 0xac, 0xf9, 0x0d,
+	0x6b, 0x7a, 0xc2, 0x59, 0x3c, 0x83, 0x91, 0xe0, 0xdf, 0x99, 0xb2, 0xd4, 0x28, 0xeb, 0x4c, 0xfc,
+	0x01, 0xfc, 0x25, 0x6f, 0xa8, 0xe1, 0xd4, 0x2d, 0x2b, 0x38, 0x53, 0x8e, 0xeb, 0xad, 0xe1, 0x0a,
+	0x29, 0x64, 0xe3, 0x38, 0x6b, 0xe2, 0xcf, 0x30, 0x59, 0x11, 0x75, 0x51, 0xf3, 0x8a, 0x08, 0xfc,
+	0x16, 0xc6, 0xc4, 0x2a, 0xcb, 0x3e, 0x7f, 0x37, 0x4b, 0xba, 0x63, 0x25, 0xee, 0x58, 0xc9, 0x45,
+	0x7d, 0x9f, 0xf5, 0x7b, 0x70, 0x00, 0xe8, 0xce, 0x96, 0x79, 0x19, 0xba, 0x8b, 0x2f, 0x21, 0x58,
+	0x11, 0xf5, 0xd8, 0x75, 0x06, 0xb0, 0x21, 0xea, 0xea, 0x80, 0xbe, 0xc9, 0xc6, 0x41, 0xf1, 0x1a,
+	0x8e, 0xbb, 0x92, 0xc7, 0x9e, 0x73, 0x98, 0x9a, 0x9e, 0x03, 0xbb, 0x82, 0xcd, 0x13, 0x36, 0xce,
+	0xe1, 0xc5, 0x92, 0xd0, 0x75, 0x2b, 0x34, 0xff, 0xc2, 0xcb, 0x9a, 0xe8, 0xb6, 0x61, 0x38, 0x02,
+	0x50, 0xce, 0x98, 0x4b, 0xf2, 0x16, 0x41, 0xf6, 0x24, 0xc1, 0x6f, 0xe0, 0xb8, 0x22, 0x82, 0x17,
+	0x5c, 0xb6, 0xea, 0xea, 0x9a, 0x33, 0x41, 0xc3, 0xd1, 0x09, 0x5a, 0x04, 0xd9, 0xf4, 0x21, 0xfe,
+	0x64, 0xd2, 0x73, 0x7f, 0xfb, 0xeb, 0x35, 0x8a, 0x29, 0xc0, 0x57, 0x92, 0x0b, 0xb6, 0x96, 0x94,
+	0x09, 0x3c, 0x85, 0x21, 0xa7, 0xf6, 0x0b, 0xfd, 0x6c, 0xc8, 0xe9, 0xff, 0xfe, 0x30, 0x7e, 0x09,
+	0xe3, 0xba, 0xad, 0x72, 0xd6, 0x84, 0x9e, 0xdd, 0xd7, 0x3b, 0x3c, 0x87, 0xa3, 0x8a, 0x69, 0x62,
+	0xa6, 0x2c, 0xf4, 0xed, 0x1b, 0x1f, 0xfc, 0x72, 0xf5, 0x7b, 0x17, 0xa1, 0xed, 0x2e, 0x42, 0x7f,
+	0x77, 0x11, 0xfa, 0xb9, 0x8f, 0x06, 0xdb, 0x7d, 0x34, 0xf8, 0xb3, 0x8f, 0x06, 0xdf, 0x92, 0x92,
+	0xeb, 0x4d, 0x9b, 0x27, 0x85, 0xac, 0xd2, 0x42, 0xaa, 0x4a, 0xaa, 0xfe, 0x71, 0xaa, 0xe8, 0x4d,
+	0x6a, 0xc6, 0xb6, 0xd5, 0x5c, 0xa4, 0x6e, 0x7e, 0xf3, 0xb1, 0xbd, 0xaf, 0xb3, 0x7f, 0x01, 0x00,
+	0x00, 0xff, 0xff, 0xbd, 0x48, 0xf9, 0x24, 0xe2, 0x02, 0x00, 0x00,
 }
 
 func (m *Dog) Marshal() (dAtA []byte, err error) {
@@ -426,6 +553,41 @@ func (m *Cat) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.Moniker)
 		copy(dAtA[i:], m.Moniker)
 		i = encodeVarintTestdata(dAtA, i, uint64(len(m.Moniker)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *Bird) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Bird) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Bird) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Color != 0 {
+		i = encodeVarintTestdata(dAtA, i, uint64(m.Color))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Species) > 0 {
+		i -= len(m.Species)
+		copy(dAtA[i:], m.Species)
+		i = encodeVarintTestdata(dAtA, i, uint64(len(m.Species)))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -585,6 +747,53 @@ func (m *BadMultiSignature) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *TableModel) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *TableModel) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TableModel) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Metadata) > 0 {
+		i -= len(m.Metadata)
+		copy(dAtA[i:], m.Metadata)
+		i = encodeVarintTestdata(dAtA, i, uint64(len(m.Metadata)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if m.Number != 0 {
+		i = encodeVarintTestdata(dAtA, i, uint64(m.Number))
+		i--
+		dAtA[i] = 0x18
+	}
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintTestdata(dAtA, i, uint64(len(m.Name)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.Id != 0 {
+		i = encodeVarintTestdata(dAtA, i, uint64(m.Id))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintTestdata(dAtA []byte, offset int, v uint64) int {
 	offset -= sovTestdata(v)
 	base := offset
@@ -625,6 +834,22 @@ func (m *Cat) Size() (n int) {
 	}
 	if m.Lives != 0 {
 		n += 1 + sovTestdata(uint64(m.Lives))
+	}
+	return n
+}
+
+func (m *Bird) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Species)
+	if l > 0 {
+		n += 1 + l + sovTestdata(uint64(l))
+	}
+	if m.Color != 0 {
+		n += 1 + sovTestdata(uint64(m.Color))
 	}
 	return n
 }
@@ -689,6 +914,29 @@ func (m *BadMultiSignature) Size() (n int) {
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *TableModel) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Id != 0 {
+		n += 1 + sovTestdata(uint64(m.Id))
+	}
+	l = len(m.Name)
+	if l > 0 {
+		n += 1 + l + sovTestdata(uint64(l))
+	}
+	if m.Number != 0 {
+		n += 1 + sovTestdata(uint64(m.Number))
+	}
+	l = len(m.Metadata)
+	if l > 0 {
+		n += 1 + l + sovTestdata(uint64(l))
 	}
 	return n
 }
@@ -889,6 +1137,107 @@ func (m *Cat) Unmarshal(dAtA []byte) error {
 				b := dAtA[iNdEx]
 				iNdEx++
 				m.Lives |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTestdata(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTestdata
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Bird) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTestdata
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Bird: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Bird: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Species", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTestdata
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTestdata
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTestdata
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Species = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Color", wireType)
+			}
+			m.Color = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTestdata
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Color |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1299,6 +1648,160 @@ func (m *BadMultiSignature) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *TableModel) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTestdata
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: TableModel: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: TableModel: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+			}
+			m.Id = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTestdata
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Id |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTestdata
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTestdata
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTestdata
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Name = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Number", wireType)
+			}
+			m.Number = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTestdata
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Number |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Metadata", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTestdata
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthTestdata
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTestdata
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Metadata = append(m.Metadata[:0], dAtA[iNdEx:postIndex]...)
+			if m.Metadata == nil {
+				m.Metadata = []byte{}
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTestdata(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTestdata
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
 			iNdEx += skippy
 		}
 	}

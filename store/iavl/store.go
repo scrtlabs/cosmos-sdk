@@ -6,14 +6,15 @@ import (
 	"io"
 	"time"
 
+	dbm "github.com/cometbft/cometbft-db"
+	abci "github.com/cometbft/cometbft/abci/types"
+	"github.com/cometbft/cometbft/libs/log"
+	tmcrypto "github.com/cometbft/cometbft/proto/tendermint/crypto"
 	ics23 "github.com/confio/ics23/go"
 	"github.com/cosmos/iavl"
-	abci "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/libs/log"
-	tmcrypto "github.com/tendermint/tendermint/proto/tendermint/crypto"
-	dbm "github.com/tendermint/tm-db"
 
 	"github.com/cosmos/cosmos-sdk/store/cachekv"
+	pruningtypes "github.com/cosmos/cosmos-sdk/store/pruning/types"
 	"github.com/cosmos/cosmos-sdk/store/tracekv"
 	"github.com/cosmos/cosmos-sdk/store/types"
 	"github.com/cosmos/cosmos-sdk/telemetry"
@@ -35,7 +36,8 @@ var (
 
 // Store Implements types.KVStore and CommitKVStore.
 type Store struct {
-	tree Tree
+	tree   Tree
+	logger log.Logger
 }
 
 // LoadStore returns an IAVL Store as a CommitKVStore. Internally, it will load the
@@ -85,7 +87,8 @@ func LoadStoreWithInitialVersion(db dbm.DB, logger log.Logger, key types.StoreKe
 	}
 
 	return &Store{
-		tree: tree,
+		tree:   tree,
+		logger: logger,
 	}, nil
 }
 
@@ -108,7 +111,7 @@ func UnsafeNewStore(tree *iavl.MutableTree) *Store {
 // Any mutable operations executed will result in a panic.
 func (st *Store) GetImmutable(version int64) (*Store, error) {
 	if !st.VersionExists(version) {
-		return &Store{tree: &immutableTree{&iavl.ImmutableTree{}}}, fmt.Errorf("version mismatch on immutable IAVL tree; version does not exist. Version has either been pruned, or is for a future block height")
+		return nil, fmt.Errorf("version mismatch on immutable IAVL tree; version does not exist. Version has either been pruned, or is for a future block height")
 	}
 
 	iTree, err := st.tree.GetImmutable(version)
@@ -152,13 +155,13 @@ func (st *Store) LastCommitID() types.CommitID {
 
 // SetPruning panics as pruning options should be provided at initialization
 // since IAVl accepts pruning options directly.
-func (st *Store) SetPruning(_ types.PruningOptions) {
+func (st *Store) SetPruning(_ pruningtypes.PruningOptions) {
 	panic("cannot set pruning options on an initialized IAVL store")
 }
 
 // SetPruning panics as pruning options should be provided at initialization
 // since IAVl accepts pruning options directly.
-func (st *Store) GetPruning() types.PruningOptions {
+func (st *Store) GetPruning() pruningtypes.PruningOptions {
 	panic("cannot get pruning options on an initialized IAVL store")
 }
 
@@ -169,7 +172,7 @@ func (st *Store) VersionExists(version int64) bool {
 
 // GetAllVersions returns all versions in the iavl tree
 func (st *Store) GetAllVersions() []int {
-	return st.tree.(*iavl.MutableTree).AvailableVersions()
+	return st.tree.AvailableVersions()
 }
 
 // Implements Store.
@@ -191,7 +194,10 @@ func (st *Store) CacheWrapWithTrace(w io.Writer, tc types.TraceContext) types.Ca
 func (st *Store) Set(key, value []byte) {
 	types.AssertValidKey(key)
 	types.AssertValidValue(value)
-	st.tree.Set(key, value)
+	_, err := st.tree.Set(key, value)
+	if err != nil && st.logger != nil {
+		st.logger.Error("iavl set error", "error", err.Error())
+	}
 }
 
 // Implements types.KVStore.
@@ -233,6 +239,11 @@ func (st *Store) LoadVersionForOverwriting(targetVersion int64) (int64, error) {
 	return st.tree.LoadVersionForOverwriting(targetVersion)
 }
 
+// LazyLoadVersionForOverwriting is the lazy version of LoadVersionForOverwriting.
+func (st *Store) LazyLoadVersionForOverwriting(targetVersion int64) (int64, error) {
+	return st.tree.LazyLoadVersionForOverwriting(targetVersion)
+}
+
 // Implements types.KVStore.
 func (st *Store) Iterator(start, end []byte) types.Iterator {
 	iterator, err := st.tree.Iterator(start, end, true)
@@ -267,7 +278,7 @@ func (st *Store) Export(version int64) (*iavl.Exporter, error) {
 	if !ok || tree == nil {
 		return nil, fmt.Errorf("iavl export failed: unable to fetch tree for version %v", version)
 	}
-	return tree.Export(), nil
+	return tree.Export()
 }
 
 // Import imports an IAVL tree at the given version, returning an iavl.Importer for importing.
@@ -304,7 +315,7 @@ func (st *Store) Query(req abci.RequestQuery) (res abci.ResponseQuery) {
 	defer telemetry.MeasureSince(time.Now(), "store", "iavl", "query")
 
 	if len(req.Data) == 0 {
-		return sdkerrors.QueryResult(sdkerrors.Wrap(sdkerrors.ErrTxDecode, "query cannot be zero length"))
+		return sdkerrors.QueryResult(sdkerrors.Wrap(sdkerrors.ErrTxDecode, "query cannot be zero length"), false)
 	}
 
 	tree := st.tree
@@ -369,7 +380,7 @@ func (st *Store) Query(req abci.RequestQuery) (res abci.ResponseQuery) {
 		res.Value = bz
 
 	default:
-		return sdkerrors.QueryResult(sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "unexpected query path: %v", req.Path))
+		return sdkerrors.QueryResult(sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "unexpected query path: %v", req.Path), false)
 	}
 
 	return res
@@ -402,27 +413,4 @@ func getProofFromTree(tree *iavl.MutableTree, key []byte, exists bool) *tmcrypto
 
 	op := types.NewIavlCommitmentOp(key, commitmentProof)
 	return &tmcrypto.ProofOps{Ops: []tmcrypto.ProofOp{op.ProofOp()}}
-}
-
-//----------------------------------------
-
-// Implements types.Iterator.
-type iavlIterator struct {
-	dbm.Iterator
-}
-
-var _ types.Iterator = (*iavlIterator)(nil)
-
-// newIAVLIterator will create a new iavlIterator.
-// CONTRACT: Caller must release the iavlIterator, as each one creates a new
-// goroutine.
-func newIAVLIterator(tree *iavl.ImmutableTree, start, end []byte, ascending bool) *iavlIterator { //nolint:unused
-	iterator, err := tree.Iterator(start, end, ascending)
-	if err != nil {
-		panic(err)
-	}
-	iter := &iavlIterator{
-		Iterator: iterator,
-	}
-	return iter
 }

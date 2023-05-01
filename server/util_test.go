@@ -10,10 +10,19 @@ import (
 	"strings"
 	"testing"
 
+	tmcfg "github.com/cometbft/cometbft/config"
 	"github.com/spf13/cobra"
+	"github.com/stretchr/testify/require"
 
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/server"
+	"github.com/cosmos/cosmos-sdk/server/config"
+	servertypes "github.com/cosmos/cosmos-sdk/server/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/cosmos/cosmos-sdk/types/module"
+	"github.com/cosmos/cosmos-sdk/types/module/testutil"
+	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
 )
 
 var cancelledInPreRun = errors.New("Cancelled in prerun")
@@ -21,7 +30,7 @@ var cancelledInPreRun = errors.New("Cancelled in prerun")
 // Used in each test to run the function under test via Cobra
 // but to always halt the command
 func preRunETestImpl(cmd *cobra.Command, args []string) error {
-	err := server.InterceptConfigsPreRunHandler(cmd, "", nil)
+	err := server.InterceptConfigsPreRunHandler(cmd, "", nil, tmcfg.DefaultConfig())
 	if err != nil {
 		return err
 	}
@@ -98,7 +107,7 @@ func TestInterceptConfigsPreRunHandlerReadsConfigToml(t *testing.T) {
 		t.Fatalf("creating config.toml file failed: %v", err)
 	}
 
-	_, err = writer.WriteString(fmt.Sprintf("db_backend = '%s'\n", testDbBackend))
+	_, err = fmt.Fprintf(writer, "db_backend = '%s'\n", testDbBackend)
 	if err != nil {
 		t.Fatalf("Failed writing string to config.toml: %v", err)
 	}
@@ -122,7 +131,7 @@ func TestInterceptConfigsPreRunHandlerReadsConfigToml(t *testing.T) {
 	}
 
 	if testDbBackend != serverCtx.Config.DBBackend {
-		t.Error("DBPath was not set from config.toml")
+		t.Error("backend was not set from config.toml")
 	}
 }
 
@@ -139,7 +148,7 @@ func TestInterceptConfigsPreRunHandlerReadsAppToml(t *testing.T) {
 		t.Fatalf("creating app.toml file failed: %v", err)
 	}
 
-	_, err = writer.WriteString(fmt.Sprintf("halt-time = %d\n", testHaltTime))
+	_, err = fmt.Fprintf(writer, "halt-time = %d\n", testHaltTime)
 	if err != nil {
 		t.Fatalf("Failed writing string to app.toml: %v", err)
 	}
@@ -207,9 +216,9 @@ func TestInterceptConfigsPreRunHandlerReadsEnvVars(t *testing.T) {
 	basename = strings.ReplaceAll(basename, ".", "_")
 	// This is added by tendermint
 	envVarName := fmt.Sprintf("%s_RPC_LADDR", strings.ToUpper(basename))
-	os.Setenv(envVarName, testAddr)
+	require.NoError(t, os.Setenv(envVarName, testAddr))
 	t.Cleanup(func() {
-		os.Unsetenv(envVarName)
+		require.NoError(t, os.Unsetenv(envVarName))
 	})
 
 	cmd.PreRunE = preRunETestImpl
@@ -294,7 +303,7 @@ func (v precedenceCommon) setAll(t *testing.T, setFlag *string, setEnvVar *strin
 	}
 
 	if setEnvVar != nil {
-		os.Setenv(v.envVarName, *setEnvVar)
+		require.NoError(t, os.Setenv(v.envVarName, *setEnvVar))
 	}
 
 	if setConfigFile != nil {
@@ -303,7 +312,7 @@ func (v precedenceCommon) setAll(t *testing.T, setFlag *string, setEnvVar *strin
 			t.Fatalf("creating config.toml file failed: %v", err)
 		}
 
-		_, err = writer.WriteString(fmt.Sprintf("[rpc]\nladdr = \"%s\"\n", *setConfigFile))
+		_, err = fmt.Fprintf(writer, "[rpc]\nladdr = \"%s\"\n", *setConfigFile)
 		if err != nil {
 			t.Fatalf("Failed writing string to config.toml: %v", err)
 		}
@@ -400,3 +409,42 @@ func TestInterceptConfigsWithBadPermissions(t *testing.T) {
 		t.Fatalf("Failed to catch permissions error, got: [%T] %v", err, err)
 	}
 }
+
+func TestEmptyMinGasPrices(t *testing.T) {
+	tempDir := t.TempDir()
+	err := os.Mkdir(filepath.Join(tempDir, "config"), os.ModePerm)
+	require.NoError(t, err)
+	encCfg := testutil.MakeTestEncodingConfig()
+
+	// Run InitCmd to create necessary config files.
+	clientCtx := client.Context{}.WithHomeDir(tempDir).WithCodec(encCfg.Codec)
+	serverCtx := server.NewDefaultContext()
+	ctx := context.WithValue(context.Background(), server.ServerContextKey, serverCtx)
+	ctx = context.WithValue(ctx, client.ClientContextKey, &clientCtx)
+	cmd := genutilcli.InitCmd(module.NewBasicManager(), tempDir)
+	cmd.SetArgs([]string{"appnode-test"})
+	err = cmd.ExecuteContext(ctx)
+	require.NoError(t, err)
+
+	// Modify app.toml.
+	appCfgTempFilePath := filepath.Join(tempDir, "config", "app.toml")
+	appConf := config.DefaultConfig()
+	appConf.BaseConfig.MinGasPrices = ""
+	config.WriteConfigFile(appCfgTempFilePath, appConf)
+
+	// Run StartCmd.
+	cmd = server.StartCmd(nil, tempDir)
+	cmd.PreRunE = func(cmd *cobra.Command, _ []string) error {
+		return server.InterceptConfigsPreRunHandler(cmd, "", nil, tmcfg.DefaultConfig())
+	}
+	err = cmd.ExecuteContext(ctx)
+	require.Errorf(t, err, sdkerrors.ErrAppConfig.Error())
+}
+
+type mapGetter map[string]interface{}
+
+func (m mapGetter) Get(key string) interface{} {
+	return m[key]
+}
+
+var _ servertypes.AppOptions = mapGetter{}

@@ -5,12 +5,13 @@ import (
 	"io"
 	"time"
 
-	"github.com/gogo/protobuf/grpc"
+	dbm "github.com/cometbft/cometbft-db"
+	abci "github.com/cometbft/cometbft/abci/types"
+	"github.com/cometbft/cometbft/libs/log"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
+	tmtypes "github.com/cometbft/cometbft/types"
+	"github.com/cosmos/gogoproto/grpc"
 	"github.com/spf13/cobra"
-	abci "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/libs/log"
-	tmtypes "github.com/tendermint/tendermint/types"
-	dbm "github.com/tendermint/tm-db"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/server/api"
@@ -53,18 +54,11 @@ type (
 		// RegisterTendermintService registers the gRPC Query service for tendermint queries.
 		RegisterTendermintService(client.Context)
 
-		// CommitMultiStore Returns the multistore instance
-		CommitMultiStore() sdk.CommitMultiStore
-	}
-
-	// ApplicationQueryService defines an extension of the Application interface
-	// that facilitates gRPC query Services.
-	//
-	// NOTE: This interfaces exists only in the v0.45.x line to ensure the existing
-	// Application interface does not introduce API breaking changes.
-	ApplicationQueryService interface {
 		// RegisterNodeService registers the node gRPC Query service.
 		RegisterNodeService(client.Context)
+
+		// CommitMultiStore return the multistore instance
+		CommitMultiStore() sdk.CommitMultiStore
 	}
 
 	// AppCreator is a function that allows us to lazily initialize an
@@ -84,7 +78,7 @@ type (
 		// Height is the app's latest block height.
 		Height int64
 		// ConsensusParams are the exported consensus params for ABCI.
-		ConsensusParams *abci.ConsensusParams
+		ConsensusParams *tmproto.ConsensusParams
 	}
 
 	// AppExporter is a function that dumps all app state to

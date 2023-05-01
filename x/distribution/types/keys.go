@@ -17,9 +17,6 @@ const (
 
 	// RouterKey is the message route for distribution
 	RouterKey = ModuleName
-
-	// QuerierRoute is the querier route for distribution
-	QuerierRoute = ModuleName
 )
 
 // Keys for distribution store
@@ -42,6 +39,8 @@ const (
 // - 0x07<valAddrLen (1 Byte)><valAddr_Bytes>: ValidatorCurrentCommission
 //
 // - 0x08<valAddrLen (1 Byte)><valAddr_Bytes><height>: ValidatorSlashEvent
+//
+// - 0x09: Params
 var (
 	FeePoolKey                        = []byte{0x00} // key for global distribution state
 	ProposerKey                       = []byte{0x01} // key for the proposer operator address
@@ -55,6 +54,8 @@ var (
 	ValidatorSlashEventPrefix            = []byte{0x08} // key for validator slash fraction
 
 	AutoRestakeEntryPrefix = []byte{0xF0}
+
+	ParamsKey = []byte{0x09} // key for distribution module params
 )
 
 // GetValidatorOutstandingRewardsAddress creates an address from a validator's outstanding rewards key.

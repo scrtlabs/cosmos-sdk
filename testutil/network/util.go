@@ -2,20 +2,18 @@ package network
 
 import (
 	"encoding/json"
+	"fmt"
+	"os"
 	"path/filepath"
 	"time"
 
-	tmos "github.com/tendermint/tendermint/libs/os"
-	"github.com/tendermint/tendermint/node"
-	"github.com/tendermint/tendermint/p2p"
-	pvm "github.com/tendermint/tendermint/privval"
-	"github.com/tendermint/tendermint/proxy"
-	"github.com/tendermint/tendermint/rpc/client/local"
-	"github.com/tendermint/tendermint/types"
-	tmtime "github.com/tendermint/tendermint/types/time"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/encoding"
-	"google.golang.org/grpc/encoding/proto"
+	"github.com/cometbft/cometbft/node"
+	"github.com/cometbft/cometbft/p2p"
+	pvm "github.com/cometbft/cometbft/privval"
+	"github.com/cometbft/cometbft/proxy"
+	"github.com/cometbft/cometbft/rpc/client/local"
+	"github.com/cometbft/cometbft/types"
+	tmtime "github.com/cometbft/cometbft/types/time"
 
 	"github.com/cosmos/cosmos-sdk/server/api"
 	servergrpc "github.com/cosmos/cosmos-sdk/server/grpc"
@@ -41,9 +39,9 @@ func startInProcess(cfg Config, val *Validator) error {
 	}
 
 	app := cfg.AppConstructor(*val)
-
 	genDocProvider := node.DefaultGenesisDocProviderFunc(tmCfg)
-	tmNode, err := node.NewNode(
+
+	tmNode, err := node.NewNode( //resleak:notresource
 		tmCfg,
 		pvm.LoadOrGenFilePV(tmCfg.PrivValidatorKeyFile(), tmCfg.PrivValidatorStateFile()),
 		nodeKey,
@@ -60,7 +58,6 @@ func startInProcess(cfg Config, val *Validator) error {
 	if err := tmNode.Start(); err != nil {
 		return err
 	}
-
 	val.tmNode = tmNode
 
 	if val.RPCAddress != "" {
@@ -74,10 +71,7 @@ func startInProcess(cfg Config, val *Validator) error {
 
 		app.RegisterTxService(val.ClientCtx)
 		app.RegisterTendermintService(val.ClientCtx)
-
-		if a, ok := app.(srvtypes.ApplicationQueryService); ok {
-			a.RegisterNodeService(val.ClientCtx)
-		}
+		app.RegisterNodeService(val.ClientCtx)
 	}
 
 	if val.APIAddress != "" {
@@ -109,22 +103,6 @@ func startInProcess(cfg Config, val *Validator) error {
 
 		val.grpc = grpcSrv
 
-		// If grpc is enabled, configure grpc client.
-		grpcClient, err := grpc.Dial(
-			val.AppConfig.GRPC.Address,
-			grpc.WithInsecure(),
-			grpc.WithDefaultCallOptions(
-				grpc.ForceCodec(encoding.GetCodec(proto.Name)),
-				grpc.MaxCallRecvMsgSize(val.AppConfig.GRPC.MaxRecvMsgSize),
-				grpc.MaxCallSendMsgSize(val.AppConfig.GRPC.MaxSendMsgSize),
-			),
-		)
-		if err != nil {
-			return err
-		}
-
-		val.ClientCtx = val.ClientCtx.WithGRPCClient(grpcClient)
-
 		if val.AppConfig.GRPCWeb.Enable {
 			val.grpcWeb, err = servergrpc.StartGRPCWeb(grpcSrv, *val.AppConfig)
 			if err != nil {
@@ -132,7 +110,6 @@ func startInProcess(cfg Config, val *Validator) error {
 			}
 		}
 	}
-
 	return nil
 }
 
@@ -157,7 +134,7 @@ func collectGenFiles(cfg Config, vals []*Validator, outputDir string) error {
 		}
 
 		appState, err := genutil.GenAppStateFromConfig(cfg.Codec, cfg.TxConfig,
-			tmCfg, initCfg, *genDoc, banktypes.GenesisBalancesIterator{})
+			tmCfg, initCfg, *genDoc, banktypes.GenesisBalancesIterator{}, genutiltypes.DefaultMessageValidator)
 		if err != nil {
 			return err
 		}
@@ -213,16 +190,13 @@ func initGenFiles(cfg Config, genAccounts []authtypes.GenesisAccount, genBalance
 }
 
 func writeFile(name string, dir string, contents []byte) error {
-	writePath := filepath.Join(dir) //nolint:gocritic
-	file := filepath.Join(writePath, name)
+	file := filepath.Join(dir, name)
 
-	err := tmos.EnsureDir(writePath, 0o755)
-	if err != nil {
-		return err
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		return fmt.Errorf("could not create directory %q: %w", dir, err)
 	}
 
-	err = tmos.WriteFile(file, contents, 0o644)
-	if err != nil {
+	if err := os.WriteFile(file, contents, 0o644); err != nil { //nolint: gosec
 		return err
 	}
 

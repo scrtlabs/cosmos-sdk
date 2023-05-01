@@ -29,11 +29,12 @@ type (
 		Hash() ([]byte, error)
 		VersionExists(version int64) bool
 		GetVersioned(key []byte, version int64) ([]byte, error)
-		GetVersionedWithProof(key []byte, version int64) ([]byte, *iavl.RangeProof, error)
 		GetImmutable(version int64) (*iavl.ImmutableTree, error)
 		SetInitialVersion(version uint64)
 		Iterator(start, end []byte, ascending bool) (types.Iterator, error)
+		AvailableVersions() []int
 		LoadVersionForOverwriting(targetVersion int64) (int64, error)
+		LazyLoadVersionForOverwriting(targetVersion int64) (int64, error)
 	}
 
 	// immutableTree is a simple wrapper around a reference to an iavl.ImmutableTree
@@ -80,14 +81,6 @@ func (it *immutableTree) GetVersioned(key []byte, version int64) ([]byte, error)
 	return it.Get(key)
 }
 
-func (it *immutableTree) GetVersionedWithProof(key []byte, version int64) ([]byte, *iavl.RangeProof, error) {
-	if it.Version() != version {
-		return nil, nil, fmt.Errorf("version mismatch on immutable IAVL tree; got: %d, expected: %d", version, it.Version())
-	}
-
-	return it.GetWithProof(key)
-}
-
 func (it *immutableTree) GetImmutable(version int64) (*iavl.ImmutableTree, error) {
 	if it.Version() != version {
 		return nil, fmt.Errorf("version mismatch on immutable IAVL tree; got: %d, expected: %d", version, it.Version())
@@ -96,6 +89,14 @@ func (it *immutableTree) GetImmutable(version int64) (*iavl.ImmutableTree, error
 	return it.ImmutableTree, nil
 }
 
+func (it *immutableTree) AvailableVersions() []int {
+	return []int{}
+}
+
 func (it *immutableTree) LoadVersionForOverwriting(targetVersion int64) (int64, error) {
 	panic("cannot call 'LoadVersionForOverwriting' on an immutable IAVL tree")
+}
+
+func (it *immutableTree) LazyLoadVersionForOverwriting(targetVersion int64) (int64, error) {
+	panic("cannot call 'LazyLoadVersionForOverwriting' on an immutable IAVL tree")
 }

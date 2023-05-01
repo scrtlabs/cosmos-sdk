@@ -22,7 +22,13 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/cosmos-sdk/testutil/network"
+	_ "github.com/cosmos/cosmos-sdk/x/auth"
+	_ "github.com/cosmos/cosmos-sdk/x/auth/tx/config"
+	_ "github.com/cosmos/cosmos-sdk/x/bank"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	_ "github.com/cosmos/cosmos-sdk/x/genutil"
+	_ "github.com/cosmos/cosmos-sdk/x/params"
+	_ "github.com/cosmos/cosmos-sdk/x/staking"
 )
 
 // https://github.com/improbable-eng/grpc-web/blob/master/go/grpcweb/wrapper_test.go used as a reference
@@ -41,13 +47,16 @@ type GRPCWebTestSuite struct {
 func (s *GRPCWebTestSuite) SetupSuite() {
 	s.T().Log("setting up integration test suite")
 
-	cfg := network.DefaultConfig()
+	cfg, err := network.DefaultConfigWithAppConfig(network.MinimumAppConfig())
+
+	s.NoError(err)
 	cfg.NumValidators = 1
 	s.cfg = cfg
-	s.network = network.New(s.T(), s.cfg)
-	s.Require().NotNil(s.network)
 
-	_, err := s.network.WaitForHeight(2)
+	s.network, err = network.New(s.T(), s.T().TempDir(), s.cfg)
+	s.Require().NoError(err)
+
+	_, err = s.network.WaitForHeight(2)
 	s.Require().NoError(err)
 
 	s.protoCdc = codec.NewProtoCodec(s.cfg.InterfaceRegistry)
@@ -193,7 +202,9 @@ func (s *GRPCWebTestSuite) makeGrpcRequest(
 	if err != nil {
 		return nil, Trailer{}, nil, err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 	contents, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, Trailer{}, nil, err

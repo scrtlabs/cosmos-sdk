@@ -38,7 +38,7 @@ func cloneAppend(bz []byte, tail []byte) (res []byte) {
 	return
 }
 
-func (s Store) key(key []byte) (res []byte) {
+func (s Store) Key(key []byte) (res []byte) {
 	if key == nil {
 		panic("nil key on Store")
 	}
@@ -63,25 +63,25 @@ func (s Store) CacheWrapWithTrace(w io.Writer, tc types.TraceContext) types.Cach
 
 // Implements KVStore
 func (s Store) Get(key []byte) []byte {
-	res := s.parent.Get(s.key(key))
+	res := s.parent.Get(s.Key(key))
 	return res
 }
 
 // Implements KVStore
 func (s Store) Has(key []byte) bool {
-	return s.parent.Has(s.key(key))
+	return s.parent.Has(s.Key(key))
 }
 
 // Implements KVStore
 func (s Store) Set(key, value []byte) {
 	types.AssertValidKey(key)
 	types.AssertValidValue(value)
-	s.parent.Set(s.key(key), value)
+	s.parent.Set(s.Key(key), value)
 }
 
 // Implements KVStore
 func (s Store) Delete(key []byte) {
-	s.parent.Delete(s.key(key))
+	s.parent.Delete(s.Key(key))
 }
 
 // Implements KVStore

@@ -143,7 +143,7 @@ replace (
 	// use cosmos fork of keyring
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
 
-	github.com/cometbft/cometbft => github.com/scrtlabs/tendermint v1.9.0-scrt.0.20230802140502-097dce2df3f8
+	//github.com/cometbft/cometbft => github.com/scrtlabs/tendermint v1.9.0-scrt.0.20230802140502-097dce2df3f8
 	// dgrijalva/jwt-go is deprecated and doesn't receive security updates.
 	// TODO: remove it: https://github.com/cosmos/cosmos-sdk/issues/13134
 	github.com/dgrijalva/jwt-go => github.com/golang-jwt/jwt/v4 v4.4.2
@@ -157,10 +157,10 @@ replace (
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 
 	github.com/jhump/protoreflect => github.com/jhump/protoreflect v1.9.0
-	github.com/tendermint/tendermint => github.com/scrtlabs/tendermint v1.9.0-scrt.0.20230802140502-097dce2df3f8
+	// github.com/tendermint/tendermint => github.com/scrtlabs/tendermint v1.9.0-scrt.0.20230802140502-097dce2df3f8
 
-	//// use cometbft
-	//github.com/tendermint/tendermint => github.com/cometbft/cometbft v0.34.27
+	// use cometbft
+	github.com/tendermint/tendermint => github.com/cometbft/cometbft v0.34.29
 
 	// latest grpc doesn't work with with our modified proto compiler, so we need to enforce
 	// the following version across all dependencies.

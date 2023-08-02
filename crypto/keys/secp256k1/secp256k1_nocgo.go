@@ -55,7 +55,7 @@ func (pubKey *PubKey) VerifySignatureEip191(msg []byte, sigStr []byte) bool {
 	if len(sigStr) != 64 {
 		return false
 	}
-	pub, err := secp256k1.ParsePubKey(pubKey.Key, secp256k1.S256())
+	pub, err := secp256k1.ParsePubKey(pubKey.Key)
 	if err != nil {
 		return false
 	}
@@ -63,7 +63,13 @@ func (pubKey *PubKey) VerifySignatureEip191(msg []byte, sigStr []byte) bool {
 	signature := signatureFromBytes(sigStr)
 	// Reject malleable signatures. libsecp256k1 does this check but btcec doesn't.
 	// see: https://github.com/ethereum/go-ethereum/blob/f9401ae011ddf7f8d2d95020b7446c17f8d98dc1/crypto/signature_nocgo.go#L90-L93
-	if signature.S.Cmp(secp256k1halfN) > 0 {
+	// Serialize() would negate S value if it is over half order.
+	// Hence, if the signature is different after Serialize() if should be rejected.
+	modifiedSignature, parseErr := ecdsa.ParseDERSignature(signature.Serialize())
+	if parseErr != nil {
+		return false
+	}
+	if !signature.IsEqual(modifiedSignature) {
 		return false
 	}
 

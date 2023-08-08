@@ -664,10 +664,9 @@ func (app *BaseApp) createQueryContext(height int64, prove bool) (sdk.Context, e
 			)
 	}
 
-	cacheMS, err := app.cms.CacheMultiStoreWithVersion(height)
-	if err != nil {
-		return sdk.Context{}, fmt.Errorf("failed to load cache multi store for height %d: %w", height, err)
-	}
+	// Passing the whole multistore in queries instead of one with only the current height, because on
+	// contract queries we use the previous height, as that's the last height with a merkle proof
+	cacheMS := app.cms.CacheMultiStore()
 
 	// branch the commit-multistore for safety
 	ctx := sdk.NewContext(

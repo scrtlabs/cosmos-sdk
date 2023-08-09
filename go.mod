@@ -22,7 +22,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
-	github.com/hashicorp/golang-lru v0.5.5-0.20210104140557-80c98217689d
+	github.com/hashicorp/golang-lru v1.0.2
 	github.com/hdevalence/ed25519consensus v0.0.0-20220222234857-c00d1f31bab3
 	github.com/improbable-eng/grpc-web v0.14.1
 	github.com/jhump/protoreflect v1.13.1-0.20220928232736-101791cb1b4c
@@ -121,7 +121,6 @@ require (
 	github.com/rogpeppe/go-internal v1.9.0 // indirect
 	github.com/rs/cors v1.8.2 // indirect
 	github.com/sasha-s/go-deadlock v0.3.1 // indirect
-	github.com/scrtlabs/tm-secret-enclave v1.7.2-0.20230313154812-b08e3ee2ac31 // indirect
 	github.com/spf13/afero v1.9.2 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/subosito/gotenv v1.4.1 // indirect

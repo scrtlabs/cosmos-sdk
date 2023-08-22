@@ -139,5 +139,11 @@ func DeductFees(bankKeeper types.BankKeeper, ctx sdk.Context, acc types.AccountI
 		return sdkerrors.Wrapf(sdkerrors.ErrInsufficientFunds, err.Error())
 	}
 
+	// Added custom code to just burn the TX fees rather than add them to the pool
+	err = bankKeeper.BurnCoins(ctx, types.FeeCollectorName, fees)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidCoins, err.Error())
+	}
+
 	return nil
 }

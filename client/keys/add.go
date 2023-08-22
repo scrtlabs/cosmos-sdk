@@ -70,10 +70,17 @@ Example:
 	f.StringSlice(flagMultisig, nil, "List of key names stored in keyring to construct a public legacy multisig key")
 	f.Int(flagMultiSigThreshold, 1, "K out of N required signatures. For use in conjunction with --multisig")
 	f.Bool(flagNoSort, false, "Keys passed to --multisig are taken in the order they're supplied")
-	f.String(FlagPublicKey, "", "Parse a public key in JSON format and saves key info to <name> file.")
+	f.String(FlagPublicKey, "", "Parse a public key in JSON format and saves key info to <name> file")
 	f.BoolP(flagInteractive, "i", false, "Interactively prompt user for BIP39 passphrase and mnemonic")
-	f.Bool(flags.FlagUseLedger, false, "Store a local reference to a private key on a Ledger device")
-	f.Bool(flagCosmosLedgerApp, false, "If using Ledger, use the old HD path, which is compatible with Cosmos app")
+	f.Bool(flags.FlagUseLedger, false, fmt.Sprintf(
+		"Store a local reference to a private key on a Ledger device (ignores --%s and --%s)",
+		flagHDPath,
+		flagCoinType,
+	))
+	f.Bool(flagCosmosLedgerApp, false, fmt.Sprintf(
+		"If using --%s, use the old HD path, which is compatible with Cosmos app",
+		flags.FlagUseLedger,
+	))
 	f.Bool(flagRecover, false, "Provide seed phrase to recover existing key instead of creating")
 	f.Bool(flagNoBackup, false, "Don't print out seed phrase (if others are watching the terminal)")
 	f.Bool(flags.FlagDryRun, false, "Perform action, but don't add key to local keystore")
@@ -210,7 +217,7 @@ func runAddCmd(ctx client.Context, cmd *cobra.Command, args []string, inBuf *buf
 	if useLedger {
 		isCosmosLedgerApp, _ := cmd.Flags().GetBool(flagCosmosLedgerApp)
 		if isCosmosLedgerApp {
-			coinType = sdk.CoinType // secret's hd path used on the old cosmos app is the same one as cosmos'
+			coinType = sdk.CoinType // the HD path used on the old cosmos app is the same one as cosmos'
 		} else {
 			coinType = DefaultLedgerCoinType
 		}

@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"time"
 
 	"github.com/coinbase/rosetta-sdk-go/types"
 
@@ -10,26 +9,19 @@ import (
 	crgtypes "github.com/cosmos/cosmos-sdk/server/rosetta/lib/types"
 )
 
-// genesisBlockFetchTimeout defines a timeout to fetch the genesis block
-const genesisBlockFetchTimeout = 15 * time.Second
-
 // NewOnlineNetwork builds a single network adapter.
 // It will get the Genesis block on the beginning to avoid calling it everytime.
 func NewOnlineNetwork(network *types.NetworkIdentifier, client crgtypes.Client) (crgtypes.API, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), genesisBlockFetchTimeout)
-	defer cancel()
-
-	var genesisHeight int64 = -1 // to use initial_height in genesis.json
-	block, err := client.BlockByHeight(ctx, &genesisHeight)
-	if err != nil {
-		return OnlineNetwork{}, err
+	blockId := &types.BlockIdentifier{
+		Index: 813800,
+		Hash:  "C168FE742EC3DCD6911B31CEE7F0C58EF7621EB85E87193875CD9C2C7E74473C",
 	}
 
 	return OnlineNetwork{
 		client:                 client,
 		network:                network,
-		networkOptions:         networkOptionsFromClient(client, block.Block),
-		genesisBlockIdentifier: block.Block,
+		networkOptions:         networkOptionsFromClient(client, blockId),
+		genesisBlockIdentifier: blockId,
 	}, nil
 }
 

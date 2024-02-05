@@ -185,6 +185,8 @@ type BaseApp struct {
 	// including the goroutine handling.This is experimental and must be enabled
 	// by developers.
 	optimisticExec *oe.OptimisticExecution
+
+    LastTxManager LastMsgMarkerContainer
 }
 
 // NewBaseApp returns a reference to an initialized BaseApp. It accepts a
@@ -974,10 +976,17 @@ func (app *BaseApp) runMsgs(ctx sdk.Context, msgs []sdk.Msg, msgsV2 []protov2.Me
 	events := sdk.EmptyEvents()
 	var msgResponses []*codectypes.Any
 
+	// Set the marker as false - future messages may toggle this flag
+	app.LastTxManager.SetMarker(false)
+
 	// NOTE: GasWanted is determined by the AnteHandler and GasUsed by the GasMeter.
 	for i, msg := range msgs {
 		if mode != execModeFinalize && mode != execModeSimulate {
 			break
+		}
+
+		if app.LastTxManager.GetMarker() {
+			return nil, errorsmod.Wrapf(sdkerrors.ErrLastTx, "message was attempted but last message was marked by a contract; message index: %d", i)
 		}
 
 		handler := app.msgServiceRouter.Handler(msg)

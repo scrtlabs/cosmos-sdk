@@ -142,4 +142,7 @@ var (
 
 	// ErrPanic should only be set when we recovering from a panic
 	ErrPanic = errorsmod.ErrPanic
+
+	// ErrLastTx defines an error occurred if we tried to execute another msg after the last one was set
+	ErrLastTx = errorsmod.Register(RootCodespace, 40404, "Cannot send messages after last tx marker was set")
 )

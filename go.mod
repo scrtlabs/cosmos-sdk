@@ -27,14 +27,14 @@ require (
 	github.com/improbable-eng/grpc-web v0.14.1
 	github.com/jhump/protoreflect v1.13.1-0.20220928232736-101791cb1b4c
 	github.com/magiconair/properties v1.8.6
-	github.com/mattn/go-isatty v0.0.16
+	github.com/mattn/go-isatty v0.0.19
 	github.com/otiai10/copy v1.6.0
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.14.0
 	github.com/prometheus/common v0.37.0
 	github.com/rakyll/statik v0.1.7
 	github.com/regen-network/cosmos-proto v0.3.1
-	github.com/rs/zerolog v1.27.0
+	github.com/rs/zerolog v1.32.0
 	github.com/spf13/cast v1.5.0
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/pflag v1.0.5
@@ -121,7 +121,6 @@ require (
 	github.com/rogpeppe/go-internal v1.9.0 // indirect
 	github.com/rs/cors v1.8.2 // indirect
 	github.com/sasha-s/go-deadlock v0.3.1 // indirect
-	github.com/scrtlabs/tm-secret-enclave v1.7.2-0.20230313154812-b08e3ee2ac31 // indirect
 	github.com/spf13/afero v1.9.2 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/subosito/gotenv v1.4.1 // indirect
@@ -131,7 +130,7 @@ require (
 	github.com/zondax/ledger-go v0.14.1 // indirect
 	go.etcd.io/bbolt v1.3.6 // indirect
 	golang.org/x/net v0.7.0 // indirect
-	golang.org/x/sys v0.5.0 // indirect
+	golang.org/x/sys v0.12.0 // indirect
 	golang.org/x/term v0.5.0 // indirect
 	golang.org/x/text v0.7.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect

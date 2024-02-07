@@ -10,20 +10,22 @@ import (
 
 func DefaultConfig() *ClientConfig {
 	return &ClientConfig{
-		ChainID:        "",
-		KeyringBackend: "os",
-		Output:         "text",
-		Node:           "tcp://localhost:26657",
-		BroadcastMode:  "sync",
+		ChainID:         "",
+		KeyringBackend:  "os",
+		Output:          "text",
+		Node:            "tcp://localhost:26657",
+		BroadcastMode:   "sync",
+        GRPCConcurrency: false,
 	}
 }
 
 type ClientConfig struct {
-	ChainID        string `mapstructure:"chain-id" json:"chain-id"`
-	KeyringBackend string `mapstructure:"keyring-backend" json:"keyring-backend"`
-	Output         string `mapstructure:"output" json:"output"`
-	Node           string `mapstructure:"node" json:"node"`
-	BroadcastMode  string `mapstructure:"broadcast-mode" json:"broadcast-mode"`
+	ChainID         string `mapstructure:"chain-id" json:"chain-id"`
+	KeyringBackend  string `mapstructure:"keyring-backend" json:"keyring-backend"`
+	Output          string `mapstructure:"output" json:"output"`
+	Node            string `mapstructure:"node" json:"node"`
+	BroadcastMode   string `mapstructure:"broadcast-mode" json:"broadcast-mode"`
+    GRPCConcurrency bool   `mapstructure:"grpc-concurrency" json:"grpc-concurrency"`
 }
 
 func (c *ClientConfig) SetChainID(chainID string) {
@@ -44,6 +46,10 @@ func (c *ClientConfig) SetNode(node string) {
 
 func (c *ClientConfig) SetBroadcastMode(broadcastMode string) {
 	c.BroadcastMode = broadcastMode
+}
+
+func (c *ClientConfig) SetGRPCConcurrency(grpcConcurrency bool) {
+	c.GRPCConcurrency = grpcConcurrency
 }
 
 // ReadFromClientConfig reads values from client.toml file and updates them in client Context

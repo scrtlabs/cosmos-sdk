@@ -500,6 +500,12 @@ func startGrpcServer(
 		maxRecvMsgSize = serverconfig.DefaultGRPCMaxRecvMsgSize
 	}
 
+	println("CONCURRENCY IS: ", config.Concurrency)
+	if config.Concurrency {
+		println("SETTING CONCURRENCY ON")
+		clientCtx = clientCtx.WithConcurrency(true)
+	}
+
 	// if gRPC is enabled, configure gRPC client for gRPC gateway
 	grpcClient, err := grpc.Dial(
 		config.Address,

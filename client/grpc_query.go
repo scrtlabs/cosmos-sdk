@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"reflect"
 	"strconv"
+    "strings"
 
 	abci "github.com/cometbft/cometbft/abci/types"
 	gogogrpc "github.com/cosmos/gogoproto/grpc"
@@ -56,9 +57,23 @@ func (ctx Context) Invoke(grpcCtx gocontext.Context, method string, req, reply i
 		return err
 	}
 
-	if ctx.GRPCClient != nil {
+	// Certain queries must not be be concurrent with ABCI to function correctly.
+	// As a result, we direct them to the ABCI flow where they get syncronized.
+	_, isSimulationRequest := req.(*tx.SimulateRequest)
+	isTendermintQuery := strings.Contains(method, "tendermint")
+	grpcConcurrentEnabled := ctx.GRPCConcurrency
+	isGRPCAllowed := !isTendermintQuery && !isSimulationRequest && grpcConcurrentEnabled
+
+	requestedHeight, err := selectHeight(ctx, grpcCtx)
+	if err != nil {
+		return err
+	}
+
+	if ctx.GRPCClient != nil && isGRPCAllowed {
+		md := metadata.Pairs(grpctypes.GRPCBlockHeightHeader, strconv.FormatInt(requestedHeight, 10))
+		context := metadata.NewOutgoingContext(grpcCtx, md)
 		// Case 2-1. Invoke grpc.
-		return ctx.GRPCClient.Invoke(grpcCtx, method, req, reply, opts...)
+		return ctx.GRPCClient.Invoke(context, method, req, reply, opts...)
 	}
 
 	// Case 2-2. Querying state via abci query.
@@ -139,4 +154,23 @@ func (ctx Context) gRPCCodec() encoding.Codec {
 	}
 
 	return pc.GRPCCodec()
+}
+
+// selectHeight returns the height chosen from client context and grpc context.
+// If exists, height extracted from grpcCtx takes precedence.
+func selectHeight(clientContext Context, grpcCtx gocontext.Context) (int64, error) {
+	var height int64
+	if clientContext.Height > 0 {
+		height = clientContext.Height
+	}
+
+	md, _ := metadata.FromOutgoingContext(grpcCtx)
+	if heights := md.Get(grpctypes.GRPCBlockHeightHeader); len(heights) > 0 {
+		var err error
+		height, err = strconv.ParseInt(heights[0], 10, 64)
+		if err != nil {
+			return 0, err
+		}
+	}
+	return height, nil
 }

@@ -79,6 +79,7 @@ const (
 	FlagFeePayer         = "fee-payer"
 	FlagFeeGranter       = "fee-granter"
 	FlagReverse          = "reverse"
+	FlagGRPCConcurrency  = "grpc-concurrency"
 	FlagTip              = "tip"
 	FlagAux              = "aux"
 	FlagInitHeight       = "initial-height"

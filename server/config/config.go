@@ -139,6 +139,8 @@ type GRPCConfig struct {
 	// MaxSendMsgSize defines the max message size in bytes the server can send.
 	// The default value is math.MaxInt32.
 	MaxSendMsgSize int `mapstructure:"max-send-msg-size"`
+
+	Concurrency bool `mapstructure:"concurrency"`
 }
 
 // GRPCWebConfig defines configuration for the gRPC-web server.
@@ -248,6 +250,7 @@ func DefaultConfig() *Config {
 			Address:        DefaultGRPCAddress,
 			MaxRecvMsgSize: DefaultGRPCMaxRecvMsgSize,
 			MaxSendMsgSize: DefaultGRPCMaxSendMsgSize,
+            Concurrency: true,
 		},
 		GRPCWeb: GRPCWebConfig{
 			Enable: true,

@@ -35,9 +35,13 @@ const (
 	flagNoSort       = "nosort"
 	flagHDPath       = "hd-path"
 	flagPubKeyBase64 = "pubkey-base64"
+	flagLegacyHdPath = "legacy-hd-path"
 
 	// DefaultKeyPass contains the default key password for genesis transactions
 	DefaultKeyPass = "12345678"
+
+	// Default CoinType for Secret Ledger App
+	DefaultLedgerCoinType = 529
 )
 
 // AddKeyCommand defines a keys command to add a generated or recovered private key to keybase.
@@ -75,6 +79,7 @@ Example:
 	f.String(flagPubKeyBase64, "", "Parse a public key in base64 format and saves key info.")
 	f.BoolP(flagInteractive, "i", false, "Interactively prompt user for BIP39 passphrase and mnemonic")
 	f.Bool(flags.FlagUseLedger, false, "Store a local reference to a private key on a Ledger device")
+	f.Bool(flagLegacyHdPath, false, "Flag to specify the command uses old HD path - use this for ledger compatibility")
 	f.Bool(flagRecover, false, "Provide seed phrase to recover existing key instead of creating")
 	f.Bool(flagNoBackup, false, "Don't print out seed phrase (if others are watching the terminal)")
 	f.Bool(flags.FlagDryRun, false, "Perform action, but don't add key to local keystore")
@@ -257,6 +262,13 @@ func runAddCmd(ctx client.Context, cmd *cobra.Command, args []string, inBuf *buf
 
 	// If we're using ledger, only thing we need is the path and the bech32 prefix.
 	if useLedger {
+		legacyHdPath, _ := cmd.Flags().GetBool(flagLegacyHdPath)
+		if legacyHdPath {
+			coinType = sdk.CoinType
+		} else {
+			coinType = DefaultLedgerCoinType
+		}
+
 		bech32PrefixAccAddr := sdk.GetConfig().GetBech32AccountAddrPrefix()
 		k, err := kb.SaveLedgerKey(name, hd.Secp256k1, bech32PrefixAccAddr, coinType, account, index)
 		if err != nil {

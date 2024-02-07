@@ -1,6 +1,8 @@
 package client
 
 import (
+    "net/url"
+
 	"encoding/base64"
 
 	rpchttp "github.com/cometbft/cometbft/rpc/client/http"
@@ -78,7 +80,20 @@ func ReadPageRequest(flagSet *pflag.FlagSet) (*query.PageRequest, error) {
 // NewClientFromNode sets up Client implementation that communicates with a CometBFT node over
 // JSON RPC and WebSockets
 func NewClientFromNode(nodeURI string) (*rpchttp.HTTP, error) {
-	return rpchttp.New(nodeURI, "/websocket")
+	defaultPortURI, err := url.Parse(nodeURI)
+	if err != nil {
+		return nil, err
+	}
+
+	if defaultPortURI.Scheme == "https" && defaultPortURI.Port() == "" {
+		defaultPortURI.Host += ":443"
+	}
+
+	if defaultPortURI.Scheme == "http" && defaultPortURI.Port() == "" {
+		defaultPortURI.Host += ":80"
+	}
+
+	return rpchttp.New(defaultPortURI.String(), "/websocket")
 }
 
 // FlagSetWithPageKeyDecoded returns the provided flagSet with the page-key value base64 decoded (if it exists).

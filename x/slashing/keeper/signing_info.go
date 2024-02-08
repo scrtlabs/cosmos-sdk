@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+    "fmt"
 	"time"
 
 	"github.com/bits-and-blooms/bitset"
@@ -101,6 +102,22 @@ func (k Keeper) Tombstone(ctx context.Context, consAddr sdk.ConsAddress) error {
 
 	signInfo.Tombstoned = true
 	return k.SetValidatorSigningInfo(ctx, consAddr, signInfo)
+}
+
+// RevertTombstone attempts to revert a tombstone state of a validator.
+// Panics if signing info for the given validator does not exist.
+func (k Keeper) RevertTombstone(ctx sdk.Context, consAddr sdk.ConsAddress) {
+	signInfo, ok := k.GetValidatorSigningInfo(ctx, consAddr)
+	if ok != nil {
+		panic(fmt.Sprintf("cannot tombstone validator that does not have any signing information: %s", consAddr.String()))
+	}
+
+	if !signInfo.Tombstoned {
+		panic(fmt.Sprintf("cannot untombstone a validator that is not tombstoned: %s", consAddr.String()))
+	}
+
+	signInfo.Tombstoned = false
+	k.SetValidatorSigningInfo(ctx, consAddr, signInfo)
 }
 
 // IsTombstoned returns if a given validator by consensus address is tombstoned.

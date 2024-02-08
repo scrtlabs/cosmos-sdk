@@ -7,6 +7,7 @@ import (
 	"errors"
 
 	"github.com/cometbft/cometbft/crypto"
+	"golang.org/x/crypto/sha3"
 	secp256k1 "github.com/decred/dcrd/dcrec/secp256k1/v4"
 	"github.com/decred/dcrd/dcrec/secp256k1/v4/ecdsa"
 )
@@ -37,6 +38,39 @@ func (pubKey *PubKey) VerifySignature(msg, sigStr []byte) bool {
 		return false
 	}
 	return signature.Verify(crypto.Sha256(msg), pub)
+}
+
+// VerifyBytes verifies a signature of the form R || S.
+// It rejects signatures which are not in lower-S form.
+func (pubKey *PubKey) VerifySignatureEip191(msg []byte, sigStr []byte) bool {
+	if len(sigStr) != 64 {
+		return false
+	}
+	pub, err := secp256k1.ParsePubKey(pubKey.Key)
+	if err != nil {
+		return false
+	}
+	// parse the signature:
+	signature, _ := signatureFromBytes(sigStr)
+	// Reject malleable signatures. libsecp256k1 does this check but btcec doesn't.
+	// see: https://github.com/ethereum/go-ethereum/blob/f9401ae011ddf7f8d2d95020b7446c17f8d98dc1/crypto/signature_nocgo.go#L90-L93
+	// Serialize() would negate S value if it is over half order.
+	// Hence, if the signature is different after Serialize() if should be rejected.
+	modifiedSignature, parseErr := ecdsa.ParseDERSignature(signature.Serialize())
+	if parseErr != nil {
+		return false
+	}
+	if !signature.IsEqual(modifiedSignature) {
+		return false
+	}
+
+	return signature.Verify(keccak256(msg), pub)
+}
+
+func keccak256(bytes []byte) []byte {
+	hasher := sha3.NewLegacyKeccak256()
+	hasher.Write(bytes)
+	return hasher.Sum(nil)
 }
 
 // Read Signature struct from R || S. Caller needs to ensure

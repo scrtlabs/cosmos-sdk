@@ -70,6 +70,41 @@ service Query {
   rpc CommunityPool(QueryCommunityPoolRequest) returns (QueryCommunityPoolResponse) {
     option (google.api.http).get = "/cosmos/distribution/v1beta1/community_pool";
   }
+
+  // DelegatorWithdrawAddress queries withdraw address of a delegator.
+  rpc FoundationTax(QueryFoundationTaxRequest) returns (QueryFoundationTaxResponse) {
+    option (google.api.http).get = "/cosmos/distribution/v1beta1/foundation_tax";
+  }
+
+  // RestakeThreshold queries the community pool coins.
+  rpc RestakeThreshold(QueryRestakeThresholdRequest) returns (QueryRestakeThresholdResponse) {
+    option (google.api.http).get = "/cosmos/distribution/v1beta1/restake_threshold";
+  }
+
+  // RestakeThreshold queries the community pool coins.
+  rpc RestakingEntries(QueryRestakeEntriesRequest) returns (QueryRestakingEntriesResponse) {
+    option (google.api.http).get = "/cosmos/distribution/v1beta1/restake_entries";
+  }
+}
+
+// QueryRestakeThresholdRequest is the request type for the Query/Params RPC method.
+message QueryRestakeEntriesRequest {
+  string delegator = 1;
+}
+
+// QueryRestakeThresholdResponse is the request type for the Query/Params RPC method.
+message QueryRestakingEntriesResponse {
+  // threshold = minimum amount in uscrt that you need to have delegated to enable restaking
+  repeated string validators = 1;
+}
+
+// QueryRestakeThresholdRequest is the request type for the Query/Params RPC method.
+message QueryRestakeThresholdRequest {}
+
+// QueryRestakeThresholdResponse is the request type for the Query/Params RPC method.
+message QueryRestakeThresholdResponse {
+  // threshold = minimum amount in uscrt that you need to have delegated to enable restaking
+  string threshold = 1 [(gogoproto.nullable) = false, (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec"];
 }
 
 // QueryParamsRequest is the request type for the Query/Params RPC method.
@@ -237,6 +272,21 @@ message QueryDelegatorWithdrawAddressResponse {
 
   // withdraw_address defines the delegator address to query for.
   string withdraw_address = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+}
+
+// QueryFoundationTaxRequest is the request type for the
+// Query/FoundationTax RPC method.
+message QueryFoundationTaxRequest {}
+
+// QueryDelegatorWithdrawAddressResponse is the response type for the
+// Query/DelegatorWithdrawAddress RPC method.
+message QueryFoundationTaxResponse {
+  option (gogoproto.equal)           = false;
+  option (gogoproto.goproto_getters) = false;
+
+  // withdraw_address defines the delegator address to query for.
+  string tax                = 1;
+  string foundation_address = 2;
 }
 
 // QueryCommunityPoolRequest is the request type for the Query/CommunityPool RPC

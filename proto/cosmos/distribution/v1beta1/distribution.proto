@@ -40,7 +40,23 @@ message Params {
     deprecated             = true
   ];
 
-  bool withdraw_addr_enabled = 4;
+  bool   withdraw_addr_enabled = 4;
+  string secret_foundation_tax = 5 [
+    (cosmos_proto.scalar)  = "cosmos.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
+    (gogoproto.nullable)   = false
+  ];
+  string secret_foundation_address = 6;
+  string minimum_restake_threshold = 7 [
+    (cosmos_proto.scalar)  = "cosmos.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
+    (gogoproto.nullable)   = false
+  ];
+  string restake_period = 8 [
+    (cosmos_proto.scalar)  = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable)   = false
+  ];
 }
 
 // ValidatorHistoricalRewards represents historical rewards for a validator.

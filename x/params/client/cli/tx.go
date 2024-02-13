@@ -15,12 +15,10 @@ import (
 	paramproposal "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 )
 
-const flagIsExpedited = "is-expedited"
-
 // NewSubmitParamChangeProposalTxCmd returns a CLI command handler for creating
 // a parameter change proposal governance transaction.
 func NewSubmitParamChangeProposalTxCmd() *cobra.Command {
-	cmd := &cobra.Command{
+	return &cobra.Command{
 		Use:   "param-change [proposal-file]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Submit a parameter change proposal",
@@ -38,7 +36,7 @@ Proper vetting of a parameter change proposal should prevent this from happening
 regardless.
 
 Example:
-$ %s tx gov submit-proposal param-change <path/to/proposal.json> --from=<key_or_address> is-expedited=true
+$ %s tx gov submit-proposal param-change <path/to/proposal.json> --from=<key_or_address>
 
 Where proposal.json contains:
 
@@ -70,7 +68,7 @@ Where proposal.json contains:
 
 			from := clientCtx.GetFromAddress()
 			content := paramproposal.NewParameterChangeProposal(
-				proposal.Title, proposal.Description, proposal.IsExpedited, proposal.Changes.ToParamChanges(),
+				proposal.Title, proposal.Description, proposal.Changes.ToParamChanges(),
 			)
 
 			deposit, err := sdk.ParseCoinsNormalized(proposal.Deposit)
@@ -78,12 +76,7 @@ Where proposal.json contains:
 				return err
 			}
 
-			isExpedited, err := cmd.Flags().GetBool(flagIsExpedited)
-			if err != nil {
-				return err
-			}
-
-			msg, err := govv1beta1.NewMsgSubmitProposalWithExpedited(content, deposit, from, isExpedited)
+			msg, err := govv1beta1.NewMsgSubmitProposal(content, deposit, from)
 			if err != nil {
 				return err
 			}
@@ -91,7 +84,4 @@ Where proposal.json contains:
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
-	cmd.Flags().Bool(flagIsExpedited, false, "If true, makes the proposal an expedited one")
-
-	return cmd
 }

@@ -16,7 +16,7 @@ func init() {
 	govtypes.RegisterProposalType(ProposalTypeChange)
 }
 
-func NewParameterChangeProposal(title, description string, isExpedited bool, changes []ParamChange) *ParameterChangeProposal {
+func NewParameterChangeProposal(title, description string, changes []ParamChange) *ParameterChangeProposal {
 	return &ParameterChangeProposal{title, description, changes}
 }
 

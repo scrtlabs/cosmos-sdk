@@ -12,6 +12,7 @@ var (
 	_ sdk.Msg = (*MsgUpdateParams)(nil)
 	_ sdk.Msg = (*MsgCommunityPoolSpend)(nil)
 	_ sdk.Msg = (*MsgDepositValidatorRewardsPool)(nil)
+	_ sdk.Msg = (*MsgSetAutoRestake)(nil)
 )
 
 func NewMsgSetWithdrawAddress(delAddr, withdrawAddr sdk.AccAddress) *MsgSetWithdrawAddress {
@@ -50,5 +51,15 @@ func NewMsgDepositValidatorRewardsPool(depositor, valAddr string, amount sdk.Coi
 		Amount:           amount,
 		Depositor:        depositor,
 		ValidatorAddress: valAddr,
+	}
+}
+
+// NewMsgFundCommunityPool returns a new MsgFundCommunityPool with a sender and
+// a funding amount.
+func NewMsgSetAutoRestake(delegator sdk.AccAddress, validator sdk.ValAddress, toggle bool) *MsgSetAutoRestake {
+	return &MsgSetAutoRestake{
+		delegator.String(),
+		validator.String(),
+		toggle,
 	}
 }

@@ -1,6 +1,7 @@
 package types
 
 import (
+    "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -15,6 +16,10 @@ const (
 	QueryDelegatorValidators         = "delegator_validators"
 	QueryWithdrawAddr                = "withdraw_addr"
 	QueryCommunityPool               = "community_pool"
+	QueryFoundationTax               = "foundation_tax"
+	QueryMinimumRestakeThreshold     = "restake_threshold"
+	QueryRestakeEntriesForDelegator  = "restake_entries"
+	QueryRestakePeriod               = "restake_period"
 )
 
 // params for query 'custom/distr/validator_outstanding_rewards'
@@ -91,4 +96,10 @@ type QueryDelegatorWithdrawAddrParams struct {
 // NewQueryDelegatorWithdrawAddrParams creates a new instance of QueryDelegatorWithdrawAddrParams.
 func NewQueryDelegatorWithdrawAddrParams(delegatorAddr sdk.AccAddress) QueryDelegatorWithdrawAddrParams {
 	return QueryDelegatorWithdrawAddrParams{DelegatorAddress: delegatorAddr}
+}
+
+// params for query 'custom/distr/foundationtax'
+type FoundationTaxResponseParams struct {
+	FoundationAddress sdk.AccAddress `json:"foundation_address" yaml:"foundation_address"`
+	Tax               math.LegacyDec        `json:"tax" yaml:"tax"`
 }

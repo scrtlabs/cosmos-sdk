@@ -370,3 +370,43 @@ func (k Querier) CommunityPool(ctx context.Context, req *types.QueryCommunityPoo
 
 	return &types.QueryCommunityPoolResponse{Pool: pool.CommunityPool}, nil
 }
+
+// CommunityPool queries the community pool coins
+func (k Keeper) FoundationTax(ctx context.Context, req *types.QueryFoundationTaxRequest) (*types.QueryFoundationTaxResponse, error) {
+	fee, err := k.GetSecretFoundationTax(ctx)
+	if err != nil {
+		return nil, err
+	}
+	address, err := k.GetSecretFoundationAddr(ctx)
+	if err != nil {
+		return nil, err
+	}
+	addr, err := sdk.AccAddressFromBech32(address)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.QueryFoundationTaxResponse{Tax: fee.String(), FoundationAddress: addr.String()}, nil
+}
+
+// RestakeThreshold queries the restake threshold
+func (k Keeper) RestakeThreshold(ctx context.Context, req *types.QueryRestakeThresholdRequest) (*types.QueryRestakeThresholdResponse, error) {
+	threshold, err := k.GetMinimumRestakeThreshold(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.QueryRestakeThresholdResponse{Threshold: threshold}, nil
+}
+
+// RestakingEntries queries the restake threshold
+func (k Keeper) RestakingEntries(ctx context.Context, req *types.QueryRestakeEntriesRequest) (*types.QueryRestakingEntriesResponse, error) {
+	addr, err := sdk.AccAddressFromBech32(req.Delegator)
+	if err != nil {
+		return nil, err
+	}
+
+	validators := k.GetRestakeValidatorsForDelegator(ctx, addr)
+
+	return &types.QueryRestakingEntriesResponse{Validators: validators}, nil
+}

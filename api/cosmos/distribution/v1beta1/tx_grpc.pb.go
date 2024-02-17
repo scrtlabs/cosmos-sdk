@@ -23,6 +23,7 @@ const (
 	Msg_WithdrawDelegatorReward_FullMethodName     = "/cosmos.distribution.v1beta1.Msg/WithdrawDelegatorReward"
 	Msg_WithdrawValidatorCommission_FullMethodName = "/cosmos.distribution.v1beta1.Msg/WithdrawValidatorCommission"
 	Msg_FundCommunityPool_FullMethodName           = "/cosmos.distribution.v1beta1.Msg/FundCommunityPool"
+	Msg_SetAutoRestake_FullMethodName              = "/cosmos.distribution.v1beta1.Msg/SetAutoRestake"
 	Msg_UpdateParams_FullMethodName                = "/cosmos.distribution.v1beta1.Msg/UpdateParams"
 	Msg_CommunityPoolSpend_FullMethodName          = "/cosmos.distribution.v1beta1.Msg/CommunityPoolSpend"
 	Msg_DepositValidatorRewardsPool_FullMethodName = "/cosmos.distribution.v1beta1.Msg/DepositValidatorRewardsPool"
@@ -44,6 +45,9 @@ type MsgClient interface {
 	// FundCommunityPool defines a method to allow an account to directly
 	// fund the community pool.
 	FundCommunityPool(ctx context.Context, in *MsgFundCommunityPool, opts ...grpc.CallOption) (*MsgFundCommunityPoolResponse, error)
+	// SetAutoRestake enables or disables automatic restaking for a delegator
+	// validator pair
+	SetAutoRestake(ctx context.Context, in *MsgSetAutoRestake, opts ...grpc.CallOption) (*MsgSetAutoRestakeResponse, error)
 	// UpdateParams defines a governance operation for updating the x/distribution
 	// module parameters. The authority is defined in the keeper.
 	//
@@ -107,6 +111,15 @@ func (c *msgClient) FundCommunityPool(ctx context.Context, in *MsgFundCommunityP
 	return out, nil
 }
 
+func (c *msgClient) SetAutoRestake(ctx context.Context, in *MsgSetAutoRestake, opts ...grpc.CallOption) (*MsgSetAutoRestakeResponse, error) {
+	out := new(MsgSetAutoRestakeResponse)
+	err := c.cc.Invoke(ctx, Msg_SetAutoRestake_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *msgClient) UpdateParams(ctx context.Context, in *MsgUpdateParams, opts ...grpc.CallOption) (*MsgUpdateParamsResponse, error) {
 	out := new(MsgUpdateParamsResponse)
 	err := c.cc.Invoke(ctx, Msg_UpdateParams_FullMethodName, in, out, opts...)
@@ -150,6 +163,9 @@ type MsgServer interface {
 	// FundCommunityPool defines a method to allow an account to directly
 	// fund the community pool.
 	FundCommunityPool(context.Context, *MsgFundCommunityPool) (*MsgFundCommunityPoolResponse, error)
+	// SetAutoRestake enables or disables automatic restaking for a delegator
+	// validator pair
+	SetAutoRestake(context.Context, *MsgSetAutoRestake) (*MsgSetAutoRestakeResponse, error)
 	// UpdateParams defines a governance operation for updating the x/distribution
 	// module parameters. The authority is defined in the keeper.
 	//
@@ -185,6 +201,9 @@ func (UnimplementedMsgServer) WithdrawValidatorCommission(context.Context, *MsgW
 }
 func (UnimplementedMsgServer) FundCommunityPool(context.Context, *MsgFundCommunityPool) (*MsgFundCommunityPoolResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FundCommunityPool not implemented")
+}
+func (UnimplementedMsgServer) SetAutoRestake(context.Context, *MsgSetAutoRestake) (*MsgSetAutoRestakeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetAutoRestake not implemented")
 }
 func (UnimplementedMsgServer) UpdateParams(context.Context, *MsgUpdateParams) (*MsgUpdateParamsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateParams not implemented")
@@ -280,6 +299,24 @@ func _Msg_FundCommunityPool_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_SetAutoRestake_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSetAutoRestake)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).SetAutoRestake(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_SetAutoRestake_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).SetAutoRestake(ctx, req.(*MsgSetAutoRestake))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Msg_UpdateParams_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MsgUpdateParams)
 	if err := dec(in); err != nil {
@@ -356,6 +393,10 @@ var Msg_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "FundCommunityPool",
 			Handler:    _Msg_FundCommunityPool_Handler,
+		},
+		{
+			MethodName: "SetAutoRestake",
+			Handler:    _Msg_SetAutoRestake_Handler,
 		},
 		{
 			MethodName: "UpdateParams",

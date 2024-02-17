@@ -211,6 +211,40 @@ func (k msgServer) DepositValidatorRewardsPool(ctx context.Context, msg *types.M
 	return &types.MsgDepositValidatorRewardsPoolResponse{}, nil
 }
 
+func (k msgServer) SetAutoRestake(goCtx context.Context, msg *types.MsgSetAutoRestake) (*types.MsgSetAutoRestakeResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	valAddr, err := sdk.ValAddressFromBech32(msg.ValidatorAddress)
+	if err != nil {
+		return nil, err
+	}
+	delegatorAddress, err := sdk.AccAddressFromBech32(msg.DelegatorAddress)
+	if err != nil {
+		return nil, err
+	}
+
+	if msg.Enabled {
+		err = k.SaveAutoRestakeEntry(ctx, delegatorAddress, valAddr)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		err = k.DeleteAutoRestakeEntry(ctx, delegatorAddress, valAddr)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.DelegatorAddress),
+		),
+	)
+	return &types.MsgSetAutoRestakeResponse{}, nil
+}
+
 func (k *Keeper) validateAuthority(authority string) error {
 	if _, err := k.authKeeper.AddressCodec().StringToBytes(authority); err != nil {
 		return sdkerrors.ErrInvalidAddress.Wrapf("invalid authority address: %s", err)

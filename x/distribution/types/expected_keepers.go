@@ -4,6 +4,7 @@ import (
 	context "context"
 
 	"cosmossdk.io/core/address"
+	"cosmossdk.io/math"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
@@ -46,6 +47,14 @@ type StakingKeeper interface {
 	// Delegation allows for getting a particular delegation for a given validator
 	// and delegator outside the scope of the staking module.
 	Delegation(context.Context, sdk.AccAddress, sdk.ValAddress) (stakingtypes.DelegationI, error)
+
+	DoDelegate(
+		context.Context, sdk.AccAddress, math.Int, stakingtypes.BondStatus,
+		stakingtypes.ValidatorI, bool,
+	) (math.LegacyDec, error)
+
+	// BondDenom gets the denom used for bondage
+	BondDenom(ctx context.Context) string
 
 	IterateDelegations(ctx context.Context, delegator sdk.AccAddress,
 		fn func(index int64, delegation stakingtypes.DelegationI) (stop bool)) error

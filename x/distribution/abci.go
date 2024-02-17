@@ -2,6 +2,7 @@ package distribution
 
 import (
 	"time"
+    "fmt"
 
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -25,6 +26,31 @@ func BeginBlocker(ctx sdk.Context, k keeper.Keeper) error {
 	if ctx.BlockHeight() > 1 {
 		if err := k.AllocateTokens(ctx, previousTotalPower, ctx.VoteInfos()); err != nil {
 			return err
+		}
+	}
+
+	restakeFunc := func(delegator sdk.AccAddress, validator sdk.ValAddress) (stop bool) {
+		err := k.PerformRestake(ctx, delegator, validator)
+		if err != nil {
+			k.Logger(ctx).Info(fmt.Sprintf("Err: %s, Failed to perform restake for delegator-validator %s - %s", err, delegator, validator))
+		}
+
+		return err != nil
+	}
+
+    restakePeriod, err := k.GetRestakePeriod(ctx)
+    if err != nil {
+        return err
+    }
+	if ctx.BlockHeight()%restakePeriod.Int64() == 0 {
+        staleKeys := k.IterateRestakeEntries(ctx, restakeFunc)
+
+		for _, stale := range staleKeys {
+
+			err := k.DeleteAutoRestakeEntry(ctx, stale.Delegator, stale.Validator)
+			if err != nil {
+				k.Logger(ctx).Info(fmt.Sprintf("Err: %s, Failed to delete restake key", err))
+			}
 		}
 	}
 

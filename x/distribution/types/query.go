@@ -35,3 +35,8 @@ func (res QueryDelegatorTotalRewardsResponse) String() string {
 func NewDelegationDelegatorReward(valAddr string, reward sdk.DecCoins) DelegationDelegatorReward {
 	return DelegationDelegatorReward{ValidatorAddress: valAddr, Reward: reward}
 }
+
+// NewRestakingEntriesResponse constructs a QueryRestakingEntriesResponse
+func NewRestakingEntriesResponse(validators []string) QueryRestakingEntriesResponse {
+	return QueryRestakingEntriesResponse{Validators: validators}
+}

@@ -72,6 +72,7 @@ message MsgSetWithdrawAddress {
 // MsgEnableAutoRestake enables auto-restaking for a
 // a delegator-validator pair.
 message MsgSetAutoRestake {
+  option (cosmos.msg.v1.signer)      = "delegator_address";
   option (gogoproto.equal)           = false;
   option (gogoproto.goproto_getters) = false;
 

@@ -54,7 +54,7 @@ type StakingKeeper interface {
 	) (math.LegacyDec, error)
 
 	// BondDenom gets the denom used for bondage
-	BondDenom(ctx context.Context) string
+	BondDenom(ctx context.Context) (string, error)
 
 	IterateDelegations(ctx context.Context, delegator sdk.AccAddress,
 		fn func(index int64, delegation stakingtypes.DelegationI) (stop bool)) error

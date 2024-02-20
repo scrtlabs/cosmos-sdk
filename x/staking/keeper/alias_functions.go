@@ -122,7 +122,7 @@ func (k Keeper) GetValidatorSet() types.ValidatorSet {
 //
 // )
 // Delegation get the delegation interface for a particular set of delegator and validator addresses
-func (k Keeper) DoDelegate(ctx sdk.Context, delAddr sdk.AccAddress, bondAmt math.Int,
+func (k Keeper) DoDelegate(ctx context.Context, delAddr sdk.AccAddress, bondAmt math.Int,
 	tokenSrc types.BondStatus, validator types.ValidatorI, subtractAccount bool,
 ) (newShares math.LegacyDec, err error) {
 	address, err := sdk.ValAddressFromHex(validator.GetOperator())

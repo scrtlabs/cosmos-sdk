@@ -81,7 +81,10 @@ func (k Keeper) PerformRestake(ctx sdk.Context, delegator sdk.AccAddress, valida
 		return err
 	}
 
-	baseDenom := k.stakingKeeper.BondDenom(ctx)
+	baseDenom, err := k.stakingKeeper.BondDenom(ctx)
+    if err != nil {
+        return err
+    }
 
 	coinsToRedelegate := coins.AmountOf(baseDenom)
 

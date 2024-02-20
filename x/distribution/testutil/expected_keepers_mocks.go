@@ -9,6 +9,7 @@ import (
 	reflect "reflect"
 
 	address "cosmossdk.io/core/address"
+	math "cosmossdk.io/math"
 	types "github.com/cosmos/cosmos-sdk/types"
 	types0 "github.com/cosmos/cosmos-sdk/x/staking/types"
 	gomock "github.com/golang/mock/gomock"
@@ -235,6 +236,21 @@ func (m *MockStakingKeeper) EXPECT() *MockStakingKeeperMockRecorder {
 	return m.recorder
 }
 
+// BondDenom mocks base method.
+func (m *MockStakingKeeper) BondDenom(ctx context.Context) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "BondDenom", ctx)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// BondDenom indicates an expected call of BondDenom.
+func (mr *MockStakingKeeperMockRecorder) BondDenom(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BondDenom", reflect.TypeOf((*MockStakingKeeper)(nil).BondDenom), ctx)
+}
+
 // ConsensusAddressCodec mocks base method.
 func (m *MockStakingKeeper) ConsensusAddressCodec() address.Codec {
 	m.ctrl.T.Helper()
@@ -262,6 +278,21 @@ func (m *MockStakingKeeper) Delegation(arg0 context.Context, arg1 types.AccAddre
 func (mr *MockStakingKeeperMockRecorder) Delegation(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delegation", reflect.TypeOf((*MockStakingKeeper)(nil).Delegation), arg0, arg1, arg2)
+}
+
+// DoDelegate mocks base method.
+func (m *MockStakingKeeper) DoDelegate(arg0 context.Context, arg1 types.AccAddress, arg2 math.Int, arg3 types0.BondStatus, arg4 types0.ValidatorI, arg5 bool) (math.LegacyDec, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DoDelegate", arg0, arg1, arg2, arg3, arg4, arg5)
+	ret0, _ := ret[0].(math.LegacyDec)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DoDelegate indicates an expected call of DoDelegate.
+func (mr *MockStakingKeeperMockRecorder) DoDelegate(arg0, arg1, arg2, arg3, arg4, arg5 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DoDelegate", reflect.TypeOf((*MockStakingKeeper)(nil).DoDelegate), arg0, arg1, arg2, arg3, arg4, arg5)
 }
 
 // GetAllDelegatorDelegations mocks base method.

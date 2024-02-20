@@ -2,250 +2,8 @@ swagger: '2.0'
 info:
   title: Cosmos SDK - gRPC Gateway docs
   description: A REST interface for state queries.
-  version: 1.1.0
+  version: 1.0.0
 paths:
-  /wasm/code:
-    post:
-      summary: Generate wasm store code message
-      tags:
-        - Wasm
-      produces:
-        - application/json
-      parameters:
-        - in: body
-          name: store code request body
-          schema:
-            $ref: "#/definitions/StoreCodeReq"
-      responses:
-        200:
-          description: OK
-          schema:
-            $ref: "#/definitions/StdTx"
-        400:
-          description: Bad request
-        500:
-          description: Internal Server Error
-    get:
-      summary: List code info
-      tags:
-        - Wasm
-      produces:
-        - application/json
-      responses:
-        200:
-          description: OK
-          schema:
-            type: object
-            properties:
-              height:
-                type: string
-              result:
-                $ref: "#/definitions/ListCodeReponse"
-  /wasm/code/{codeID}:
-    post:
-      summary: Instantiate wasm contract message
-      tags:
-        - Wasm
-      produces:
-        - application/json
-      parameters:
-        - in: path
-          name: codeID
-          description: code ID you want to instantiate
-          required: true
-          type: number
-        - in: body
-          name: instantiate contract request body
-          schema:
-            $ref: "#/definitions/InstantiateContractReq"
-      responses:
-        200:
-          description: OK
-          schema:
-            $ref: "#/definitions/StdTx"
-        400:
-          description: Bad request
-        500:
-          description: Internal Server Error
-    get:
-      summary: Get code info of the code ID
-      tags:
-        - Wasm
-      produces:
-        - application/json
-      parameters:
-        - in: path
-          name: codeID
-          description: code ID you want to query
-          required: true
-          type: number
-      responses:
-        200:
-          description: OK
-          schema:
-            type: object
-            properties:
-              height:
-                type: string
-              result:
-                $ref: "#/definitions/CodeInfo"
-  /wasm/code/{codeID}/contracts:
-    get:
-      summary: Get info about all contracts deployed with a code ID
-      tags:
-        - Wasm
-      produces:
-        - application/json
-      parameters:
-        - in: path
-          name: codeID
-          description: code ID you want to query
-          required: true
-          type: number
-      responses:
-        200:
-          description: OK
-          schema:
-            type: object
-            properties:
-              height:
-                type: string
-              result:
-                $ref: "#/definitions/CodeIdContracts"
-  /wasm/contract/{contractAddress}:
-    post:
-      summary: Execute wasm contract message
-      tags:
-        - Wasm
-      produces:
-        - application/json
-      parameters:
-        - in: path
-          name: contractAddress
-          description: contract address you want to execute
-          required: true
-          type: string
-        - in: body
-          name: execute contract request body
-          schema:
-            $ref: "#/definitions/ExecuteContractReq"
-      responses:
-        200:
-          description: OK
-          schema:
-            $ref: "#/definitions/StdTx"
-        400:
-          description: Bad request
-        500:
-          description: Internal Server Error
-  /wasm/contract/{contractAddress}/code-hash:
-    get:
-      summary: Get stored contract-hash information
-      tags:
-        - Wasm
-      parameters:
-        - in: path
-          name: contractAddress
-          description: contract address you want to lookup
-          required: true
-          type: string
-        - in: query
-          name: query_msg
-          description: json formatted query msg
-          required: true
-          type: string
-          x-example: "{}"
-      produces:
-        - application/json
-      responses:
-        200:
-          description: OK
-          schema:
-            type: object
-            properties:
-              height:
-                type: string
-              result:
-                type: string
-  /wasm/contract/{contractAddress}/query/{query}:
-    get:
-      summary: Get stored information with store key
-      tags:
-        - Wasm
-      parameters:
-        - in: path
-          name: contractAddress
-          description: contract address you want to lookup
-          required: true
-          type: string
-        - in: path
-          name: query
-          description: hex encoded data for the query
-          required: true
-          type: string
-        - in: query
-          name: encoding
-          description: encoding of the query data (only hex supported)
-          required: false
-          type: string
-      produces:
-        - application/json
-      responses:
-        200:
-          description: OK
-          schema:
-            type: object
-            properties:
-              height:
-                type: string
-              result:
-                type: object
-                properties:
-                  key:
-                    type: string
-                  value:
-                    type: string
-  /wasm/code/{codeID}/hash:
-    get:
-      summary: Get code ID data hash
-      tags:
-        - Wasm
-      parameters:
-        - in: path
-          name: codeID
-          description: code ID you want to query
-          required: true
-          type: number
-      produces:
-        - application/json
-      responses:
-        200:
-          description: OK
-          schema:
-            type: object
-            properties:
-              height:
-                type: string
-              result:
-                $ref: "#/definitions/CodeHash"
-        404:
-          description: Not Found
-  /reg/consensus-io-exch-pubkey:
-    get:
-      tags:
-        - Reg
-      summary: Get chain public key
-      description: Get chain public key
-      operationId: consensus-io-exch-pubkey
-      responses:
-        200:
-          description: OK
-          schema:
-            type: object
-            properties:
-              $ref: '#/definitons/IoExchPubkeyResponse'
-        '404':
-          description: Not Found
   /cosmos/auth/v1beta1/account_info/{address}:
     get:
       summary: AccountInfo queries account info which is common to all account types.
@@ -10112,6 +9870,48 @@ paths:
           type: string
       tags:
         - Query
+  /cosmos/distribution/v1beta1/foundation_tax:
+    get:
+      summary: DelegatorWithdrawAddress queries withdraw address of a delegator.
+      operationId: FoundationTax
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              tax:
+                type: string
+                description: withdraw_address defines the delegator address to query for.
+              foundation_address:
+                type: string
+            description: |-
+              QueryDelegatorWithdrawAddressResponse is the response type for the
+              Query/DelegatorWithdrawAddress RPC method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      tags:
+        - Query
   /cosmos/distribution/v1beta1/params:
     get:
       summary: Params queries params of the distribution module.
@@ -10144,9 +9944,108 @@ paths:
                       in the x/distribution module's reward mechanism.
                   withdraw_addr_enabled:
                     type: boolean
+                  secret_foundation_tax:
+                    type: string
+                  secret_foundation_address:
+                    type: string
+                  minimum_restake_threshold:
+                    type: string
+                  restake_period:
+                    type: string
             description: >-
               QueryParamsResponse is the response type for the Query/Params RPC
               method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      tags:
+        - Query
+  /cosmos/distribution/v1beta1/restake_entries:
+    get:
+      summary: RestakeThreshold queries the community pool coins.
+      operationId: RestakingEntries
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              validators:
+                type: array
+                items:
+                  type: string
+                title: >-
+                  threshold = minimum amount in uscrt that you need to have
+                  delegated to enable restaking
+            description: >-
+              QueryRestakeThresholdResponse is the request type for the
+              Query/Params RPC method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: delegator
+          in: query
+          required: false
+          type: string
+      tags:
+        - Query
+  /cosmos/distribution/v1beta1/restake_threshold:
+    get:
+      summary: RestakeThreshold queries the community pool coins.
+      operationId: RestakeThreshold
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              threshold:
+                type: string
+                title: >-
+                  threshold = minimum amount in uscrt that you need to have
+                  delegated to enable restaking
+            description: >-
+              QueryRestakeThresholdResponse is the request type for the
+              Query/Params RPC method.
         default:
           description: An unexpected error response.
           schema:
@@ -38906,105 +38805,6 @@ paths:
       tags:
         - Query
 definitions:
-  CodeIdContracts:
-    type: object
-    properties:
-      height:
-        type: string
-      result:
-        type: array
-        items:
-          $ref: "#/definitions/ListContractSingle"
-  IoExchPubkeyResponse:
-    type: object
-    properties:
-      height:
-        type: string
-      result:
-        type: object
-        properties:
-          ioExchPubkey:
-            type: string
-  ListContractSingle:
-    type: object
-    properties:
-      code-id:
-        type: number
-      creator:
-        type: string
-      label:
-        type: string
-      address:
-        type: string
-  ListCodeReponse:
-    type: object
-    properties:
-      height:
-        type: string
-      result:
-        type: array
-        items:
-          $ref: "#/definitions/ListCodeSingle"
-  ListCodeSingle:
-    type: object
-    properties:
-      id:
-        type: number
-      creator:
-        type: string
-      data_hash:
-        type: string
-      source:
-        type: string
-      builder:
-        type: string
-  CodeHash:
-    type: object
-    properties:
-      height:
-        type: string
-      result:
-        type: string
-  CodeInfo:
-    type: object
-    properties:
-      code_hash:
-        type: string
-      creator:
-        type: string
-  StoreCodeReq:
-    type: object
-    properties:
-      base_req:
-        $ref: "#/definitions/BaseReq"
-      wasm_bytes:
-        type: string
-        example: "Avz04VhtKJh8ACCVzlI8aTosGy0ikFXKIVHQ3jKMrosH"
-  InstantiateContractReq:
-    type: object
-    properties:
-      base_req:
-        $ref: "#/definitions/BaseReq"
-      init_coins:
-        type: array
-        items:
-          $ref: "#/definitions/Coin"
-      init_msg:
-        type: string
-        description: json formatted string
-        example: "{}"
-  ExecuteContractReq:
-    type: object
-    properties:
-      base_req:
-        $ref: "#/definitions/BaseReq"
-      coins:
-        type: array
-        items:
-          $ref: "#/definitions/Coin"
-      exec_msg:
-        type: string
-        example: "{}"
   cosmos.auth.v1beta1.AddressBytesToStringResponse:
     type: object
     properties:
@@ -48016,6 +47816,14 @@ definitions:
           in the x/distribution module's reward mechanism.
       withdraw_addr_enabled:
         type: boolean
+      secret_foundation_tax:
+        type: string
+      secret_foundation_address:
+        type: string
+      minimum_restake_threshold:
+        type: string
+      restake_period:
+        type: string
     description: Params defines the set of params for the distribution module.
   cosmos.distribution.v1beta1.QueryCommunityPoolResponse:
     type: object
@@ -48131,6 +47939,17 @@ definitions:
     description: |-
       QueryDelegatorWithdrawAddressResponse is the response type for the
       Query/DelegatorWithdrawAddress RPC method.
+  cosmos.distribution.v1beta1.QueryFoundationTaxResponse:
+    type: object
+    properties:
+      tax:
+        type: string
+        description: withdraw_address defines the delegator address to query for.
+      foundation_address:
+        type: string
+    description: |-
+      QueryDelegatorWithdrawAddressResponse is the response type for the
+      Query/DelegatorWithdrawAddress RPC method.
   cosmos.distribution.v1beta1.QueryParamsResponse:
     type: object
     properties:
@@ -48156,7 +47975,39 @@ definitions:
               in the x/distribution module's reward mechanism.
           withdraw_addr_enabled:
             type: boolean
+          secret_foundation_tax:
+            type: string
+          secret_foundation_address:
+            type: string
+          minimum_restake_threshold:
+            type: string
+          restake_period:
+            type: string
     description: QueryParamsResponse is the response type for the Query/Params RPC method.
+  cosmos.distribution.v1beta1.QueryRestakeThresholdResponse:
+    type: object
+    properties:
+      threshold:
+        type: string
+        title: >-
+          threshold = minimum amount in uscrt that you need to have delegated to
+          enable restaking
+    description: >-
+      QueryRestakeThresholdResponse is the request type for the Query/Params RPC
+      method.
+  cosmos.distribution.v1beta1.QueryRestakingEntriesResponse:
+    type: object
+    properties:
+      validators:
+        type: array
+        items:
+          type: string
+        title: >-
+          threshold = minimum amount in uscrt that you need to have delegated to
+          enable restaking
+    description: >-
+      QueryRestakeThresholdResponse is the request type for the Query/Params RPC
+      method.
   cosmos.distribution.v1beta1.QueryValidatorCommissionResponse:
     type: object
     properties:

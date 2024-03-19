@@ -11,6 +11,11 @@ require (
 	github.com/stretchr/testify v1.8.4
 )
 
+replace (
+	github.com/cosmos/cosmos-sdk => github.com/scrtlabs/cosmos-sdk secret-0.50.x
+
+)
+
 require (
 	cloud.google.com/go v0.110.10 // indirect
 	cloud.google.com/go/compute v1.23.3 // indirect

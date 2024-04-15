@@ -501,12 +501,15 @@ func (m *Manager) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, genesisData 
 				return &abci.ResponseInitChain{}, err
 			}
 		} else if module, ok := mod.(HasGenesis); ok {
-			ctx.Logger().Info("running initialization for module", "[+] module", moduleName)
+			//@TODO: change logger level to Debug upon next release 2.14
+			ctx.Logger().Info("running initialization for module  (HasGenesis)", "[+] module", moduleName)
 			module.InitGenesis(ctx, cdc, genesisData[moduleName])
 		} else if module, ok := mod.(HasABCIGenesis); ok {
-			ctx.Logger().Debug("running initialization for module", "module", moduleName)
+			//@TODO: change logger level to Debug upon next release 2.14
+			ctx.Logger().Info("running initialization for module (HasABCIGenesis)", "[+] module", moduleName)
 			moduleValUpdates := module.InitGenesis(ctx, cdc, genesisData[moduleName])
-
+			//@TODO: change logger level to Debug upon next release 2.14
+			ctx.Logger().Info("!Check: HasABCIGenesis", "module", moduleName, "len", len(moduleValUpdates))
 			// use these validator updates if provided, the module manager assumes
 			// only one module will update the validator set
 			if len(moduleValUpdates) > 0 {

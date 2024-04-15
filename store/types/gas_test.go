@@ -112,12 +112,12 @@ func TestTransientGasConfig(t *testing.T) {
 	t.Parallel()
 	config := TransientGasConfig()
 	require.Equal(t, config, GasConfig{
-		HasCost:          10,
-		DeleteCost:       10,
-		ReadCostFlat:     10,
+		HasCost:          100,
+		DeleteCost:       100,
+		ReadCostFlat:     100,
 		ReadCostPerByte:  0,
-		WriteCostFlat:    20,
-		WriteCostPerByte: 1,
-		IterNextCostFlat: 1,
+		WriteCostFlat:    200,
+		WriteCostPerByte: 3,
+		IterNextCostFlat: 3,
 	})
 }

@@ -93,6 +93,24 @@ func NewAppModule(accountKeeper types.AccountKeeper,
 	})
 }
 
+// NewAppModule creates a new AppModule object
+func NewAppModuleVal(validator types.MessageValidator,
+	accountKeeper types.AccountKeeper,
+	stakingKeeper types.StakingKeeper, deliverTx genesis.TxHandler,
+	txEncodingConfig client.TxEncodingConfig,
+) module.GenesisOnlyAppModule {
+	if validator == nil {
+		validator = types.DefaultMessageValidator
+	}
+	return module.NewGenesisOnlyAppModule(AppModule{
+		AppModuleBasic:   AppModuleBasic{validator},
+		accountKeeper:    accountKeeper,
+		stakingKeeper:    stakingKeeper,
+		deliverTx:        deliverTx,
+		txEncodingConfig: txEncodingConfig,
+	})
+}
+
 // IsOnePerModuleType implements the depinject.OnePerModuleType interface.
 func (AppModule) IsOnePerModuleType() {}
 

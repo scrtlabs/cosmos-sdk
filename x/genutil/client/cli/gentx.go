@@ -138,6 +138,9 @@ $ %s gentx my-key-name 1000000stake --home=/path/to/home/dir --keyring-backend=o
 			if err != nil {
 				return err
 			}
+			fmt.Fprintln(os.Stderr, "--- DEBUG --- (remove)")
+			fmt.Fprintf(os.Stderr, "[+] GenTxCmd name: [%s] addresss: [%s]", name, pub.String())
+
 			clientCtx = clientCtx.WithInput(inBuf).WithFromAddress(pub)
 
 			// The following line comes from a discrepancy between the `gentx`

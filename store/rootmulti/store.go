@@ -605,7 +605,12 @@ func (rs *Store) CacheMultiStoreWithVersion(version int64) (types.CacheMultiStor
 				// If the store existed at this version, it means there's actually an error
 				// getting the root store at this version.
 				if storeInfos[key.Name()] {
-					return nil, err
+					// agh -- allow to continue while working on a fix
+					rs.logger.Info("FIXME! - solve store key missing")
+					rs.logger.Error("[!] error with store", "key", key.String(), "error", err.Error())
+					continue
+					// agh - disable to default behaviour for now
+					// return nil, err
 				}
 			}
 

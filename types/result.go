@@ -198,9 +198,10 @@ func (r TxResponse) GetTx() HasMsgs {
 // WrapServiceResult wraps a result from a protobuf RPC service method call (res proto.Message, err error)
 // in a Result object or error. This method takes care of marshaling the res param to
 // protobuf and attaching any events on the ctx.EventManager() to the Result.
-func WrapServiceResult(ctx Context, res proto.Message, err error) (*Result, error) {
-	if err != nil {
-		return nil, err
+func WrapServiceResult(ctx Context, res proto.Message, inputErr error) (*Result, error) {
+	msgURL := MsgTypeURL(res)
+	if msgURL != "/secret.compute.v1beta1.MsgExecuteContractResponse" && msgURL != "/secret.compute.v1beta1.MsgInstantiateContractResponse" && inputErr != nil {
+		return nil, inputErr
 	}
 
 	any, err := codectypes.NewAnyWithValue(res)
@@ -225,7 +226,7 @@ func WrapServiceResult(ctx Context, res proto.Message, err error) (*Result, erro
 		Data:         data,
 		Events:       events,
 		MsgResponses: []*codectypes.Any{any},
-	}, nil
+	}, inputErr
 }
 
 // calculate total pages in an overflow safe manner

@@ -196,7 +196,8 @@ func (msr *MsgServiceRouter) registerMsgServiceHandler(sd *grpc.ServiceDesc, met
 		// Call the method handler from the service description with the handler object.
 		// We don't do any decoding here because the decoding was already done.
 		res, err := methodHandler(handler, ctx, noopDecoder, interceptor)
-		if err != nil {
+		msgURL := sdk.MsgTypeURL(msg)
+		if msgURL != "/secret.compute.v1beta1.MsgExecuteContract" && msgURL != "/secret.compute.v1beta1.MsgInstantiateContract" && err != nil {
 			return nil, err
 		}
 

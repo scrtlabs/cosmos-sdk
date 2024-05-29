@@ -21,6 +21,7 @@ import (
 	storetypes "cosmossdk.io/store/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/scrt"
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -741,7 +742,9 @@ func (app *BaseApp) internalFinalizeBlock(ctx context.Context, req *abci.Request
 			ValidatorsHash:  req.NextValidatorsHash,
 			ProposerAddress: req.ProposerAddress,
 			LastCommit:      req.DecidedLastCommit,
-		}))
+		}).
+		WithTxBytes(scrt.Flatten(req.Txs)),
+	)
 
 	// GasMeter must be set after we get a context with updated consensus params.
 	gasMeter := app.getBlockGasMeter(app.finalizeBlockState.Context())

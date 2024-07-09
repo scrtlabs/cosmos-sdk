@@ -15,7 +15,7 @@ func DefaultConfig() *ClientConfig {
 		Output:          "text",
 		Node:            "tcp://localhost:26657",
 		BroadcastMode:   "sync",
-        GRPCConcurrency: false,
+		GRPCConcurrency: false,
 	}
 }
 
@@ -25,7 +25,7 @@ type ClientConfig struct {
 	Output          string `mapstructure:"output" json:"output"`
 	Node            string `mapstructure:"node" json:"node"`
 	BroadcastMode   string `mapstructure:"broadcast-mode" json:"broadcast-mode"`
-    GRPCConcurrency bool   `mapstructure:"grpc-concurrency" json:"grpc-concurrency"`
+	GRPCConcurrency bool   `mapstructure:"grpc-concurrency" json:"grpc-concurrency"`
 }
 
 func (c *ClientConfig) SetChainID(chainID string) {
@@ -50,6 +50,26 @@ func (c *ClientConfig) SetBroadcastMode(broadcastMode string) {
 
 func (c *ClientConfig) SetGRPCConcurrency(grpcConcurrency bool) {
 	c.GRPCConcurrency = grpcConcurrency
+}
+
+// ReadDefaultValuesFromDefaultClientConfig reads default values from default client.toml file and updates them in client.Context
+// The client.toml is then discarded.
+func ReadDefaultValuesFromDefaultClientConfig(ctx client.Context) (client.Context, error) {
+	prevHomeDir := ctx.HomeDir
+	dir, err := os.MkdirTemp("", "simapp")
+	if err != nil {
+		return ctx, fmt.Errorf("couldn't create temp dir: %w", err)
+	}
+	defer os.RemoveAll(dir)
+
+	ctx.HomeDir = dir
+	ctx, err = ReadFromClientConfig(ctx)
+	if err != nil {
+		return ctx, fmt.Errorf("couldn't create client config: %w", err)
+	}
+
+	ctx.HomeDir = prevHomeDir
+	return ctx, nil
 }
 
 // ReadFromClientConfig reads values from client.toml file and updates them in client Context

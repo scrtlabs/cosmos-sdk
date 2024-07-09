@@ -1,8 +1,7 @@
 package distribution
 
 import (
-	"time"
-    "fmt"
+	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -13,7 +12,7 @@ import (
 // BeginBlocker sets the proposer for determining distribution during endblock
 // and distribute rewards for the previous block.
 func BeginBlocker(ctx sdk.Context, k keeper.Keeper) error {
-	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyBeginBlocker)
+	defer telemetry.ModuleMeasureSince(types.ModuleName, telemetry.Now(), telemetry.MetricKeyBeginBlocker)
 
 	// determine the total power signing the block
 	var previousTotalPower int64
@@ -38,12 +37,12 @@ func BeginBlocker(ctx sdk.Context, k keeper.Keeper) error {
 		return err != nil
 	}
 
-    restakePeriod, err := k.GetRestakePeriod(ctx)
-    if err != nil {
-        return err
-    }
+	restakePeriod, err := k.GetRestakePeriod(ctx)
+	if err != nil {
+		return err
+	}
 	if ctx.BlockHeight()%restakePeriod.Int64() == 0 {
-        staleKeys := k.IterateRestakeEntries(ctx, restakeFunc)
+		staleKeys := k.IterateRestakeEntries(ctx, restakeFunc)
 
 		for _, stale := range staleKeys {
 

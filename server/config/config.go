@@ -250,7 +250,7 @@ func DefaultConfig() *Config {
 			Address:        DefaultGRPCAddress,
 			MaxRecvMsgSize: DefaultGRPCMaxRecvMsgSize,
 			MaxSendMsgSize: DefaultGRPCMaxSendMsgSize,
-            Concurrency: true,
+			Concurrency:    true,
 		},
 		GRPCWeb: GRPCWebConfig{
 			Enable: true,

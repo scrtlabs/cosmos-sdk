@@ -126,9 +126,9 @@ func (k Keeper) DoDelegate(ctx context.Context, delAddr sdk.AccAddress, bondAmt 
 	tokenSrc types.BondStatus, validator types.ValidatorI, subtractAccount bool,
 ) (newShares math.LegacyDec, err error) {
 	address, err := sdk.ValAddressFromHex(validator.GetOperator())
-    if err != nil {
-        return math.LegacyDec{}, err
-    }
+	if err != nil {
+		return math.LegacyDec{}, err
+	}
 
 	val, found := k.GetValidator(ctx, address)
 	if found != nil {

@@ -1,21 +1,21 @@
 package keeper
 
 import (
-    "context"
+	"context"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	storetypes "cosmossdk.io/store/types"
+	"github.com/cosmos/cosmos-sdk/runtime"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/address"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/kv"
-	"github.com/cosmos/cosmos-sdk/runtime"
 	"github.com/cosmos/cosmos-sdk/x/distribution/types"
 )
 
 func (k Keeper) GetRestakeValidatorsForDelegator(ctx context.Context, delegator sdk.AccAddress) (validators []string) {
 	delegatorPrefix := keyPrefixFromDelegator(delegator)
 	store := runtime.KVStoreAdapter(k.storeService.OpenKVStore(ctx))
-    iter := storetypes.KVStorePrefixIterator(store, delegatorPrefix)
+	iter := storetypes.KVStorePrefixIterator(store, delegatorPrefix)
 
 	defer iter.Close()
 	for ; iter.Valid(); iter.Next() {
@@ -34,21 +34,21 @@ func (k Keeper) SaveAutoRestakeEntry(ctx context.Context, delegator sdk.AccAddre
 	store := runtime.KVStoreAdapter(k.storeService.OpenKVStore(ctx))
 
 	delegation, err := k.stakingKeeper.Delegation(ctx, delegator, validator)
-    if err != nil {
-        return err
-    }
+	if err != nil {
+		return err
+	}
 
 	valInfo, err := k.stakingKeeper.Validator(ctx, validator)
-    if err != nil {
-        return err
-    }
+	if err != nil {
+		return err
+	}
 
 	currentStake := valInfo.TokensFromShares(delegation.GetShares())
 
-    minimumRestakeThreshold, err := k.GetMinimumRestakeThreshold(ctx)
-    if err != nil {
-        return err
-    }
+	minimumRestakeThreshold, err := k.GetMinimumRestakeThreshold(ctx)
+	if err != nil {
+		return err
+	}
 	if minimumRestakeThreshold.GT(currentStake) {
 		return types.ErrNotEnoughStakeForAuto
 	}
@@ -82,9 +82,9 @@ func (k Keeper) PerformRestake(ctx sdk.Context, delegator sdk.AccAddress, valida
 	}
 
 	baseDenom, err := k.stakingKeeper.BondDenom(ctx)
-    if err != nil {
-        return err
-    }
+	if err != nil {
+		return err
+	}
 
 	coinsToRedelegate := coins.AmountOf(baseDenom)
 

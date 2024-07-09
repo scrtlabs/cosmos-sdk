@@ -97,7 +97,7 @@ func VerifySignature(
 			}
 		} else if !pubKey.VerifySignature(signBytes, data.Signature) {
 			return fmt.Errorf("unable to verify single signer signature %s for signBytes %s", hex.EncodeToString(data.Signature), hex.EncodeToString(signBytes))
-        }
+		}
 		return nil
 
 	case *signing.MultiSignatureData:

@@ -1,7 +1,7 @@
 package types
 
 import (
-    "cosmossdk.io/math"
+	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -101,5 +101,5 @@ func NewQueryDelegatorWithdrawAddrParams(delegatorAddr sdk.AccAddress) QueryDele
 // params for query 'custom/distr/foundationtax'
 type FoundationTaxResponseParams struct {
 	FoundationAddress sdk.AccAddress `json:"foundation_address" yaml:"foundation_address"`
-	Tax               math.LegacyDec        `json:"tax" yaml:"tax"`
+	Tax               math.LegacyDec `json:"tax" yaml:"tax"`
 }

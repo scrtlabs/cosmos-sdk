@@ -46,7 +46,7 @@ func makeSignDocCmd() func(cmd *cobra.Command, args []string) error {
 		}
 
 		res, _ := tx.NewFactoryCLI(ctx, cmd.Flags())
-        keybase := res.Keybase()
+		keybase := res.Keybase()
 		sig, err := signStdSignDoc(ctx, keybase, doc)
 		if err != nil {
 			return err

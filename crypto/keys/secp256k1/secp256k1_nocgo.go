@@ -7,9 +7,9 @@ import (
 	"errors"
 
 	"github.com/cometbft/cometbft/crypto"
-	"golang.org/x/crypto/sha3"
 	secp256k1 "github.com/decred/dcrd/dcrec/secp256k1/v4"
 	"github.com/decred/dcrd/dcrec/secp256k1/v4/ecdsa"
+	"golang.org/x/crypto/sha3"
 )
 
 // Sign creates an ECDSA signature on curve Secp256k1, using SHA256 on the msg.

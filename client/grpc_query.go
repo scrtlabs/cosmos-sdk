@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"reflect"
 	"strconv"
-    "strings"
+	"strings"
 
 	abci "github.com/cometbft/cometbft/abci/types"
 	gogogrpc "github.com/cosmos/gogoproto/grpc"
@@ -103,7 +103,7 @@ func (ctx Context) Invoke(grpcCtx gocontext.Context, method string, req, reply i
 	// We then parse all the call options, if the call option is a
 	// HeaderCallOption, then we manually set the value of that header to the
 	// metadata.
-    md := metadata.Pairs(grpctypes.GRPCBlockHeightHeader, strconv.FormatInt(res.Height, 10))
+	md := metadata.Pairs(grpctypes.GRPCBlockHeightHeader, strconv.FormatInt(res.Height, 10))
 	for _, callOpt := range opts {
 		header, ok := callOpt.(grpc.HeaderCallOption)
 		if !ok {

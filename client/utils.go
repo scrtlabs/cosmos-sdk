@@ -1,7 +1,7 @@
 package client
 
 import (
-    "net/url"
+	"net/url"
 
 	"encoding/base64"
 

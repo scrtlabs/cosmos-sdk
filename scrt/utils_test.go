@@ -137,7 +137,7 @@ func TestUnFlattenTwo_1_1(t *testing.T) {
 	flat_data := []byte{6, 7, 25, 13, 103, 251, 114, 10, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1}
 	x2_data := scrt.UnFlatten(flat_data)
 	assert.Equal(t, x2_data, [][]byte{{1}, {1}})
-} 
+}
 
 func TestFlattenTwo_F_F(t *testing.T) {
 	test_data := [][]byte{{0xF}, {0xF}}

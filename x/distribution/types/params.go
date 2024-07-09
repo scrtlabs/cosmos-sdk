@@ -10,11 +10,11 @@ import (
 // DefaultParams returns default distribution parameters
 func DefaultParams() Params {
 	return Params{
-		CommunityTax:        math.LegacyNewDecWithPrec(2, 2), // 2%
-		BaseProposerReward:  math.LegacyZeroDec(),            // deprecated
-		BonusProposerReward: math.LegacyZeroDec(),            // deprecated
-		WithdrawAddrEnabled: true,
-		SecretFoundationTax:     math.LegacyZeroDec(),            // 0%
+		CommunityTax:            math.LegacyNewDecWithPrec(2, 2), // 2%
+		BaseProposerReward:      math.LegacyZeroDec(),            // deprecated
+		BonusProposerReward:     math.LegacyZeroDec(),            // deprecated
+		WithdrawAddrEnabled:     true,
+		SecretFoundationTax:     math.LegacyZeroDec(), // 0%
 		SecretFoundationAddress: sdk.AccAddress{}.String(),
 		MinimumRestakeThreshold: math.LegacyNewDec(10_000_000),
 		RestakePeriod:           math.NewInt(1000),

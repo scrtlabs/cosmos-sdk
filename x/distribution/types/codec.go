@@ -35,7 +35,7 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&MsgUpdateParams{},
 		&MsgCommunityPoolSpend{},
 		&MsgDepositValidatorRewardsPool{},
-        &MsgSetAutoRestake{},
+		&MsgSetAutoRestake{},
 	)
 
 	registry.RegisterImplementations(

@@ -41,7 +41,7 @@ type Context struct {
 	KeyringDir        string
 	From              string
 	BroadcastMode     string
-    GRPCConcurrency   bool
+	GRPCConcurrency   bool
 	FromName          string
 	SignModeStr       string
 	UseLedger         bool

@@ -187,7 +187,14 @@ type BaseApp struct {
 	// by developers.
 	optimisticExec *oe.OptimisticExecution
 
-    LastTxManager LastMsgMarkerContainer
+	LastTxManager LastMsgMarkerContainer
+
+	// disableBlockGasMeter will disable the block gas meter if true, block gas meter is tricky to support
+	// when executing transactions in parallel.
+	// when disabled, the block gas meter in context is a noop one.
+	//
+	// SAFETY: it's safe to do if validators validate the total gas wanted in the `ProcessProposal`, which is the case in the default handler.
+	disableBlockGasMeter bool
 }
 
 // NewBaseApp returns a reference to an initialized BaseApp. It accepts a
@@ -642,6 +649,10 @@ func (app *BaseApp) getState(mode execMode) *state {
 }
 
 func (app *BaseApp) getBlockGasMeter(ctx sdk.Context) storetypes.GasMeter {
+	if app.disableBlockGasMeter {
+		return noopGasMeter{}
+	}
+
 	if maxGas := app.GetMaximumBlockGas(ctx); maxGas > 0 {
 		return storetypes.NewGasMeter(maxGas)
 	}

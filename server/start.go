@@ -475,9 +475,7 @@ func startGrpcServer(
 		maxRecvMsgSize = serverconfig.DefaultGRPCMaxRecvMsgSize
 	}
 
-	println("CONCURRENCY IS: ", config.Concurrency)
 	if config.Concurrency {
-		println("SETTING CONCURRENCY ON")
 		clientCtx = clientCtx.WithConcurrency(true)
 	}
 

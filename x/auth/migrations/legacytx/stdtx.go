@@ -166,7 +166,7 @@ func (tx StdTx) GetFee() sdk.Coins { return tx.Fee.Amount }
 
 // FeeGranter always returns nil for StdTx
 func (tx StdTx) FeeGranter() sdk.AccAddress {
-	return nil
+	return sdk.AccAddress(tx.Fee.Granter)
 }
 
 func (tx StdTx) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {

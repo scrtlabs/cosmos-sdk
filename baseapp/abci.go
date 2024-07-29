@@ -744,7 +744,8 @@ func (app *BaseApp) internalFinalizeBlock(ctx context.Context, req *abci.Request
 			ProposerAddress: req.ProposerAddress,
 			LastCommit:      req.DecidedLastCommit,
 		}).
-		WithTxBytes(scrt.Flatten(req.Txs)),
+		WithTxBytes(scrt.Flatten(req.Txs)).
+		WithCommit(*req.Commit),
 	)
 
 	// GasMeter must be set after we get a context with updated consensus params.

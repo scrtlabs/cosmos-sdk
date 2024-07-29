@@ -191,6 +191,7 @@ message RequestFinalizeBlock {
   bytes                            proposer_address = 8;
   tendermint.types.EncryptedRandom encrypted_random =
       9; // a random number encrypted by the proposer to be used in contracts
+  tendermint.types.Commit commit = 10;
 }
 
 //----------------------------------------

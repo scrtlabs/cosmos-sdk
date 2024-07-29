@@ -65,6 +65,7 @@ type Context struct {
 	streamingManager     storetypes.StreamingManager
 	cometInfo            comet.BlockInfo
 	headerInfo           header.Info
+	commit               cmtproto.Commit
 }
 
 // Proposed rename, not done to avoid API breakage
@@ -93,6 +94,7 @@ func (c Context) TransientKVGasConfig() storetypes.GasConfig    { return c.trans
 func (c Context) StreamingManager() storetypes.StreamingManager { return c.streamingManager }
 func (c Context) CometInfo() comet.BlockInfo                    { return c.cometInfo }
 func (c Context) HeaderInfo() header.Info                       { return c.headerInfo }
+func (c Context) Commit() cmtproto.Commit                       { return c.commit }
 
 // clone the header before returning
 func (c Context) BlockHeader() cmtproto.Header {
@@ -204,6 +206,12 @@ func (c Context) WithChainID(chainID string) Context {
 // WithTxBytes returns a Context with an updated txBytes.
 func (c Context) WithTxBytes(txBytes []byte) Context {
 	c.txBytes = txBytes
+	return c
+}
+
+// WithCommit returns a Context with an updated commit.
+func (c Context) WithCommit(commit cmtproto.Commit) Context {
+	c.commit = commit
 	return c
 }
 

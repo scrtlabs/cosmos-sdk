@@ -10,6 +10,7 @@ import (
 	"github.com/cockroachdb/errors"
 	abci "github.com/cometbft/cometbft/abci/types"
 	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
+	cmttypes "github.com/cometbft/cometbft/types"
 	"github.com/cosmos/gogoproto/proto"
 	"google.golang.org/grpc/codes"
 	grpcstatus "google.golang.org/grpc/status"
@@ -707,6 +708,11 @@ func (app *BaseApp) internalFinalizeBlock(ctx context.Context, req *abci.Request
 		))
 	}
 
+	txs := make(cmttypes.Txs, len(req.Txs))
+	for i, row := range req.Txs {
+		txs[i] = cmttypes.Tx(row)
+	}
+
 	header := cmtproto.Header{
 		ChainID:            app.chainID,
 		Height:             req.Height,
@@ -714,6 +720,7 @@ func (app *BaseApp) internalFinalizeBlock(ctx context.Context, req *abci.Request
 		ProposerAddress:    req.ProposerAddress,
 		NextValidatorsHash: req.NextValidatorsHash,
 		AppHash:            app.LastCommitID().Hash,
+		DataHash:           txs.Hash(),
 		EncryptedRandom:    req.EncryptedRandom,
 	}
 

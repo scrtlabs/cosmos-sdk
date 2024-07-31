@@ -85,6 +85,15 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Short:     "Query the amount of coins in the community pool",
 					Example:   fmt.Sprintf(`$ %s query distribution community-pool`, version.AppName),
 				},
+				{
+					RpcMethod: "RestakingEntries",
+					Use:       "restake-entries",
+					Short:     "Query all the validators for which this delegator is auto re-staking",
+					Example:   fmt.Sprintf(`$ %s query distribution restake-entries secret1xnjxbsdbsbfsbdfbshdfbhsdfhsfdh`, version.AppName),
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "delegator"},
+					},
+				},
 			},
 		},
 		Tx: &autocliv1.ServiceCommandDescriptor{
@@ -135,6 +144,17 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					},
 				},
 				{
+					RpcMethod: "SetAutoRestake",
+					Use:       "set-auto-restaking [delegator] [validator] [enabled]",
+					Short:     "Either enable or disable auto restaking",
+					Example:   fmt.Sprintf(`$ %s tx distribution set-auto-restaking cosmos1gghjut3ccd8ay0zduzj64hwre2fxs9ld75ru9p secretvaloper1x20lytyf6zkcrv5edpkfkn8sz578qg5sqfyqnp false`, version.AppName),
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "delegator_address"},
+						{ProtoField: "validator_address"},
+						{ProtoField: "enabled"},
+					},
+				},
+				{
 					RpcMethod: "UpdateParams",
 					Skip:      true, // skipped because authority gated
 				},
@@ -143,7 +163,7 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Skip:      true, // skipped because authority gated
 				},
 			},
-			EnhanceCustomCommand: false, // use custom commands only until v0.51
+			EnhanceCustomCommand: true, // use custom commands only until v0.51
 		},
 	}
 }

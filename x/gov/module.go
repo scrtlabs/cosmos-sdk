@@ -36,7 +36,11 @@ import (
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 )
 
-const ConsensusVersion = 5
+// Note: Secret introduced migration logic from cosmos-sdk v0.43 to secret-v0.45.x
+// which became known as v3
+// Cosmos aligned their own version v3 to correspond to v0.46, v4 -> v0.47, v5 -> v0.50
+// We need to increase the consensus version by 1 and only support upgrades from secret-v0.45.x
+const ConsensusVersion = 6
 
 var (
 	_ module.AppModuleBasic      = AppModuleBasic{}
@@ -277,20 +281,23 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 	v1.RegisterQueryServer(cfg.QueryServer(), keeper.NewQueryServer(am.keeper))
 
 	m := keeper.NewMigrator(am.keeper, am.legacySubspace)
-	if err := cfg.RegisterMigration(govtypes.ModuleName, 1, m.Migrate1to2); err != nil {
-		panic(fmt.Sprintf("failed to migrate x/gov from version 1 to 2: %v", err))
-	}
 
-	if err := cfg.RegisterMigration(govtypes.ModuleName, 2, m.Migrate2to3); err != nil {
-		panic(fmt.Sprintf("failed to migrate x/gov from version 2 to 3: %v", err))
-	}
+	// if err := cfg.RegisterMigration(govtypes.ModuleName, 1, m.Migrate1to2); err != nil {
+	// 	panic(fmt.Sprintf("failed to migrate x/gov from version 1 to 2: %v", err))
+	// }
 
-	if err := cfg.RegisterMigration(govtypes.ModuleName, 3, m.Migrate3to4); err != nil {
+	// We are currently at consensus version 3 (secret-0.45.x) upgrading to v0.50.8-secret.1
+	// So we need to upgrade from secret-v0.45.x to v0.46 
+	if err := cfg.RegisterMigration(govtypes.ModuleName, 3, m.Migrate2to3); err != nil {
 		panic(fmt.Sprintf("failed to migrate x/gov from version 3 to 4: %v", err))
 	}
-
-	if err := cfg.RegisterMigration(govtypes.ModuleName, 4, m.Migrate4to5); err != nil {
+	// from v0.46 to v0.47
+	if err := cfg.RegisterMigration(govtypes.ModuleName, 4, m.Migrate3to4); err != nil {
 		panic(fmt.Sprintf("failed to migrate x/gov from version 4 to 5: %v", err))
+	}
+	// from v0.47 to v0.50
+	if err := cfg.RegisterMigration(govtypes.ModuleName, 5, m.Migrate4to5); err != nil {
+		panic(fmt.Sprintf("failed to migrate x/gov from version 5 to 6: %v", err))
 	}
 }
 

@@ -695,10 +695,12 @@ func (app *BaseApp) internalFinalizeBlock(ctx context.Context, req *abci.Request
 	var events []abci.Event
 
 	if err := app.checkHalt(req.Height, req.Time); err != nil {
+		app.logger.Error(fmt.Sprintf("[e1] :%s", err))
 		return nil, err
 	}
 
 	if err := app.validateFinalizeBlockHeight(req); err != nil {
+		app.logger.Error(fmt.Sprintf("[e2] :%s", err))
 		return nil, err
 	}
 
@@ -766,11 +768,13 @@ func (app *BaseApp) internalFinalizeBlock(ctx context.Context, req *abci.Request
 	}
 
 	if err := app.preBlock(req); err != nil {
+		app.logger.Error(fmt.Sprintf("[e3] :%s", err))
 		return nil, err
 	}
 
 	beginBlock, err := app.beginBlock(req)
 	if err != nil {
+		app.logger.Error(fmt.Sprintf("[e4] :%s", err))
 		return nil, err
 	}
 
@@ -801,6 +805,7 @@ func (app *BaseApp) internalFinalizeBlock(ctx context.Context, req *abci.Request
 		if _, err := app.txDecoder(rawTx); err == nil {
 			response = app.deliverTx(rawTx)
 		} else {
+			app.logger.Error(fmt.Sprintf(" :%s", err))
 			// In the case where a transaction included in a block proposal is malformed,
 			// we still want to return a default response to comet. This is because comet
 			// expects a response for each transaction included in a block proposal.
@@ -830,6 +835,7 @@ func (app *BaseApp) internalFinalizeBlock(ctx context.Context, req *abci.Request
 
 	endBlock, err := app.endBlock(app.finalizeBlockState.Context())
 	if err != nil {
+		app.logger.Error(fmt.Sprintf("[e5] :%s", err))
 		return nil, err
 	}
 

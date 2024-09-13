@@ -2,6 +2,8 @@ go 1.21
 
 module github.com/cosmos/cosmos-sdk
 
+replace github.com/cometbft/cometbft => github.com/scrtlabs/tendermint v0.38.9-secret.3
+
 require (
 	cosmossdk.io/api v0.7.5
 	cosmossdk.io/collections v0.4.0
@@ -142,6 +144,7 @@ require (
 	github.com/sagikazarmark/locafero v0.4.0 // indirect
 	github.com/sagikazarmark/slog-shim v0.1.0 // indirect
 	github.com/sasha-s/go-deadlock v0.3.1 // indirect
+	github.com/scrtlabs/tm-secret-enclave v1.11.8 // indirect
 	github.com/sourcegraph/conc v0.3.0 // indirect
 	github.com/spf13/afero v1.11.0 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect

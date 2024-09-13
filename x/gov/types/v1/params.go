@@ -11,18 +11,34 @@ import (
 
 // Default period for deposits & voting
 const (
-	DefaultPeriod                         time.Duration = time.Hour * 24 * 2 // 2 days
-	DefaultExpeditedPeriod                time.Duration = time.Hour * 24 * 1 // 1 day
-	DefaultMinExpeditedDepositTokensRatio               = 5
+	// SCRT: Secret Network MAINNET default voting period is 7 days
+	DefaultPeriod time.Duration = time.Hour * 24 * 7 // 7 days
+	// SCRT: Secret Network MAINNET expedited voting period is 1 day
+	DefaultExpeditedPeriod time.Duration = time.Hour * 24 * 1 // 1 day
+	// SCRT: Secret Network default multiplier is 2.5
+	SCRTMinExpeditedDepositTokensRatio    = 2.5
+	DefaultMinExpeditedDepositTokensRatio = 5
+	// SCRT: Secret Network default min deposit
+	SCRTMinDepositTokens int64 = 1000000000
 )
 
 // Default governance params
 var (
-	DefaultMinDepositTokens          = sdkmath.NewInt(10000000)
-	DefaultMinExpeditedDepositTokens = DefaultMinDepositTokens.Mul(sdkmath.NewInt(DefaultMinExpeditedDepositTokensRatio))
-	DefaultQuorum                    = sdkmath.LegacyNewDecWithPrec(334, 3)
-	DefaultThreshold                 = sdkmath.LegacyNewDecWithPrec(5, 1)
-	DefaultExpeditedThreshold        = sdkmath.LegacyNewDecWithPrec(667, 3)
+	// SCRT
+	// DefaultMinDepositTokens          = sdkmath.NewInt(10000000)
+	DefaultMinDepositTokens = sdkmath.NewInt(SCRTMinDepositTokens)
+	// SCRT
+	// DefaultMinExpeditedDepositTokens = DefaultMinDepositTokens.Mul(sdkmath.NewInt(DefaultMinExpeditedDepositTokensRatio))
+	DefaultMinExpeditedDepositTokens = sdkmath.NewInt(2500000000)
+
+	DefaultQuorum    = sdkmath.LegacyNewDecWithPrec(334, 3)
+	DefaultThreshold = sdkmath.LegacyNewDecWithPrec(5, 1)
+
+	// SCRT
+	// DefaultExpeditedThreshold        = sdkmath.LegacyNewDecWithPrec(667, 3)
+	// SCRT Set Tally Expedited threshold to MAINNET default
+	DefaultExpeditedThreshold = sdkmath.LegacyNewDecWithPrec(666666666666666667, sdkmath.LegacyPrecision)
+
 	DefaultVetoThreshold             = sdkmath.LegacyNewDecWithPrec(334, 3)
 	DefaultMinInitialDepositRatio    = sdkmath.LegacyZeroDec()
 	DefaultProposalCancelRatio       = sdkmath.LegacyMustNewDecFromStr("0.5")

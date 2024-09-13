@@ -877,6 +877,9 @@ func (app *BaseApp) FinalizeBlock(req *abci.RequestFinalizeBlock) (res *abci.Res
 		aborted := app.optimisticExec.AbortIfNeeded(req.Hash)
 		// Wait for the OE to finish, regardless of whether it was aborted or not
 		res, err = app.optimisticExec.WaitResult()
+		if err != nil {
+			app.logger.Error(fmt.Sprintf("[e1] FinalizeBlock: %s", err))
+		}
 
 		// only return if we are not aborting
 		if !aborted {
@@ -896,6 +899,9 @@ func (app *BaseApp) FinalizeBlock(req *abci.RequestFinalizeBlock) (res *abci.Res
 	res, err = app.internalFinalizeBlock(context.Background(), req)
 	if res != nil {
 		res.AppHash = app.workingHash()
+	}
+	if err != nil {
+		app.logger.Error(fmt.Sprintf("[e2] FinalizeBlock: %s", err))
 	}
 
 	return res, err

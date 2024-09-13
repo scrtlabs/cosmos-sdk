@@ -23,6 +23,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	"github.com/cosmos/cosmos-sdk/x/auth/simulation"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
+	consensus_ver "github.com/cosmos/cosmos-sdk/scrt"
 )
 
 // ConsensusVersion defines the current x/auth module consensus version.
@@ -121,15 +122,16 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 		panic(fmt.Sprintf("failed to migrate x/%s from version 1 to 2: %v", types.ModuleName, err))
 	}
 
-	if err := cfg.RegisterMigration(types.ModuleName, 2, m.Migrate2to3); err != nil {
+	// SCRT
+	if err := cfg.RegisterMigration(types.ModuleName, consensus_ver.CURRENT_CONSENSUS, m.Migrate2to3); err != nil {
 		panic(fmt.Sprintf("failed to migrate x/%s from version 2 to 3: %v", types.ModuleName, err))
 	}
-
-	if err := cfg.RegisterMigration(types.ModuleName, 3, m.Migrate3to4); err != nil {
+	// SCRT
+	if err := cfg.RegisterMigration(types.ModuleName, consensus_ver.CURRENT_CONSENSUS + 1, m.Migrate3to4); err != nil {
 		panic(fmt.Sprintf("failed to migrate x/%s from version 3 to 4: %v", types.ModuleName, err))
 	}
-
-	if err := cfg.RegisterMigration(types.ModuleName, 4, m.Migrate4To5); err != nil {
+	// SCRT
+	if err := cfg.RegisterMigration(types.ModuleName, consensus_ver.CURRENT_CONSENSUS + 2, m.Migrate4To5); err != nil {
 		panic(fmt.Sprintf("failed to migrate x/%s from version 4 to 5", types.ModuleName))
 	}
 }

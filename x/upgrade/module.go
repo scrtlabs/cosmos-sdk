@@ -31,6 +31,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	
 )
 
 func init() {
@@ -38,7 +39,8 @@ func init() {
 }
 
 // ConsensusVersion defines the current x/upgrade module consensus version.
-const ConsensusVersion uint64 = 2
+// SCRT - increase the current version by 1 because secret network is on version 3
+const ConsensusVersion uint64 = 3
 
 var (
 	_ module.AppModuleBasic = AppModule{}

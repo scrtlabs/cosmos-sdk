@@ -31,6 +31,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/bank/simulation"
 	"github.com/cosmos/cosmos-sdk/x/bank/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	consensus_ver "github.com/cosmos/cosmos-sdk/scrt"
 )
 
 // ConsensusVersion defines the current x/bank module consensus version.
@@ -122,12 +123,12 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 	if err := cfg.RegisterMigration(types.ModuleName, 1, m.Migrate1to2); err != nil {
 		panic(fmt.Sprintf("failed to migrate x/bank from version 1 to 2: %v", err))
 	}
-
-	if err := cfg.RegisterMigration(types.ModuleName, 2, m.Migrate2to3); err != nil {
+	// SCRT: our consensus version v3 is their v2
+	if err := cfg.RegisterMigration(types.ModuleName, consensus_ver.CURRENT_CONSENSUS, m.Migrate2to3); err != nil {
 		panic(fmt.Sprintf("failed to migrate x/bank from version 2 to 3: %v", err))
 	}
-
-	if err := cfg.RegisterMigration(types.ModuleName, 3, m.Migrate3to4); err != nil {
+	// SCRT: their v3 + 1
+	if err := cfg.RegisterMigration(types.ModuleName, consensus_ver.CURRENT_CONSENSUS + 1, m.Migrate3to4); err != nil {
 		panic(fmt.Sprintf("failed to migrate x/bank from version 3 to 4: %v", err))
 	}
 }

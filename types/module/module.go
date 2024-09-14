@@ -32,6 +32,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	rt "runtime"
 	"sort"
 
 	abci "github.com/cometbft/cometbft/abci/types"
@@ -782,7 +783,14 @@ func (m *Manager) BeginBlock(ctx sdk.Context) (sdk.BeginBlock, error) {
 	for _, moduleName := range m.OrderBeginBlockers {
 		if module, ok := m.Modules[moduleName].(appmodule.HasBeginBlocker); ok {
 			if err := module.BeginBlock(ctx); err != nil {
-				return sdk.BeginBlock{}, err
+				var e error = nil
+				if _, file, line, ok := rt.Caller(0); ok {
+					e = fmt.Errorf("@%s:%d module:%s BeginBlock err:%s", file, line, moduleName, err)
+				} else {
+					e = fmt.Errorf("module:%s BeginBlock err:%s", moduleName, err)
+				}
+				return sdk.BeginBlock{}, e
+
 			}
 		}
 	}

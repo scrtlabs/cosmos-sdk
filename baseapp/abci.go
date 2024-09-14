@@ -782,6 +782,7 @@ func (app *BaseApp) internalFinalizeBlock(ctx context.Context, req *abci.Request
 	// we spend any significant amount of time.
 	select {
 	case <-ctx.Done():
+		app.logger.Error(fmt.Sprintf("[ex] :%s", ctx.Err()))
 		return nil, ctx.Err()
 	default:
 		// continue

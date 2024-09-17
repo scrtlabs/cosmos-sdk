@@ -23,6 +23,12 @@ func DefaultParams() Params {
 
 // ValidateBasic performs basic validation on distribution parameters.
 func (p Params) ValidateBasic() error {
+	if p.SecretFoundationTax.IsNegative() || p.SecretFoundationTax.GT(math.LegacyOneDec()) {
+		return fmt.Errorf(
+			"secret foundation tax should non-negative and less than one: %s", p.SecretFoundationTax,
+		)
+	}
+
 	return validateCommunityTax(p.CommunityTax)
 }
 

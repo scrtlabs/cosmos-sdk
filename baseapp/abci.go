@@ -695,12 +695,10 @@ func (app *BaseApp) internalFinalizeBlock(ctx context.Context, req *abci.Request
 	var events []abci.Event
 
 	if err := app.checkHalt(req.Height, req.Time); err != nil {
-		app.logger.Error(fmt.Sprintf("[e1] :%s", err))
 		return nil, err
 	}
 
 	if err := app.validateFinalizeBlockHeight(req); err != nil {
-		app.logger.Error(fmt.Sprintf("[e2] :%s", err))
 		return nil, err
 	}
 
@@ -768,13 +766,11 @@ func (app *BaseApp) internalFinalizeBlock(ctx context.Context, req *abci.Request
 	}
 
 	if err := app.preBlock(req); err != nil {
-		app.logger.Error(fmt.Sprintf("[e3] :%s", err))
 		return nil, err
 	}
 
 	beginBlock, err := app.beginBlock(req)
 	if err != nil {
-		app.logger.Error(fmt.Sprintf("[e4] :%s", err))
 		return nil, err
 	}
 
@@ -782,7 +778,6 @@ func (app *BaseApp) internalFinalizeBlock(ctx context.Context, req *abci.Request
 	// we spend any significant amount of time.
 	select {
 	case <-ctx.Done():
-		app.logger.Error(fmt.Sprintf("[ex] :%s", ctx.Err()))
 		return nil, ctx.Err()
 	default:
 		// continue
@@ -806,7 +801,6 @@ func (app *BaseApp) internalFinalizeBlock(ctx context.Context, req *abci.Request
 		if _, err := app.txDecoder(rawTx); err == nil {
 			response = app.deliverTx(rawTx)
 		} else {
-			app.logger.Error(fmt.Sprintf(" :%s", err))
 			// In the case where a transaction included in a block proposal is malformed,
 			// we still want to return a default response to comet. This is because comet
 			// expects a response for each transaction included in a block proposal.
@@ -836,7 +830,6 @@ func (app *BaseApp) internalFinalizeBlock(ctx context.Context, req *abci.Request
 
 	endBlock, err := app.endBlock(app.finalizeBlockState.Context())
 	if err != nil {
-		app.logger.Error(fmt.Sprintf("[e5] :%s", err))
 		return nil, err
 	}
 
@@ -884,9 +877,6 @@ func (app *BaseApp) FinalizeBlock(req *abci.RequestFinalizeBlock) (res *abci.Res
 		aborted := app.optimisticExec.AbortIfNeeded(req.Hash)
 		// Wait for the OE to finish, regardless of whether it was aborted or not
 		res, err = app.optimisticExec.WaitResult()
-		if err != nil {
-			app.logger.Error(fmt.Sprintf("[e1] FinalizeBlock: %s", err))
-		}
 
 		// only return if we are not aborting
 		if !aborted {
@@ -906,9 +896,6 @@ func (app *BaseApp) FinalizeBlock(req *abci.RequestFinalizeBlock) (res *abci.Res
 	res, err = app.internalFinalizeBlock(context.Background(), req)
 	if res != nil {
 		res.AppHash = app.workingHash()
-	}
-	if err != nil {
-		app.logger.Error(fmt.Sprintf("[e2] FinalizeBlock: %s", err))
 	}
 
 	return res, err

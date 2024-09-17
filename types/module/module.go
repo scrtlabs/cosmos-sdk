@@ -32,7 +32,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	rt "runtime"
 	"sort"
 
 	abci "github.com/cometbft/cometbft/abci/types"
@@ -726,10 +725,8 @@ func (m Manager) RunMigrations(ctx context.Context, cfg Configurator, fromVM Ver
 		// 2. An existing chain is upgrading from version < 0.43 to v0.43+ for the first time.
 		// In this case, all modules have yet to be added to x/upgrade's VersionMap store.
 		if exists {
-			sdkCtx.Logger().Info(fmt.Sprintf("Running %s migration from %d to %d", moduleName, fromVersion, toVersion))
 			err := c.runModuleMigrations(sdkCtx, moduleName, fromVersion, toVersion)
 			if err != nil {
-				sdkCtx.Logger().Error(fmt.Sprintf("Module %s migration error:%s", moduleName, err))
 				return nil, err
 			}
 		} else {
@@ -783,14 +780,7 @@ func (m *Manager) BeginBlock(ctx sdk.Context) (sdk.BeginBlock, error) {
 	for _, moduleName := range m.OrderBeginBlockers {
 		if module, ok := m.Modules[moduleName].(appmodule.HasBeginBlocker); ok {
 			if err := module.BeginBlock(ctx); err != nil {
-				var e error = nil
-				if _, file, line, ok := rt.Caller(0); ok {
-					e = fmt.Errorf("@%s:%d module:%s BeginBlock err:%s", file, line, moduleName, err)
-				} else {
-					e = fmt.Errorf("module:%s BeginBlock err:%s", moduleName, err)
-				}
-				return sdk.BeginBlock{}, e
-
+				return sdk.BeginBlock{}, err
 			}
 		}
 	}

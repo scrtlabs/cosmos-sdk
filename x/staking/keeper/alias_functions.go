@@ -125,7 +125,7 @@ func (k Keeper) GetValidatorSet() types.ValidatorSet {
 func (k Keeper) DoDelegate(ctx context.Context, delAddr sdk.AccAddress, bondAmt math.Int,
 	tokenSrc types.BondStatus, validator types.ValidatorI, subtractAccount bool,
 ) (newShares math.LegacyDec, err error) {
-	address, err := sdk.ValAddressFromHex(validator.GetOperator())
+	address, err := sdk.ValAddressFromBech32(validator.GetOperator())
 	if err != nil {
 		return math.LegacyDec{}, err
 	}

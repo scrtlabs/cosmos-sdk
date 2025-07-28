@@ -2,6 +2,8 @@ package baseapp
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"sort"
 	"strings"
@@ -45,8 +47,10 @@ func (app *BaseApp) InitChain(req *abci.RequestInitChain) (*abci.ResponseInitCha
 
 	// On a new chain, we consider the init chain block height as 0, even though
 	// req.InitialHeight is 1 by default.
-	initHeader := cmtproto.Header{ChainID: req.ChainId, Time: req.Time}
-	app.logger.Info("InitChain", "initialHeight", req.InitialHeight, "chainID", req.ChainId)
+	emptyHash := sha256.Sum256([]byte{})
+
+	initHeader := cmtproto.Header{ChainID: req.ChainId, Time: req.Time, ImplicitHash: emptyHash[:]}
+	app.logger.Info("InitChain", "initialHeight", req.InitialHeight, "chainID", req.ChainId, "emptyHash", hex.EncodeToString(emptyHash[:]))
 
 	// Set the initial height, which will be used to determine if we are proposing
 	// or processing the first block or not.
@@ -384,12 +388,22 @@ func (app *BaseApp) PrepareProposal(req *abci.RequestPrepareProposal) (resp *abc
 	// Always reset state given that PrepareProposal can timeout and be called
 	// again in a subsequent round.
 	header := cmtproto.Header{
+		Version:            req.Version,
 		ChainID:            app.chainID,
 		Height:             req.Height,
 		Time:               req.Time,
-		ProposerAddress:    req.ProposerAddress,
+		LastBlockId:        req.LastBlockId,
+		LastCommitHash:     req.LastCommitHash,
+		DataHash:           req.DataHash,
+		ValidatorsHash:     req.ValidatorsHash,
 		NextValidatorsHash: req.NextValidatorsHash,
+		ConsensusHash:      req.ConsensusHash,
 		AppHash:            app.LastCommitID().Hash,
+		LastResultsHash:    req.LastResultsHash,
+		EvidenceHash:       req.EvidenceHash,
+		ProposerAddress:    req.ProposerAddress,
+		EncryptedRandom:    req.EncryptedRandom,
+		ImplicitHash:       req.ImplicitHash,
 	}
 	app.setState(execModePrepareProposal, header)
 
@@ -468,12 +482,22 @@ func (app *BaseApp) ProcessProposal(req *abci.RequestProcessProposal) (resp *abc
 	// Always reset state given that ProcessProposal can timeout and be called
 	// again in a subsequent round.
 	header := cmtproto.Header{
+		Version:            req.Version,
 		ChainID:            app.chainID,
 		Height:             req.Height,
 		Time:               req.Time,
-		ProposerAddress:    req.ProposerAddress,
+		LastBlockId:        req.LastBlockId,
+		LastCommitHash:     req.LastCommitHash,
+		DataHash:           req.DataHash,
+		ValidatorsHash:     req.ValidatorsHash,
 		NextValidatorsHash: req.NextValidatorsHash,
+		ConsensusHash:      req.ConsensusHash,
 		AppHash:            app.LastCommitID().Hash,
+		LastResultsHash:    req.LastResultsHash,
+		EvidenceHash:       req.EvidenceHash,
+		ProposerAddress:    req.ProposerAddress,
+		EncryptedRandom:    req.EncryptedRandom,
+		ImplicitHash:       req.ImplicitHash,
 	}
 	app.setState(execModeProcessProposal, header)
 
@@ -561,7 +585,7 @@ func (app *BaseApp) ExtendVote(_ context.Context, req *abci.RequestExtendVote) (
 	if req.Height == app.initialHeight {
 		ctx, _ = app.finalizeBlockState.Context().CacheContext()
 	} else {
-		emptyHeader := cmtproto.Header{ChainID: app.chainID, Height: req.Height}
+		emptyHeader := cmtproto.Header{ChainID: app.chainID, Height: req.Height, ImplicitHash: req.ImplicitHash}
 		ms := app.cms.CacheMultiStore()
 		ctx = sdk.NewContext(ms, emptyHeader, false, app.logger).WithStreamingManager(app.streamingManager)
 	}
@@ -714,14 +738,22 @@ func (app *BaseApp) internalFinalizeBlock(ctx context.Context, req *abci.Request
 	}
 
 	header := cmtproto.Header{
+		Version:            req.Version,
 		ChainID:            app.chainID,
 		Height:             req.Height,
 		Time:               req.Time,
-		ProposerAddress:    req.ProposerAddress,
+		LastBlockId:        req.LastBlockId,
+		LastCommitHash:     req.LastCommitHash,
+		DataHash:           req.DataHash,
+		ValidatorsHash:     req.ValidatorsHash,
 		NextValidatorsHash: req.NextValidatorsHash,
+		ConsensusHash:      req.ConsensusHash,
 		AppHash:            app.LastCommitID().Hash,
-		DataHash:           txs.Hash(),
+		LastResultsHash:    req.LastResultsHash,
+		EvidenceHash:       req.EvidenceHash,
+		ProposerAddress:    req.ProposerAddress,
 		EncryptedRandom:    req.EncryptedRandom,
+		ImplicitHash:       req.ImplicitHash,
 	}
 
 	// finalizeBlockState should be set on InitChain or ProcessProposal. If it is

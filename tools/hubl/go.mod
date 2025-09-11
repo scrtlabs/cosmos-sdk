@@ -1,6 +1,6 @@
 module cosmossdk.io/tools/hubl
 
-go 1.21
+go 1.23
 
 require (
 	cosmossdk.io/api v0.7.5
@@ -12,7 +12,7 @@ require (
 	github.com/pelletier/go-toml/v2 v2.1.0
 	github.com/spf13/cobra v1.8.0
 	google.golang.org/grpc v1.63.2
-	google.golang.org/protobuf v1.34.2
+	google.golang.org/protobuf v1.36.9
 )
 
 require (

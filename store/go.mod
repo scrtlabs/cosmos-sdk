@@ -1,6 +1,6 @@
 module cosmossdk.io/store
 
-go 1.21
+go 1.23
 
 require (
 	cosmossdk.io/errors v1.0.0
@@ -22,7 +22,7 @@ require (
 	github.com/tidwall/btree v1.7.0
 	golang.org/x/exp v0.0.0-20240404231335-c0f41cb1a7a0
 	google.golang.org/grpc v1.62.1
-	google.golang.org/protobuf v1.34.2
+	google.golang.org/protobuf v1.36.9
 	gotest.tools/v3 v3.5.1
 )
 

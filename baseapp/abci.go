@@ -722,6 +722,13 @@ func (app *BaseApp) internalFinalizeBlock(ctx context.Context, req *abci.Request
 		AppHash:            app.LastCommitID().Hash,
 		DataHash:           txs.Hash(),
 		EncryptedRandom:    req.EncryptedRandom,
+		Version:            req.Version,
+		LastBlockId:        req.LastBlockId,
+		LastCommitHash:     req.LastCommitHash,
+		ValidatorsHash:     req.ValidatorsHash,
+		ConsensusHash:      req.ConsensusHash,
+		LastResultsHash:    req.LastResultsHash,
+		EvidenceHash:       req.EvidenceHash,
 	}
 
 	// finalizeBlockState should be set on InitChain or ProcessProposal. If it is

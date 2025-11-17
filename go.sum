@@ -642,8 +642,8 @@ github.com/sagikazarmark/slog-shim v0.1.0/go.mod h1:SrcSrq8aKtyuqEI1uvTDTK1arOWR
 github.com/samuel/go-zookeeper v0.0.0-20190923202752-2cc03de413da/go.mod h1:gi+0XIa01GRL2eRQVjQkKGqKF3SF9vZR/HnPullcV2E=
 github.com/sasha-s/go-deadlock v0.3.5 h1:tNCOEEDG6tBqrNDOX35j/7hL5FcFViG6awUGROb2NsU=
 github.com/sasha-s/go-deadlock v0.3.5/go.mod h1:bugP6EGbdGYObIlx7pUZtWqlvo8k9H6vCBBsiChJQ5U=
-github.com/scrtlabs/tendermint v0.38.17-secret-beta-6 h1:aKRU4crtRI49XwW38soSRJwzIizcMwXJCxP0HHsdasY=
-github.com/scrtlabs/tendermint v0.38.17-secret-beta-6/go.mod h1:CZUJG1djTJUVbpjGS9JmQx9CFfF4goKi3LzYUQtxWO8=
+github.com/scrtlabs/tendermint v0.38.19-secret.1 h1:NxZ21CS6INBjL2QCL087/BJLb1NAIeoY07mHasTuqKs=
+github.com/scrtlabs/tendermint v0.38.19-secret.1/go.mod h1:CZUJG1djTJUVbpjGS9JmQx9CFfF4goKi3LzYUQtxWO8=
 github.com/scrtlabs/tm-secret-enclave v1.13.0-beta h1:9IqEHQ/GSaRzcgqrFkxoLd/5ejOgLSezduz75VKCsZg=
 github.com/scrtlabs/tm-secret-enclave v1.13.0-beta/go.mod h1:nxZQtzzAqBNBLOEXSv4cKlUnVA4vRmHOn6ujr3kxVME=
 github.com/sean-/seed v0.0.0-20170313163322-e2103e2c3529/go.mod h1:DxrIzT+xaE7yg65j358z/aeFdxmN0P9QXhEzd20vsDc=

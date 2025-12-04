@@ -10,7 +10,7 @@ require (
 	github.com/cosmos/cosmos-sdk v0.50.0-rc.1
 	github.com/manifoldco/promptui v0.9.0
 	github.com/pelletier/go-toml/v2 v2.1.0
-	github.com/spf13/cobra v1.8.0
+	github.com/spf13/cobra v1.10.2
 	google.golang.org/grpc v1.63.2
 	google.golang.org/protobuf v1.34.2
 )
@@ -126,7 +126,7 @@ require (
 	github.com/sourcegraph/conc v0.3.0 // indirect
 	github.com/spf13/afero v1.11.0 // indirect
 	github.com/spf13/cast v1.6.0 // indirect
-	github.com/spf13/pflag v1.0.5 // indirect
+	github.com/spf13/pflag v1.0.9 // indirect
 	github.com/spf13/viper v1.18.2 // indirect
 	github.com/stretchr/testify v1.9.0 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect

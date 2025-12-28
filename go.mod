@@ -4,7 +4,7 @@ toolchain go1.24.0
 
 module github.com/cosmos/cosmos-sdk
 
-replace github.com/cometbft/cometbft => github.com/scrtlabs/tendermint v0.38.19-secret.1
+replace github.com/cometbft/cometbft => github.com/scrtlabs/tendermint v0.38.19-secret.2
 
 require (
 	cosmossdk.io/api v0.7.6

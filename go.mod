@@ -1,4 +1,4 @@
-go 1.22.11
+go 1.23
 
 toolchain go1.24.0
 
@@ -64,7 +64,7 @@ require (
 	google.golang.org/grpc v1.70.0
 	google.golang.org/protobuf v1.36.4
 	gotest.tools/v3 v3.5.1
-	pgregory.net/rapid v1.1.0
+	pgregory.net/rapid v1.3.0
 	sigs.k8s.io/yaml v1.4.0
 )
 
